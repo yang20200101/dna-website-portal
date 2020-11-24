@@ -1,0 +1,25 @@
+package com.highershine.portal.common.entity.po;
+
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class Thumbnail {
+    private Long id;
+
+    private String bucketName;
+
+    private String keyName;
+
+    private String fileName;
+
+    private String url;
+
+    private Boolean deleteFlag;
+
+    private Date createdAt;
+
+    private Date updatedAt;
+
+}

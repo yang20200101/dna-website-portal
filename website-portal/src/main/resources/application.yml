@@ -1,0 +1,28 @@
+# 本应用占用端口
+server:
+  port: 8000
+  servlet:
+    context-path: /web-portal
+
+#执行Profiles为dev的yml配置文件
+# application-{profiles}.yml
+spring:
+  profiles:
+    active: dev
+
+# 日志文件配置
+logging:
+  config: classpath:logback.xml
+
+# 读取mybatis 配置
+mybatis:
+  mapper-locations:
+    - classpath*:mapper/*.xml
+
+website:
+  #关于信息
+  about:
+    #联系方式
+    contact: 010-83752638
+    #版本号
+    version: 1.2.1

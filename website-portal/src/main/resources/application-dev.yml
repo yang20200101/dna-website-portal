@@ -1,0 +1,37 @@
+spring:
+  #配置数据源
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://192.168.10.68:5432/dna_portal
+    username: dna_portal
+    password: dna_portal
+    driverClassName: org.postgresql.Driver
+
+  jackson:
+    # 对返回时间字段进行格式化
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+
+  # redis 相关配置
+  redis:
+    password: highershine
+    cluster:
+      max-redirects: 10
+      nodes: 192.168.10.22:6379,192.168.10.22:6380,192.168.10.29:6379,192.168.10.29:6380,192.168.10.30:6379,192.168.10.30:6380
+
+# session 超时时间hours
+manage:
+  session:
+    timeout: 8
+
+#MinIO配置
+minio:
+  endPoint: http://192.168.10.50:9000
+  bucketName: pothumbnail
+  accessKey: miniotest
+  secretKey: miniotest
+  connTimeOut: 10000
+  maxConnections: 10
+  maxErrorRetry: 50
+  socketTimeOut: 10000

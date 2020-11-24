@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.CategoryMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Category">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ext_id" jdbcType="VARCHAR" property="extId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ext_id, name, alias, sort, remark, deleted, status, created_at, updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from po_category
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from po_category
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Category">
+    insert into po_category (id, ext_id, name,
+      alias, sort, remark,
+      deleted, status, created_at,
+      updated_at)
+    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{alias,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+      #{deleted,jdbcType=BIT}, #{status,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP},
+      #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Category">
+    update po_category
+    set ext_id = #{extId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      status = #{status,jdbcType=BIT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!--  查询栏目列表-->
+  <select id="getCategoryList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from po_category c order by c.sort asc
+  </select>
+  <update id="deleteCategoryById" parameterType="long">
+    update po_category  set deleted = true where id = #{id,jdbcType=BIGINT}
+  </update>
+<!-- 获取详情-->
+  <select id="findCategoryById" parameterType="long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from po_category c where c.id = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>

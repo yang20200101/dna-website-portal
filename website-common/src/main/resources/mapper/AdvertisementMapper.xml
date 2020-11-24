@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.AdvertisementMapper">
+    <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Advertisement">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="ext_id" jdbcType="VARCHAR" property="extId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="link" jdbcType="VARCHAR" property="link"/>
+        <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId"/>
+        <result column="position" jdbcType="VARCHAR" property="position"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="is_publish" jdbcType="BIT" property="isPublish"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted" jdbcType="BIT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, ext_id, title, link, thumbnail_id, position, level, is_publish, created_at, updated_at,
+    deleted
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from po_advertisement
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from po_advertisement
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Advertisement">
+    insert into po_advertisement (id, ext_id, title, 
+      link, thumbnail_id, position,
+      level, is_publish, created_at, 
+      updated_at, deleted)
+    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{link,jdbcType=VARCHAR}, #{thumbnailId,jdbcType=BIGINT}, #{position,jdbcType=VARCHAR},
+      #{level,jdbcType=VARCHAR}, #{isPublish,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP}, 
+      #{updatedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT})
+  </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Advertisement">
+    update po_advertisement
+    set ext_id = #{extId,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      link = #{link,jdbcType=VARCHAR},
+      thumbnail_id = #{thumbnailId,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      level = #{level,jdbcType=VARCHAR},
+      is_publish = #{isPublish,jdbcType=BIT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <!--飄窗列表查询接口-->
+    <select id="getAdvertisementList" parameterType="com.highershine.portal.common.entity.dto.AdvertisementDTO"
+            resultType="com.highershine.portal.common.entity.vo.AdvertisementVo">
+        select
+        <include refid="Base_Column_List"/>
+        from po_advertisement
+        where 1=1 and deleted = false
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="position != null and position != ''">
+            and position = #{position, jdbcType=VARCHAR}
+        </if>
+        <if test="isPublish != null">
+            and is_publish = #{isPublish}
+        </if>
+    </select>
+</mapper>

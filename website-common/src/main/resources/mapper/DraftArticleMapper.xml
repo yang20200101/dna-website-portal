@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.DraftArticleMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.DraftArticle">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ext_id" jdbcType="VARCHAR" property="extId" />
+    <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="category_ext_id" jdbcType="VARCHAR" property="categoryExtId" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="is_publish" jdbcType="BIT" property="isPublish" />
+    <result column="is_need_update" jdbcType="BIT" property="isNeedUpdate" />
+    <result column="is_top" jdbcType="BIT" property="isTop" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="link" jdbcType="VARCHAR" property="link" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId" />
+    <result column="is_focus" jdbcType="BIT" property="isFocus" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ext_id, publish_date, deleted, category_ext_id, category_id, is_publish, is_need_update,
+    is_top, title, source, link, description, thumbnail_id, is_focus, content, created_at,
+    updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from po_draft_article
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from po_draft_article
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.DraftArticle">
+    insert into po_draft_article (id, ext_id, publish_date,
+      deleted, category_ext_id, category_id,
+      is_publish, is_need_update, is_top,
+      title, source, link,
+      description, thumbnail_id, is_focus,
+      content, created_at, updated_at
+      )
+    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{publishDate,jdbcType=TIMESTAMP},
+      #{deleted,jdbcType=BIT}, #{categoryExtId,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT},
+      #{isPublish,jdbcType=BIT}, #{isNeedUpdate,jdbcType=BIT}, #{isTop,jdbcType=BIT},
+      #{title,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{link,jdbcType=VARCHAR},
+      #{description,jdbcType=VARCHAR}, #{thumbnailId,jdbcType=BIGINT}, #{isFocus,jdbcType=BIT},
+      #{content,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.DraftArticle">
+    update po_draft_article
+    set ext_id = #{extId,jdbcType=VARCHAR},
+      publish_date = #{publishDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      category_ext_id = #{categoryExtId,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=BIGINT},
+      is_publish = #{isPublish,jdbcType=BIT},
+      is_need_update = #{isNeedUpdate,jdbcType=BIT},
+      is_top = #{isTop,jdbcType=BIT},
+      title = #{title,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      link = #{link,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      thumbnail_id = #{thumbnailId,jdbcType=BIGINT},
+      is_focus = #{isFocus,jdbcType=BIT},
+      content = #{content,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!--  获取文章草稿列表-->
+  <select id="getDraftArticleList" parameterType="com.highershine.portal.common.entity.dto.DraftArticleDTO"
+          resultType="com.highershine.portal.common.entity.vo.DraftArticleVo">
+    select
+    <include refid="Base_Column_List"/>
+    from po_draft_article
+    where 1 = 1
+    <if test="keyword != null and keyword != ''">
+      title like concat('%',#{keyword,jdbcType=VARCHAR},'%')
+      or
+      description like concat('%',#{keyword,jdbcType=VARCHAR},'%')
+      or
+      content  like concat('%',#{keyword,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="categoryId != null">
+      category_id = #{categoryId,jdbcType=BIGINT}
+    </if>
+  </select>
+  <select id="findDraftArticleById" parameterType="long"
+          resultType="com.highershine.portal.common.entity.vo.DraftArticleVo">
+    select
+    <include refid="Base_Column_List"/>,
+    pt.url as url
+    from po_draft_article , po_thumbnail pt
+    where pt.id = thumbnail_id
+    id = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>
