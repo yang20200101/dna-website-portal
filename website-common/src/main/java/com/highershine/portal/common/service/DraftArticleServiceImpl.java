@@ -2,15 +2,17 @@ package com.highershine.portal.common.service;
 
 
 import com.highershine.portal.common.entity.dto.DraftArticleDTO;
+import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.po.DraftArticle;
 import com.highershine.portal.common.entity.vo.DraftArticleVo;
+import com.highershine.portal.common.mapper.CategoryMapper;
 import com.highershine.portal.common.mapper.DraftArticleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -22,8 +24,10 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DraftArticleServiceImpl implements DraftArticleService {
-    @Resource
+    @Autowired
     private DraftArticleMapper draftArticleMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
     /**
      * 获取文章草稿列表
      * @param draftArticleDTO
@@ -43,6 +47,8 @@ public class DraftArticleServiceImpl implements DraftArticleService {
     @Override
     public DraftArticleVo findDraftArticleById(Long id) throws Exception {
         DraftArticleVo draftArticleVo =  draftArticleMapper.findDraftArticleById(id);
+        Category category = categoryMapper.selectByPrimaryKey(draftArticleVo.getCategoryId());
+        draftArticleVo.setCategoryName(category.getName());
         return draftArticleVo;
     }
 

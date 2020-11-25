@@ -108,14 +108,6 @@
     from po_article pa
     left join po_category pc
     on pa.category_id = pc.id
-    where 1 = 1
-    <if test="categoryId != null and categoryId != ''">
-      and pa.category_id = #{categoryId,jdbcType=BIGINT}
-    </if>
-    <if test="keyword != null and keyword != ''">
-      and (pa.title like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%')
-      or pa.content like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%'))
-    </if>
   </select>
 
 </mapper>

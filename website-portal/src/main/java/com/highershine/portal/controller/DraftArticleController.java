@@ -66,7 +66,8 @@ public class DraftArticleController {
     public Result<DraftArticleVo> findDraftArticleById(@PathVariable("id") Long id) {
         try {
             DraftArticleVo draftArticleVo = draftArticleService.findDraftArticleById(id);
-            draftArticleVo.setUrl(minIOPropertyConfig.getEndPoint() + draftArticleVo.getUrl());
+            draftArticleVo.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName()
+                    + "/" + draftArticleVo.getUrl());
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, draftArticleVo);
         } catch (Exception e) {
             log.error("【文章草稿】获取文章草稿详情出现异常，异常信息：", e);

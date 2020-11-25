@@ -33,6 +33,9 @@ public class DraftArticleVo {
     @ApiModelProperty(value = "栏目表关联Id", name = "categoryId", example = "1", dataType = "long")
     private Long categoryId;
 
+    @ApiModelProperty(value = "栏目名称", name = "categoryName", example = "今日说法", dataType = "string")
+    private String categoryName;
+
     @ApiModelProperty(value = "是否发布", name = "isPublish", example = "true", dataType = "bool")
     private Boolean isPublish;
 
@@ -47,6 +50,9 @@ public class DraftArticleVo {
 
     @ApiModelProperty(value = "来源", name = "source", example = "XXX文章", dataType = "string")
     private String source;
+
+    @ApiModelProperty(value = "等级", name = "level", example = "10", dataType = "int")
+    private Integer level;
 
     @ApiModelProperty(value = "链接", name = "link", dataType = "string")
     private String link;

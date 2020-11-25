@@ -78,27 +78,64 @@
   <select id="getDraftArticleList" parameterType="com.highershine.portal.common.entity.dto.DraftArticleDTO"
           resultType="com.highershine.portal.common.entity.vo.DraftArticleVo">
     select
-    <include refid="Base_Column_List"/>
-    from po_draft_article
+    pc.name as categoryName,
+    pa.id,
+    pa.ext_id as extId,
+    pa.publish_date as publishDate,
+    pa.deleted,
+    pa.category_ext_id as categoryExtId,
+    pa.category_id as categoryId,
+    pa.is_publish as isPublish,
+    pa.is_need_update as isNeedUpdate,
+    pa.is_top as isTop,
+    pa.title,
+    pa.source,
+    pa.link,
+    pa.description,
+    pa.thumbnail_id as thumbnailId,
+    pa.is_focus as isFocus,
+    pa.content,
+    pa.level,
+    pa.created_at as createdAt,
+    pa.updated_at as updatedAt
+    from po_draft_article pa
+    left join po_category pc
+    on pa.category_id = pc.id
     where 1 = 1
-    <if test="keyword != null and keyword != ''">
-      title like concat('%',#{keyword,jdbcType=VARCHAR},'%')
-      or
-      description like concat('%',#{keyword,jdbcType=VARCHAR},'%')
-      or
-      content  like concat('%',#{keyword,jdbcType=VARCHAR},'%')
+    <if test="categoryId != null and categoryId != ''">
+      and pa.category_id = #{categoryId,jdbcType=BIGINT}
     </if>
-    <if test="categoryId != null">
-      category_id = #{categoryId,jdbcType=BIGINT}
+    <if test="keyword != null and keyword != ''">
+      and (pa.title like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%')
+      or pa.content like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%'))
     </if>
   </select>
+
   <select id="findDraftArticleById" parameterType="long"
           resultType="com.highershine.portal.common.entity.vo.DraftArticleVo">
     select
-    <include refid="Base_Column_List"/>,
+    pa.id,
+    pa.ext_id as extId,
+    pa.publish_date as publishDate,
+    pa.deleted,
+    pa.category_ext_id as categoryExtId,
+    pa.category_id as categoryId,
+    pa.is_publish as isPublish,
+    pa.is_need_update as isNeedUpdate,
+    pa.is_top as isTop,
+    pa.title,
+    pa.source,
+    pa.link,
+    pa.description,
+    pa.thumbnail_id as thumbnailId,
+    pa.is_focus as isFocus,
+    pa.content,
+    pa.level,
+    pa.created_at as createdAt,
+    pa.updated_at as updatedAt,
     pt.url as url
-    from po_draft_article , po_thumbnail pt
-    where pt.id = thumbnail_id
-    id = #{id,jdbcType=BIGINT}
+    from po_draft_article pa, po_thumbnail pt
+    where pt.id = pa.thumbnail_id
+    and pa.id = #{id,jdbcType=BIGINT}
   </select>
 </mapper>

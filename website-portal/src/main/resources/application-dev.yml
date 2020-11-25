@@ -28,7 +28,7 @@ manage:
 #MinIO配置
 minio:
   endPoint: http://192.168.10.50:9000
-  bucketName: pothumbnail
+  bucketName: web-portal
   accessKey: miniotest
   secretKey: miniotest
   connTimeOut: 10000
