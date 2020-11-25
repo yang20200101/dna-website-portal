@@ -18,7 +18,7 @@ public class Thumbnail {
 
     private String url;
 
-    private Boolean deleteFlag;
+    private Boolean deleted;
 
     private Date createdAt;
 

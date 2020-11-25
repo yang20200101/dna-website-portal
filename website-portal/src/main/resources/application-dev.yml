@@ -11,14 +11,19 @@ spring:
     # 对返回时间字段进行格式化
     date-format: yyyy-MM-dd
     time-zone: GMT+8
-    default-property-inclusion: NON_NULL
 
   # redis 相关配置
   redis:
+    host: 192.168.10.22
+    port: 6381
     password: highershine
-    cluster:
-      max-redirects: 10
-      nodes: 192.168.10.22:6379,192.168.10.22:6380,192.168.10.29:6379,192.168.10.29:6380,192.168.10.30:6379,192.168.10.30:6380
+
+  # 文件上传大小配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 # session 超时时间hours
 manage:

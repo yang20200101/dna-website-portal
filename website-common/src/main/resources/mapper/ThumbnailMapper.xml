@@ -4,15 +4,14 @@
   <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Thumbnail">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="bucket_name" jdbcType="VARCHAR" property="bucketName" />
-    <result column="key_name" jdbcType="VARCHAR" property="keyName" />
     <result column="file_name" jdbcType="VARCHAR" property="fileName" />
     <result column="url" jdbcType="VARCHAR" property="url" />
-    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, bucket_name, key_name, file_name, url, delete_flag, created_at, updated_at
+    id, bucket_name, file_name, url, deleted, created_at, updated_at
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -24,22 +23,21 @@
     delete from po_thumbnail
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Thumbnail">
-    insert into po_thumbnail (id, bucket_name, key_name, 
-      file_name, url, delete_flag, 
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Thumbnail" useGeneratedKeys="true" keyProperty="id">
+    insert into po_thumbnail (bucket_name,
+      file_name, url, deleted,
       created_at, updated_at)
-    values (#{id,jdbcType=BIGINT}, #{bucketName,jdbcType=VARCHAR}, #{keyName,jdbcType=VARCHAR}, 
-      #{fileName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=BIT}, 
+    values ( #{bucketName,jdbcType=VARCHAR},
+      #{fileName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT},
       #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Thumbnail">
     update po_thumbnail
     set bucket_name = #{bucketName,jdbcType=VARCHAR},
-      key_name = #{keyName,jdbcType=VARCHAR},
       file_name = #{fileName,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
-      delete_flag = #{deleteFlag,jdbcType=BIT},
+      deleted = #{deleted,jdbcType=BIT},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

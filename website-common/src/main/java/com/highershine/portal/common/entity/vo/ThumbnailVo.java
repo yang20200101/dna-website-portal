@@ -19,14 +19,12 @@ public class ThumbnailVo {
     private Long id;
     @ApiModelProperty(value = "桶名", name = "bucketName", example = "test", dataType = "string")
     private String bucketName;
-    @ApiModelProperty(value = "keyName", name = "keyName", example = "1.jpg", dataType = "string")
-    private String keyName;
     @ApiModelProperty(value = "文件名", name = "fileName", example = "1", dataType = "string")
     private String fileName;
     @ApiModelProperty(value = "路径", name = "url", example = "1", dataType = "string")
     private String url;
-    @ApiModelProperty(value = "删除状态", name = "deleteFlag", example = "true", dataType = "bool")
-    private Boolean deleteFlag;
+    @ApiModelProperty(value = "删除状态", name = "deleted", example = "true", dataType = "bool")
+    private Boolean deleted;
     @ApiModelProperty(value = "创建日期", name = "createdAt",  dataType = "date")
     private Date createdAt;
     @ApiModelProperty(value = "更新日期", name = "updatedAt", dataType = "date")

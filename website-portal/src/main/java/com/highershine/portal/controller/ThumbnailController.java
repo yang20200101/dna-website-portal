@@ -50,7 +50,7 @@ public class ThumbnailController {
         try {
             ThumbnailVo thumbnailVo =  thumbnailService.upload(file, minIOPropertyConfig.getBucketName());
             String url = thumbnailVo.getUrl();
-            thumbnailVo.setUrl(minIOPropertyConfig.getEndPoint() + url);
+            thumbnailVo.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName() + "/" + url);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, thumbnailVo);
         } catch (Exception e) {
             log.error("【缩略图】上传异常，异常信息：", e);

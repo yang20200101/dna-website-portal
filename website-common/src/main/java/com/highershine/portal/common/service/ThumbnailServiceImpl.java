@@ -3,21 +3,18 @@ package com.highershine.portal.common.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.SetBucketPolicyRequest;
 import com.highershine.portal.common.entity.po.Thumbnail;
 import com.highershine.portal.common.entity.vo.ThumbnailVo;
-import com.highershine.portal.common.enums.PolicyTypeEnum;
 import com.highershine.portal.common.mapper.ThumbnailMapper;
 import com.highershine.portal.common.utils.DateTools;
-import com.highershine.portal.common.utils.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URL;
+import java.util.Date;
 
 /**
  * @Description
@@ -41,10 +38,11 @@ public class ThumbnailServiceImpl implements ThumbnailService {
      */
     @Override
     public ThumbnailVo upload(MultipartFile file, String bucketName) throws Exception {
-
         String name = file.getOriginalFilename();
         int index = name.indexOf(".");
-        String keyName = name.substring(0, index) + "_" + System.currentTimeMillis() + name.substring(index);
+        String yyyyMM = DateTools.dateToString(new Date(), "yyyyMM");
+        String keyName = yyyyMM + "/" + name.substring(0, index) + "_"
+                + DateTools.dateToString(new Date(), DateTools.DF_COMPACT_TIME) + name.substring(index);
         String suffix = name.substring(index + 1);
         String contentType = "image/" + suffix;
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -52,30 +50,18 @@ public class ThumbnailServiceImpl implements ThumbnailService {
         int length = bytes.length;
         objectMetadata.setContentLength((long) length);
         objectMetadata.setContentType(contentType);
-        boolean exist = amazonS3.doesBucketExist(bucketName);
-        if (!exist) {
-            amazonS3.createBucket(bucketName);
-            //设置桶策略
-            String policyType = PolicyUtils.getPolicyType(bucketName, PolicyTypeEnum.READ_WRITE);
-            SetBucketPolicyRequest setBucketPolicyRequest =
-                    new SetBucketPolicyRequest(bucketName, policyType);
-            amazonS3.setBucketPolicy(setBucketPolicyRequest);
-        }
         amazonS3.putObject(bucketName, keyName, file.getInputStream(), objectMetadata);
-
-        //获取对象
-        URL url = amazonS3.getUrl(bucketName, keyName);
-        String path = url.getPath();
         //上传成功
         Thumbnail thumbnail = new Thumbnail();
         thumbnail.setFileName(name);
-        thumbnail.setUrl(path);
+        thumbnail.setUrl(keyName);
         thumbnail.setBucketName(bucketName);
-        thumbnail.setKeyName(keyName);
         thumbnail.setCreatedAt(DateTools.getNow());
+        thumbnail.setUpdatedAt(DateTools.getNow());
+        thumbnail.setDeleted(false);
         thumbnailMapper.insert(thumbnail);
         ThumbnailVo thumbnailVo = new ThumbnailVo();
-        BeanUtils.copyProperties(thumbnailVo, thumbnail);
+        BeanUtils.copyProperties(thumbnail, thumbnailVo);
         return thumbnailVo;
     }
 

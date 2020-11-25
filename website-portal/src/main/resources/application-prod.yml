@@ -19,6 +19,13 @@ spring:
       max-redirects: 10
       nodes: 192.168.50.140:8001,192.168.50.140:8004,192.168.50.141:8002,192.168.50.141:8005,192.168.50.142:8003,192.168.50.142:8006
 
+  # 文件上传大小配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+
 # session 超时时间hours
 manage:
   session:
