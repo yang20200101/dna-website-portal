@@ -72,7 +72,7 @@
     <logger name="org.hibernate.engine.QueryParameters" level="INFO"/>
     <logger name="org.hibernate.engine.query.HQLQueryPlan" level="INFO"/>
 
-    <logger name="com.highershine.website.common.mapper" level="DEBUG"></logger>
+    <logger name="com.highershine.portal.common.mapper" level="DEBUG"></logger>
 
     <root level="INFO">
         <appender-ref ref="INFO_FILE"/>

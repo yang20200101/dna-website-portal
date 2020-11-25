@@ -33,4 +33,20 @@ public interface DraftArticleService {
      * @param draftArticleDTO
      */
     DraftArticleVo addDraftArticle(DraftArticleDTO draftArticleDTO) throws Exception;
+
+    /**
+     * 批量发布
+     * @return
+     * @throws Exception
+     * @param idList
+     */
+    void batchPublish(List<Long> idList) throws Exception;
+
+    /**
+     * 批量取消发布
+     * @return
+     * @throws Exception
+     * @param idList
+     */
+    void batchUnpublish(List<Long> idList) throws Exception;
 }

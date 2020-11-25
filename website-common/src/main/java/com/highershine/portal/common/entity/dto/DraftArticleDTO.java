@@ -50,6 +50,9 @@ public class DraftArticleDTO extends BaseDTO {
     @ApiModelProperty(value = "来源", name = "source", example = "XXX文章", dataType = "string")
     private String source;
 
+    @ApiModelProperty(value = "等级", name = "level", example = "5", dataType = "int")
+    private Integer level;
+
     @ApiModelProperty(value = "链接", name = "link", dataType = "string")
     private String link;
 

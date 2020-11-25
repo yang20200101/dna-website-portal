@@ -29,4 +29,6 @@ public interface DraftArticleMapper {
      * @return
      */
     DraftArticleVo findDraftArticleById(Long id);
+
+    int updateByPrimaryKeySelective(DraftArticle record);
 }

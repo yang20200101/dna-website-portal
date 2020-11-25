@@ -35,6 +35,13 @@
     from po_article
     where id = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="selectByDraftId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from po_article
+    where draft_id = #{id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from po_article
     where id = #{id,jdbcType=BIGINT}
@@ -75,6 +82,7 @@
       content = #{content,jdbcType=VARCHAR},
       draft_ext_id = #{draftExtId,jdbcType=VARCHAR},
       draft_id = #{draftId,jdbcType=BIGINT},
+      level = #{level,jdbcType=INTEGER},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
@@ -110,4 +118,9 @@
     on pa.category_id = pc.id
   </select>
 
+ <!--根据草稿ID假删除-->
+  <delete id="deleteFlagByDraftId" parameterType="java.lang.Long">
+    delete from po_article
+    where draft_id = #{id,jdbcType=BIGINT}
+  </delete>
 </mapper>

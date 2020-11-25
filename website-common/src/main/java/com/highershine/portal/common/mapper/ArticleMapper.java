@@ -14,6 +14,8 @@ public interface ArticleMapper {
 
     Article selectByPrimaryKey(Long id);
 
+    Article selectByDraftId(Long id);
+
     int updateByPrimaryKey(Article record);
 
     /**
@@ -23,4 +25,9 @@ public interface ArticleMapper {
      */
     List<ArticleVo> getArticleList(ArticleDTO articleDTO);
 
+    /**
+     * 根据草稿id假删除
+     * @param id
+     */
+    void deleteFlagByDraftId(Long id);
 }

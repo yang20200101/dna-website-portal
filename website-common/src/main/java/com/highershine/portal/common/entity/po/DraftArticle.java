@@ -1,10 +1,12 @@
 package com.highershine.portal.common.entity.po;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 @Data
+@Accessors(chain = true)
 public class DraftArticle {
     private Long id;
 
@@ -35,6 +37,8 @@ public class DraftArticle {
     private Long thumbnailId;
 
     private Boolean isFocus;
+
+    private Integer level;
 
     private String content;
 

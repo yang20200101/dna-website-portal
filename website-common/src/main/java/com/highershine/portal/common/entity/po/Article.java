@@ -1,10 +1,12 @@
 package com.highershine.portal.common.entity.po;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 @Data
+@Accessors(chain = true)
 public class Article {
     private Long id;
 

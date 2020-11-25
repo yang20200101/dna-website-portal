@@ -14,6 +14,7 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="source" jdbcType="VARCHAR" property="source" />
     <result column="link" jdbcType="VARCHAR" property="link" />
+    <result column="level" jdbcType="INTEGER" property="level" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId" />
     <result column="is_focus" jdbcType="BIT" property="isFocus" />
@@ -23,7 +24,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, ext_id, publish_date, deleted, category_ext_id, category_id, is_publish, is_need_update,
-    is_top, title, source, link, description, thumbnail_id, is_focus, content, created_at,
+    is_top, title, source, link, description, thumbnail_id, is_focus, content,level, created_at,
     updated_at
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -36,20 +37,21 @@
     delete from po_draft_article
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.DraftArticle">
-    insert into po_draft_article (id, ext_id, publish_date,
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.DraftArticle"  useGeneratedKeys="true" keyProperty="id">
+    insert into po_draft_article (ext_id, publish_date,
       deleted, category_ext_id, category_id,
       is_publish, is_need_update, is_top,
       title, source, link,
       description, thumbnail_id, is_focus,
-      content, created_at, updated_at
+      content, created_at, updated_at, level
       )
-    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{publishDate,jdbcType=TIMESTAMP},
+    values (#{extId,jdbcType=VARCHAR}, #{publishDate,jdbcType=TIMESTAMP},
       #{deleted,jdbcType=BIT}, #{categoryExtId,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT},
       #{isPublish,jdbcType=BIT}, #{isNeedUpdate,jdbcType=BIT}, #{isTop,jdbcType=BIT},
       #{title,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{link,jdbcType=VARCHAR},
       #{description,jdbcType=VARCHAR}, #{thumbnailId,jdbcType=BIGINT}, #{isFocus,jdbcType=BIT},
-      #{content,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
+      #{content,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+      #{level,jdbcType=INTEGER}
       )
   </insert>
 
@@ -71,7 +73,8 @@
       is_focus = #{isFocus,jdbcType=BIT},
       content = #{content,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      level = #{level,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 <!--  获取文章草稿列表-->
@@ -138,4 +141,67 @@
     where pt.id = pa.thumbnail_id
     and pa.id = #{id,jdbcType=BIGINT}
   </select>
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.highershine.portal.common.entity.po.DraftArticle">
+    update po_draft_article
+    <set>
+      <if test="extId != null">
+        ext_id = #{extId,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null">
+        publish_date = #{publishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="categoryExtId != null">
+        category_ext_id = #{categoryExtId,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="isPublish != null">
+        is_publish = #{isPublish,jdbcType=BIT},
+      </if>
+      <if test="isNeedUpdate != null">
+        is_need_update = #{isNeedUpdate,jdbcType=BIT},
+      </if>
+      <if test="isTop != null">
+        is_top = #{isTop,jdbcType=BIT},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="link != null">
+        link = #{link,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbnailId != null">
+        thumbnail_id = #{thumbnailId,jdbcType=BIGINT},
+      </if>
+      <if test="isFocus != null">
+        is_focus = #{isFocus,jdbcType=BIT},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
 </mapper>

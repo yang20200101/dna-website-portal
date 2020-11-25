@@ -2,17 +2,20 @@ package com.highershine.portal.common.service;
 
 
 import com.highershine.portal.common.entity.dto.DraftArticleDTO;
+import com.highershine.portal.common.entity.po.Article;
 import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.po.DraftArticle;
 import com.highershine.portal.common.entity.vo.DraftArticleVo;
+import com.highershine.portal.common.mapper.ArticleMapper;
 import com.highershine.portal.common.mapper.CategoryMapper;
 import com.highershine.portal.common.mapper.DraftArticleMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +29,8 @@ import java.util.List;
 public class DraftArticleServiceImpl implements DraftArticleService {
     @Autowired
     private DraftArticleMapper draftArticleMapper;
+    @Autowired
+    private ArticleMapper articleMapper;
     @Autowired
     private CategoryMapper categoryMapper;
     /**
@@ -56,9 +61,44 @@ public class DraftArticleServiceImpl implements DraftArticleService {
     public DraftArticleVo addDraftArticle(DraftArticleDTO draftArticleDTO) throws Exception {
         DraftArticle draftArticle = new DraftArticle();
         BeanUtils.copyProperties(draftArticle, draftArticleDTO);
+        draftArticle.setCreatedAt(new Date()).setUpdatedAt(new Date());
         draftArticleMapper.insert(draftArticle);
         DraftArticleVo draftArticleVo = new DraftArticleVo();
-        BeanUtils.copyProperties(draftArticleVo, draftArticle);
+        BeanUtils.copyProperties(draftArticle, draftArticleVo);
         return draftArticleVo;
+    }
+
+    @Override
+    public void batchPublish(List<Long> idList) throws Exception {
+        for (Long id : idList) {
+            //更新草稿表状态
+            DraftArticle draftArticle = new DraftArticle();
+            draftArticle.setId(id).setIsPublish(true).setIsNeedUpdate(false).setUpdatedAt(new Date()).setPublishDate(new Date());
+            draftArticleMapper.updateByPrimaryKeySelective(draftArticle);
+            //将草稿表数据 同步到 文章表
+            Article article = articleMapper.selectByDraftId(id);
+            DraftArticle src = draftArticleMapper.selectByPrimaryKey(id);
+            if (article == null) {
+                article = new Article();
+                BeanUtils.copyProperties(src, article, "id");
+                article.setDraftId(id);
+                articleMapper.insert(article);
+            } else {
+                BeanUtils.copyProperties(src, article, "id");
+                articleMapper.updateByPrimaryKey(article);
+            }
+        }
+    }
+
+    @Override
+    public void batchUnpublish(List<Long> idList) throws Exception {
+        for (Long id : idList) {
+            //更新草稿表状态
+            DraftArticle draftArticle = new DraftArticle();
+            draftArticle.setId(id).setIsPublish(false).setUpdatedAt(new Date());
+            draftArticleMapper.updateByPrimaryKeySelective(draftArticle);
+            //将文章表 数据删除
+            articleMapper.deleteFlagByDraftId(id);
+        }
     }
 }

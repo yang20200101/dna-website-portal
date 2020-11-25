@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -96,18 +93,29 @@ public class DraftArticleController {
      * 批量发布
      */
     @PostMapping("publish")
-    @ApiOperation("批量发布")
-    public Result batchPublish(HttpServletRequest request) {
-        String str;
-        String whole = "";
+    @ApiOperation("批量发布（薛博仁）")
+    public Result batchPublish(@RequestBody List<Long> idList) {
         try {
-            BufferedReader reader = request.getReader();
-            while ((str = reader.readLine()) != null) {
-                whole += str;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            draftArticleService.batchPublish(idList);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (Exception e) {
+            log.error("【文章草稿】批量发布异常，异常信息：", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
-        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, whole);
+    }
+
+    /**
+     * 批量发布
+     */
+    @PostMapping("unpublish")
+    @ApiOperation("批量取消发布（薛博仁）")
+    public Result unpublish(@RequestBody List<Long> idList) {
+        try {
+            draftArticleService.batchUnpublish(idList);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (Exception e) {
+            log.error("【文章草稿】批量取消发布异常，异常信息：", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
     }
 }

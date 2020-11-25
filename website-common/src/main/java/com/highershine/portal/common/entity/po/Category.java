@@ -1,6 +1,7 @@
 package com.highershine.portal.common.entity.po;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  * @Date 2020/4/15 11:03
  **/
 @Data
+@Accessors(chain = true)
 public class Category {
 
     //主键
