@@ -57,7 +57,7 @@ public class CategoryController {
         //参数校验
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError().getDefaultMessage();
-            return ResultUtil.errorResult(ExceptionEnum.EXISTS_PARAMETERS.getCode(), message);
+            return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
         }
         try {
             CategoryVo categoryVo = categoryService.saveCategoryDTO(categoryDTO);
@@ -104,7 +104,7 @@ public class CategoryController {
         //校验参数
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError().getDefaultMessage();
-            return ResultUtil.errorResult(ExceptionEnum.EXISTS_PARAMETERS.getCode(), message);
+            return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
         }
         try {
             CategoryVo categoryVo = categoryService.updateCategory(categoryDTO);

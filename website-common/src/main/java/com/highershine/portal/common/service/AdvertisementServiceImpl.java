@@ -3,13 +3,16 @@ package com.highershine.portal.common.service;
 
 import com.highershine.portal.common.entity.dto.AdvertisementDTO;
 import com.highershine.portal.common.entity.po.Advertisement;
+import com.highershine.portal.common.entity.po.Thumbnail;
 import com.highershine.portal.common.entity.vo.AdvertisementVo;
 import com.highershine.portal.common.mapper.AdvertisementMapper;
+import com.highershine.portal.common.mapper.ThumbnailMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +25,8 @@ import java.util.List;
 public class AdvertisementServiceImpl implements AdvertisementService {
     @Resource
     private AdvertisementMapper advertisementMapper;
+    @Resource
+    private ThumbnailMapper thumbnailMapper;
 
     /**
      * 获取飘窗列表
@@ -41,9 +46,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public void deleteAdvertisement(long id) {
-        Advertisement advertisement = advertisementMapper.selectByPrimaryKey(id);
-        advertisement.setDeleted(true);
-        advertisementMapper.updateByPrimaryKey(advertisement);
+        advertisementMapper.deleteFlagByPrimaryKey(id);
     }
 
     /**
@@ -53,7 +56,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public void addAdvertisement(AdvertisementDTO advertisementDTO) throws Exception{
         Advertisement advertisement = new Advertisement();
-        BeanUtils.copyProperties(advertisement, advertisementDTO);
+        BeanUtils.copyProperties(advertisementDTO, advertisement);
+        advertisement.setDeleted(false).setCreatedAt(new Date()).setUpdatedAt(new Date())
+                .setThumbnailId(advertisementDTO.getThumbnail().getId());
         advertisementMapper.insert(advertisement);
     }
 
@@ -67,6 +72,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Advertisement advertisement = advertisementMapper.selectByPrimaryKey(id);
         AdvertisementVo advertisementVo = new AdvertisementVo();
         BeanUtils.copyProperties(advertisement, advertisementVo);
+        Thumbnail thumbnail = thumbnailMapper.selectByPrimaryKey(advertisement.getThumbnailId());
+        advertisementVo.setThumbnail(thumbnail);
         return advertisementVo;
     }
 
@@ -77,7 +84,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public void updateAdvertisement(AdvertisementDTO advertisementDTO) throws Exception{
         Advertisement advertisement = advertisementMapper.selectByPrimaryKey(advertisementDTO.getId());
-        BeanUtils.copyProperties(advertisement, advertisementDTO);
+        BeanUtils.copyProperties(advertisementDTO, advertisement);
+        advertisement.setThumbnailId(advertisementDTO.getThumbnail().getId()).setUpdatedAt(new Date());
         advertisementMapper.updateByPrimaryKey(advertisement);
     }
 }

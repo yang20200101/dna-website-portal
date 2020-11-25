@@ -6,7 +6,7 @@ import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.vo.CategoryVo;
 import com.highershine.portal.common.mapper.CategoryMapper;
 import com.highershine.portal.common.utils.DateTools;
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -16,11 +16,11 @@ public class Advertisement {
 
     private String link;
 
-    private String thumbnailId;
+    private Long thumbnailId;
 
     private String position;
 
-    private String level;
+    private Integer level;
 
     private Boolean isPublish;
 

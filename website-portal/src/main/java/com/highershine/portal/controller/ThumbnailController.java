@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.List;
-
 
 /**
  * @Description 门户缩略图上传相关接口
@@ -39,22 +36,17 @@ public class ThumbnailController {
     @PostMapping("upload")
     @ApiOperation("缩略图上传接口（朱向坤）")
     public Result<ThumbnailVo> upload(@RequestParam(name = "file")MultipartFile file) {
-        List<String> verify = Arrays.asList(".jpg", ".jpeg", ".png", ".png");
-        //校验文件格式
-        String filename = file.getOriginalFilename();
-        String suffix = filename.substring(filename.indexOf("."));
-        if (!verify.contains(suffix) || file.isEmpty()) {
-            log.error("【缩略图】上传异常，文件格式不支持！");
-            return ResultUtil.errorResult(ExceptionEnum.EXISTS_PARAMETERS);
-        }
+        ThumbnailVo thumbnailVo = null;
         try {
-            ThumbnailVo thumbnailVo =  thumbnailService.upload(file, minIOPropertyConfig.getBucketName());
-            String url = thumbnailVo.getUrl();
-            thumbnailVo.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName() + "/" + url);
-            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, thumbnailVo);
+            if (file != null) {
+                thumbnailVo = thumbnailService.upload(file, minIOPropertyConfig.getBucketName());
+                String url = thumbnailVo.getUrl();
+                thumbnailVo.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName() + "/" + url);
+            }
         } catch (Exception e) {
             log.error("【缩略图】上传异常，异常信息：", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
+        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, thumbnailVo);
     }
 }

@@ -26,12 +26,12 @@
     delete from po_category
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Category">
-    insert into po_category (id, ext_id, name,
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Category" useGeneratedKeys="true" keyProperty="id">
+    insert into po_category (ext_id, name,
       alias, sort, remark,
       deleted, status, created_at,
       updated_at)
-    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    values (#{extId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{alias,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
       #{deleted,jdbcType=BIT}, #{status,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP},
       #{updatedAt,jdbcType=TIMESTAMP})

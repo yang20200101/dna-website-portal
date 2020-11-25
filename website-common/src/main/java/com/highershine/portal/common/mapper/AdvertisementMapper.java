@@ -16,5 +16,12 @@ public interface AdvertisementMapper {
 
     int updateByPrimaryKey(Advertisement record);
 
+    /**
+     * 假删除
+     * @param id
+     * @return
+     */
+    int deleteFlagByPrimaryKey(Long id);
+
     List<AdvertisementVo> getAdvertisementList(AdvertisementDTO advertisementDTO);
 }

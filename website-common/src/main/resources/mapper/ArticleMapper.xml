@@ -46,15 +46,15 @@
     delete from po_article
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Article">
-    insert into po_article (id, ext_id, publish_date,
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into po_article (ext_id, publish_date,
       deleted, category_ext_id, category_id,
       is_publish, is_need_update, is_top,
       title, source, link,
       description, thumbnail_id, is_focus,
       content, level, draft_ext_id, draft_id,
       created_at, updated_at)
-    values (#{id,jdbcType=BIGINT}, #{extId,jdbcType=VARCHAR}, #{publishDate,jdbcType=TIMESTAMP},
+    values (#{extId,jdbcType=VARCHAR}, #{publishDate,jdbcType=TIMESTAMP},
       #{deleted,jdbcType=BIT}, #{categoryExtId,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT},
       #{isPublish,jdbcType=BIT}, #{isNeedUpdate,jdbcType=BIT}, #{isTop,jdbcType=BIT},
       #{title,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{link,jdbcType=VARCHAR},
