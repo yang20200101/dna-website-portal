@@ -18,17 +18,11 @@ public class ArticleDTO extends BaseDTO{
     @ApiModelProperty(value = "主键", name = "id", example = "1", dataType = "long")
     private Long id;
 
-    @ApiModelProperty(value = "外部关联ID", name = "extId", example = "6fQDyTuEvH", dataType = "string")
-    private String extId;
-
     @ApiModelProperty(value = "发布时间", name = "publishDate", dataType = "date")
     private Date publishDate;
 
     @ApiModelProperty(value = "删除状态", name = "deleted", example = "true", dataType = "bool")
     private Boolean deleted;
-
-    @ApiModelProperty(value = "栏目表关联Id", name = "categoryExtId", example = "6fQDyTuEvH", dataType = "string")
-    private String categoryExtId;
 
     @ApiModelProperty(value = "栏目表关联Id", name = "categoryId", example = "1", dataType = "long")
     private Long categoryId;
@@ -62,9 +56,6 @@ public class ArticleDTO extends BaseDTO{
 
     @ApiModelProperty(value = "文章内容", name = "content",  dataType = "string")
     private String content;
-
-    @ApiModelProperty(value = "源草稿文章ID", name = "draftExtId", example = "6fQDyTuEvH", dataType = "string")
-    private String draftExtId;
 
     @ApiModelProperty(value = "草稿文章ID", name = "draftId", example = "1", dataType = "long")
     private String draftId;

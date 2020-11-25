@@ -14,8 +14,6 @@ public class AdvertisementVo {
 
     @ApiModelProperty(value = "主键", name = "id", example = "1", dataType = "long")
     private Long id;
-    @ApiModelProperty(value = "外部关联ID", name = "extId", example = "6fQDyTuEvH", dataType = "string")
-    private String extId;
     @ApiModelProperty(value = "标题", dataType = "string")
     private String title;
     @ApiModelProperty(value = "点击跳转的活动链接", dataType = "string")

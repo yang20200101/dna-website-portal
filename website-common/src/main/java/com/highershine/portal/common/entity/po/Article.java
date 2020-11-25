@@ -10,15 +10,11 @@ import java.util.Date;
 public class Article {
     private Long id;
 
-    private String extId;
-
     private Date publishDate;
 
     private Boolean deleted;
 
     private Integer level;
-
-    private String categoryExtId;
 
     private Long categoryId;
 
@@ -41,8 +37,6 @@ public class Article {
     private Boolean isFocus;
 
     private String content;
-
-    private String draftExtId;
 
     private Long draftId;
 

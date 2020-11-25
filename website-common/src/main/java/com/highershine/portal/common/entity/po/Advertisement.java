@@ -10,8 +10,6 @@ import java.util.Date;
 public class Advertisement {
     private Long id;
 
-    private String extId;
-
     private String title;
 
     private String link;

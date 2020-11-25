@@ -3,7 +3,6 @@
 <mapper namespace="com.highershine.portal.common.mapper.CategoryMapper">
   <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Category">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="ext_id" jdbcType="VARCHAR" property="extId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="alias" jdbcType="VARCHAR" property="alias" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
@@ -14,7 +13,7 @@
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, ext_id, name, alias, sort, remark, deleted, status, created_at, updated_at
+    id, name, alias, sort, remark, deleted, status, created_at, updated_at
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
@@ -27,11 +26,11 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Category" useGeneratedKeys="true" keyProperty="id">
-    insert into po_category (ext_id, name,
+    insert into po_category (name,
       alias, sort, remark,
       deleted, status, created_at,
       updated_at)
-    values (#{extId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    values ( #{name,jdbcType=VARCHAR},
       #{alias,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
       #{deleted,jdbcType=BIT}, #{status,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP},
       #{updatedAt,jdbcType=TIMESTAMP})
@@ -39,7 +38,7 @@
 
   <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Category">
     update po_category
-    set ext_id = #{extId,jdbcType=VARCHAR},
+    set
       name = #{name,jdbcType=VARCHAR},
       alias = #{alias,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},

@@ -18,10 +18,6 @@ public class CategoryDTO extends BaseDTO{
     @ApiModelProperty(value = "主键ID", name = "id", example = "1", dataType = "long")
     private Long id;
 
-    //外部Id
-    @ApiModelProperty(value = "外部Id", name = "extId", example = "heGbyRgcDa", dataType = "string")
-    private String extId;
-
     //栏目名称
     @ApiModelProperty(value = "栏目名称", name = "name", example = "首页", dataType = "string")
     @NotNull(message = "栏目名称为空")

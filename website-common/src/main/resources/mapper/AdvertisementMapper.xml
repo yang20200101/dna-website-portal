@@ -3,7 +3,6 @@
 <mapper namespace="com.highershine.portal.common.mapper.AdvertisementMapper">
     <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Advertisement">
         <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="ext_id" jdbcType="VARCHAR" property="extId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="link" jdbcType="VARCHAR" property="link"/>
         <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId"/>
@@ -16,7 +15,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, ext_id, title, link, thumbnail_id, position, level, is_publish, created_at, updated_at,
+    id, title, link, thumbnail_id, position, level, is_publish, created_at, updated_at,
     deleted
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -32,16 +31,16 @@
 
    <update id="deleteFlagByPrimaryKey" parameterType="java.lang.Long">
     update po_advertisement
-    set deleted = true, update_at = now()
+    set deleted = true, updated_at = now()
     where id = #{id,jdbcType=BIGINT}
    </update>
 
     <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Advertisement" useGeneratedKeys="true" keyProperty="id">
-    insert into po_advertisement (ext_id, title,
+    insert into po_advertisement (title,
       link, thumbnail_id, position,
       level, is_publish, created_at, 
       updated_at, deleted)
-    values (#{extId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
+    values (#{title,jdbcType=VARCHAR},
       #{link,jdbcType=VARCHAR}, #{thumbnailId,jdbcType=BIGINT}, #{position,jdbcType=VARCHAR},
       #{level,jdbcType=INTEGER}, #{isPublish,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP},
       #{updatedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT})
@@ -49,7 +48,7 @@
 
     <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Advertisement">
     update po_advertisement
-    set ext_id = #{extId,jdbcType=VARCHAR},
+    set
       title = #{title,jdbcType=VARCHAR},
       link = #{link,jdbcType=VARCHAR},
       thumbnail_id = #{thumbnailId,jdbcType=VARCHAR},
@@ -66,7 +65,6 @@
             resultType="com.highershine.portal.common.entity.vo.AdvertisementVo">
         select
         pa.id,
-        pa.ext_id as extId,
         pa.title as title,
         pa.link as link,
         pa.thumbnail_id as thumbnailId,

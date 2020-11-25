@@ -10,13 +10,9 @@ import java.util.Date;
 public class DraftArticle {
     private Long id;
 
-    private String extId;
-
     private Date publishDate;
 
     private Boolean deleted;
-
-    private String categoryExtId;
 
     private Long categoryId;
 

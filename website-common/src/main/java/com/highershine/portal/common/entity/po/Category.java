@@ -17,9 +17,6 @@ public class Category {
     //主键
     private Long id;
 
-    //外部Id
-    private String extId;
-
     //栏目名称
     private String name;
 
