@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.ActivityMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Activity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="apply_number" jdbcType="INTEGER" property="applyNumber" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      id,title,thumbnail_id,date,description,content,apply_number,deleted,created_at,updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from po_activity
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from po_activity
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <update id="deleteTrueByPrimaryKey" parameterType="java.lang.Long">
+    update po_activity
+    set deleted = true, updated_at = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Activity" useGeneratedKeys="true" keyProperty="id">
+    insert into po_activity ( title,
+      date, thumbnail_id,
+      description, content, apply_number,deleted,
+      created_at, updated_at)
+    values (
+      #{title,jdbcType=VARCHAR},  #{date,jdbcType=TIMESTAMP},
+      #{thumbnailId,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR},
+      #{content,jdbcType=VARCHAR}, #{applyNumber,jdbcType=INTEGER},
+      #{deleted,jdbcType=BIT}
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.Activity">
+    update po_activity
+    set
+      title = #{title,jdbcType=VARCHAR},
+      date = #{date,jdbcType=TIMESTAMP}
+      thumbnail_id = #{thumbnailId,jdbcType=BIGINT},
+      description = #{description,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      apply_number = #{applyNumber,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=BIT},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getActivityList" parameterType="com.highershine.portal.common.entity.dto.ActivityDTO"
+          resultType="com.highershine.portal.common.entity.vo.ActivityListVo">
+     select
+    pa.id as id,
+    pa.title as title,
+    pa.date,
+    pa.apply_number as applyNumber,
+    pau.countNumber
+    from po_activity pa,(select  activity_id,count(1) countNumber from po_activity_user group by activity_id) pau
+	where pa.id = pau.activity_id and pa.deleted = false
+    <if test="title != null and title != ''">
+      and pa.title like concat('%',#{title, jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+</mapper>
