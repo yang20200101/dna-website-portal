@@ -55,7 +55,6 @@
       position = #{position,jdbcType=VARCHAR},
       level = #{level,jdbcType=INTEGER},
       is_publish = #{isPublish,jdbcType=BIT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}

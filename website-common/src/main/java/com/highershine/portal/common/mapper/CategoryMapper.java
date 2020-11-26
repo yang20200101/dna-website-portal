@@ -3,6 +3,7 @@ package com.highershine.portal.common.mapper;
 
 import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.vo.CategoryVo;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @Author zxk
  * @Date 2020/4/15 15:07
  **/
+@Repository
 public interface CategoryMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -37,5 +39,12 @@ public interface CategoryMapper {
      * @param id
      * @return
      */
-    CategoryVo findCategoryById(Long id);
+    Category findCategoryById(Long id);
+
+    /**
+     * 栏目名称别名校验
+     * @param category
+     * @return
+     */
+    int uniqueValid(Category category);
 }

@@ -45,7 +45,6 @@
       remark = #{remark,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},
       status = #{status,jdbcType=BIT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -56,12 +55,28 @@
     from po_category c order by c.sort asc
   </select>
   <update id="deleteCategoryById" parameterType="long">
-    update po_category  set deleted = true where id = #{id,jdbcType=BIGINT}
+    update po_category  set deleted = true,updated_at = now() where id = #{id,jdbcType=BIGINT}
   </update>
 <!-- 获取详情-->
   <select id="findCategoryById" parameterType="long" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from po_category c where c.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="uniqueValid" parameterType="com.highershine.portal.common.entity.po.Category"  resultType="int">
+    select
+    count(1)
+    from po_category
+    where  deleted = false
+    <if test="name != null and name != ''">
+      and name = #{name, jdbcType=VARCHAR}
+    </if>
+    <if test="alias != null and alias != ''">
+      and alias = #{alias,jdbcType=VARCHAR}
+    </if>
+    <if test="id != null">
+      and id != #{id,jdbcType=BIGINT}
+    </if>
   </select>
 </mapper>

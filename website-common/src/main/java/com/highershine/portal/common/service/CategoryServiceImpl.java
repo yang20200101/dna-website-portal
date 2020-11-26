@@ -43,7 +43,9 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
         //设置创建日期
+        category.setDeleted(false);
         category.setCreatedAt(DateTools.getNow());
+        category.setUpdatedAt(DateTools.getNow());
         //保存
         categoryMapper.insert(category);
         CategoryVo categoryVo = new CategoryVo();
@@ -85,7 +87,26 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public CategoryVo findCategoryById(Long id) throws Exception {
-      CategoryVo categoryVo =  categoryMapper.findCategoryById(id);
+        Category category =  categoryMapper.findCategoryById(id);
+        CategoryVo categoryVo = new CategoryVo();
+        BeanUtils.copyProperties(category, categoryVo);
         return categoryVo;
+    }
+
+    @Override
+    public String uniqueValid(CategoryDTO categoryDTO) {
+        String message = "";
+        Category category = new Category();
+        category.setId(categoryDTO.getId()).setName(categoryDTO.getName()).setAlias(null);
+        int num = categoryMapper.uniqueValid(category);
+        if (num > 0) {
+            message = "栏目名称重复;";
+        }
+        category.setName(null).setAlias(categoryDTO.getAlias());
+        num = categoryMapper.uniqueValid(category);
+        if (num > 0) {
+            message += "栏目别名重复;";
+        }
+        return message;
     }
 }

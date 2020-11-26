@@ -4,6 +4,7 @@ package com.highershine.portal.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.highershine.portal.common.entity.dto.DraftArticleDTO;
+import com.highershine.portal.common.entity.po.Thumbnail;
 import com.highershine.portal.common.entity.vo.DraftArticleVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -63,8 +65,10 @@ public class DraftArticleController {
     public Result<DraftArticleVo> findDraftArticleById(@PathVariable("id") Long id) {
         try {
             DraftArticleVo draftArticleVo = draftArticleService.findDraftArticleById(id);
-            draftArticleVo.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName()
-                    + "/" + draftArticleVo.getUrl());
+            Thumbnail thumbnail = new Thumbnail();
+            thumbnail.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName()
+                    + "/" + draftArticleVo.getUrl()).setId(draftArticleVo.getThumbnailId());
+            draftArticleVo.setThumbnail(thumbnail);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, draftArticleVo);
         } catch (Exception e) {
             log.error("【文章草稿】获取文章草稿详情出现异常，异常信息：", e);
@@ -74,7 +78,7 @@ public class DraftArticleController {
 
     @ApiOperation("新建文章")
     @PostMapping("add")
-    public Result<DraftArticleVo> addDraftArticle(@RequestBody DraftArticleDTO draftArticleDTO, BindingResult bindingResult) {
+    public Result<DraftArticleVo> addDraftArticle(@Valid @RequestBody DraftArticleDTO draftArticleDTO, BindingResult bindingResult) {
         //校验参数
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError().getDefaultMessage();

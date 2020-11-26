@@ -1,5 +1,6 @@
 package com.highershine.portal.common.entity.dto;
 
+import com.highershine.portal.common.entity.po.Thumbnail;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -29,6 +30,7 @@ public class DraftArticleDTO extends BaseDTO {
     private Long categoryId;
 
     @ApiModelProperty(value = "是否发布", name = "isPublish", example = "true", dataType = "bool")
+    @NotNull(message = "是否发布为空")
     private Boolean isPublish;
 
     @ApiModelProperty(value = "是否需要更新", name = "isNeedUpdate", example = "true", dataType = "bool")
@@ -53,8 +55,8 @@ public class DraftArticleDTO extends BaseDTO {
     @ApiModelProperty(value = "描述", name = "description", dataType = "string")
     private String description;
 
-    @ApiModelProperty(value = "缩略图地址", name = "thumbnailId", dataType = "long")
-    private Long thumbnailId;
+    @ApiModelProperty(value = "缩略图", name = "thumbnailId", dataType = "long")
+    private Thumbnail thumbnail;
 
     @ApiModelProperty(value = "是否设置为焦点图", name = "isFocus", example = "true", dataType = "bool")
     private Boolean isFocus;

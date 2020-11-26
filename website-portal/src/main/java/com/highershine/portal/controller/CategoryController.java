@@ -14,10 +14,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -53,12 +55,19 @@ public class CategoryController {
 
     @PostMapping("add")
     @ApiOperation("新增栏目(朱向坤)")
-    public Result addCategory(@RequestBody CategoryDTO categoryDTO, BindingResult bindingResult) {
+    public Result addCategory(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult bindingResult) {
         //参数校验
+        String message = "";
         if (bindingResult.hasErrors()) {
-            String message = bindingResult.getFieldError().getDefaultMessage();
+            message = bindingResult.getFieldError().getDefaultMessage();
+        } else {
+            //栏目名称 和 别名不能重复
+            message = categoryService.uniqueValid(categoryDTO);
+        }
+        if (StringUtils.isNotBlank(message)) {
             return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
         }
+
         try {
             CategoryVo categoryVo = categoryService.saveCategoryDTO(categoryDTO);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, categoryVo);
@@ -102,8 +111,16 @@ public class CategoryController {
     @PostMapping("update")
     public Result<CategoryVo> updateCategory(@RequestBody CategoryDTO categoryDTO, BindingResult bindingResult) {
         //校验参数
+        String message = "";
         if (bindingResult.hasErrors()) {
-            String message = bindingResult.getFieldError().getDefaultMessage();
+            message = bindingResult.getFieldError().getDefaultMessage();
+        } else if (categoryDTO.getId() == null) {
+            message = "栏目id为空;";
+        } else {
+            //栏目名称 和 别名不能重复
+            message = categoryService.uniqueValid(categoryDTO);
+        }
+        if (StringUtils.isNotBlank(message)) {
             return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
         }
         try {

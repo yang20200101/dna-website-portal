@@ -59,10 +59,29 @@ public class DraftArticleServiceImpl implements DraftArticleService {
 
     @Override
     public DraftArticleVo addDraftArticle(DraftArticleDTO draftArticleDTO) throws Exception {
+        //保存草稿
         DraftArticle draftArticle = new DraftArticle();
-        BeanUtils.copyProperties(draftArticle, draftArticleDTO);
-        draftArticle.setCreatedAt(new Date()).setUpdatedAt(new Date());
+        BeanUtils.copyProperties(draftArticleDTO, draftArticle);
+        if (draftArticleDTO.getThumbnail() != null) {
+            draftArticle.setThumbnailId(draftArticleDTO.getThumbnail().getId());
+        }
+        draftArticle.setCreatedAt(new Date()).setUpdatedAt(new Date()).setDeleted(false);
+        if (draftArticleDTO.getIsPublish()) {
+            //文章 已更新
+            draftArticle.setIsNeedUpdate(false);
+        } else {
+            //草稿 待更新
+            draftArticle.setIsNeedUpdate(true);
+        }
         draftArticleMapper.insert(draftArticle);
+        if (draftArticleDTO.getIsPublish()) {
+            //发布文章
+            Article article = new Article();
+            BeanUtils.copyProperties(draftArticle, article, "id");
+            article.setDraftId(draftArticle.getId());
+            articleMapper.insert(article);
+        }
+        //如果已发布
         DraftArticleVo draftArticleVo = new DraftArticleVo();
         BeanUtils.copyProperties(draftArticle, draftArticleVo);
         return draftArticleVo;

@@ -4,9 +4,11 @@ package com.highershine.portal.common.mapper;
 import com.highershine.portal.common.entity.dto.DraftArticleDTO;
 import com.highershine.portal.common.entity.po.DraftArticle;
 import com.highershine.portal.common.entity.vo.DraftArticleVo;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface DraftArticleMapper {
     int deleteByPrimaryKey(Long id);
 

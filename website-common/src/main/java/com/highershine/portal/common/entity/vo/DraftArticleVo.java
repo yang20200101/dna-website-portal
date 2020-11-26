@@ -1,5 +1,7 @@
 package com.highershine.portal.common.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.highershine.portal.common.entity.po.Thumbnail;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,14 +53,11 @@ public class DraftArticleVo {
     @ApiModelProperty(value = "链接", name = "link", dataType = "string")
     private String link;
 
-    @ApiModelProperty(value = "图片地址", name = "url", dataType = "string")
-    private String url;
-
     @ApiModelProperty(value = "描述", name = "description", dataType = "string")
     private String description;
 
-    @ApiModelProperty(value = "缩略图地址", name = "thumbnailId", dataType = "long")
-    private Long thumbnailId;
+    @ApiModelProperty(value = "缩略图")
+    private Thumbnail thumbnail;
 
     @ApiModelProperty(value = "是否设置为焦点图", name = "isFocus", example = "true", dataType = "bool")
     private Boolean isFocus;
@@ -71,4 +70,10 @@ public class DraftArticleVo {
 
     @ApiModelProperty(value = "更新时间", name = "updatedAt", dataType = "date")
     private Date updatedAt;
+
+    @JsonIgnore
+    private Long thumbnailId;
+
+    @JsonIgnore
+    private String url;
 }

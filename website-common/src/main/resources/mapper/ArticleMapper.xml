@@ -78,7 +78,6 @@
       content = #{content,jdbcType=VARCHAR},
       draft_id = #{draftId,jdbcType=BIGINT},
       level = #{level,jdbcType=INTEGER},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

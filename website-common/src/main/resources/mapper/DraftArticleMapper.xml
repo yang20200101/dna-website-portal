@@ -69,7 +69,6 @@
       thumbnail_id = #{thumbnailId,jdbcType=BIGINT},
       is_focus = #{isFocus,jdbcType=BIT},
       content = #{content,jdbcType=VARCHAR},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       level = #{level,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
@@ -130,9 +129,9 @@
     pa.created_at as createdAt,
     pa.updated_at as updatedAt,
     pt.url as url
-    from po_draft_article pa, po_thumbnail pt
-    where pt.id = pa.thumbnail_id
-    and pa.id = #{id,jdbcType=BIGINT}
+    from po_draft_article pa
+    left join  po_thumbnail pt on pt.id = pa.thumbnail_id
+    where pa.id = #{id,jdbcType=BIGINT}
   </select>
 
 

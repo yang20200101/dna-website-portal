@@ -45,4 +45,11 @@ public interface CategoryService {
      * @return
      */
     CategoryVo findCategoryById(Long id) throws Exception;
+
+    /**
+     * 栏目名称别名校验
+     * @param categoryDTO
+     * @return
+     */
+    String uniqueValid(CategoryDTO categoryDTO);
 }
