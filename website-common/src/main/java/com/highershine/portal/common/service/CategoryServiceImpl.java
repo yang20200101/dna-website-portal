@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,8 +29,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    public List<CategoryVo> getCategoryList() throws Exception {
-        List<CategoryVo> categoryVoList =  categoryMapper.getCategoryList();
+    public List<CategoryVo> getCategoryList(CategoryDTO categoryDTO) throws Exception {
+        List<CategoryVo> categoryVoList =  categoryMapper.getCategoryList(categoryDTO);
         return categoryVoList;
     }
 
@@ -71,6 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryVo updateCategory(CategoryDTO categoryDTO) throws Exception {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
+        category.setDeleted(false).setUpdatedAt(new Date());
         categoryMapper.updateByPrimaryKey(category);
         //根据ID 将更新后的对象查询出来
         category = categoryMapper.selectByPrimaryKey(category.getId());

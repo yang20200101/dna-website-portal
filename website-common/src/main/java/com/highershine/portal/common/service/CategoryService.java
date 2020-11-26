@@ -16,7 +16,7 @@ public interface CategoryService {
      * 查询栏目列表
      * @return
      */
-    List<CategoryVo> getCategoryList() throws Exception;
+    List<CategoryVo> getCategoryList(CategoryDTO categoryDTO) throws Exception;
 
     /**
      * 保存

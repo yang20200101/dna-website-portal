@@ -49,10 +49,44 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 <!--  查询栏目列表-->
-  <select id="getCategoryList" resultMap="BaseResultMap">
+  <select id="getCategoryList" parameterType="com.highershine.portal.common.entity.dto.CategoryDTO" resultType="com.highershine.portal.common.entity.vo.CategoryVo">
     select
-    <include refid="Base_Column_List"/>
-    from po_category c order by c.sort asc
+    id,
+    name,
+    alias,
+    sort,
+    remark,
+    deleted,
+    status,
+    created_at as createdAt,
+    updated_at as updatedAt
+    from po_category
+    <where>
+      <if test="name != null and name != ''">
+        and name like concat('%',#{name, jdbcType=VARCHAR},'%')
+      </if>
+      <if test="status != null">
+        and status = #{status,jdbcType=BIT}
+      </if>
+    </where>
+    order by
+    <choose>
+      <when test="sortField != null and sortField != ''">
+        ${sortField}
+      </when>
+      <otherwise>
+        sort
+      </otherwise>
+    </choose>
+    <choose>
+      <when test="sortOrder == 'descend'">
+         desc
+      </when>
+      <otherwise>
+         asc
+      </otherwise>
+    </choose>
+
   </select>
   <update id="deleteCategoryById" parameterType="long">
     update po_category  set deleted = true,updated_at = now() where id = #{id,jdbcType=BIGINT}

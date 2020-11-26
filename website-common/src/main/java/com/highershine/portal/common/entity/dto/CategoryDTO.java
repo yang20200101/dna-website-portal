@@ -45,4 +45,10 @@ public class CategoryDTO extends BaseDTO{
     @ApiModelProperty(value = "状态", name = "status", example = "true", dataType = "bool")
     @NotNull(message = "状态为空")
     private Boolean status;
+
+    @ApiModelProperty(value = "排序字段", name = "sortField", example = "sort", dataType = "string")
+    private String sortField = "sort";
+
+    @ApiModelProperty(value = "正序倒序", name = "sortOrder", example = "ascend;descend", dataType = "string")
+    private String sortOrder = "asc";
 }

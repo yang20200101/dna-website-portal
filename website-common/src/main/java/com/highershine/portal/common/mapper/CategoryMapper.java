@@ -1,6 +1,7 @@
 package com.highershine.portal.common.mapper;
 
 
+import com.highershine.portal.common.entity.dto.CategoryDTO;
 import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.vo.CategoryVo;
 import org.springframework.stereotype.Repository;
@@ -26,7 +27,7 @@ public interface CategoryMapper {
      * 查询栏目列表
      * @return
      */
-    List<CategoryVo> getCategoryList();
+    List<CategoryVo> getCategoryList(CategoryDTO categoryDTO);
 
     /**
      * 根据主键删除

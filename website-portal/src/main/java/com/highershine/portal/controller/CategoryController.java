@@ -44,7 +44,7 @@ public class CategoryController {
                 categoryDTO = new CategoryDTO();
             }
             PageHelper.startPage(categoryDTO.getCurrent(), categoryDTO.getPageSize());
-            List<CategoryVo> categoryVoList = categoryService.getCategoryList();
+            List<CategoryVo> categoryVoList = categoryService.getCategoryList(categoryDTO);
             PageInfo<CategoryVo> pageInfo = new PageInfo<>(categoryVoList);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, pageInfo);
         } catch (Exception e) {
