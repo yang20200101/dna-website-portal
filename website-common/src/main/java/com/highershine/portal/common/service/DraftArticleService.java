@@ -49,4 +49,6 @@ public interface DraftArticleService {
      * @param idList
      */
     void batchUnpublish(List<Long> idList) throws Exception;
+
+    void updateDraftArticle(DraftArticleDTO draftArticleDTO);
 }

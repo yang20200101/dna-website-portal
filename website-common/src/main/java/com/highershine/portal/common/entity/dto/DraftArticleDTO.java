@@ -30,8 +30,7 @@ public class DraftArticleDTO extends BaseDTO {
     private Long categoryId;
 
     @ApiModelProperty(value = "是否发布", name = "isPublish", example = "true", dataType = "bool")
-    @NotNull(message = "是否发布为空")
-    private Boolean isPublish;
+    private Boolean isPublish = false;
 
     @ApiModelProperty(value = "是否需要更新", name = "isNeedUpdate", example = "true", dataType = "bool")
     private Boolean isNeedUpdate;

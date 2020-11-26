@@ -59,7 +59,9 @@
       publish_date = #{publishDate,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=BIT},
       category_id = #{categoryId,jdbcType=BIGINT},
-      is_publish = #{isPublish,jdbcType=BIT},
+      <if test="isPublish != null">
+        is_publish = #{isPublish,jdbcType=BIT},
+      </if>
       is_need_update = #{isNeedUpdate,jdbcType=BIT},
       is_top = #{isTop,jdbcType=BIT},
       title = #{title,jdbcType=VARCHAR},
@@ -106,6 +108,7 @@
       and (pa.title like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%')
       or pa.content like concat(concat('%',#{keyword,jdbcType=VARCHAR}),'%'))
     </if>
+    order by pa.updated_at desc
   </select>
 
   <select id="findDraftArticleById" parameterType="long"

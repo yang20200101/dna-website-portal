@@ -120,4 +120,37 @@ public class DraftArticleServiceImpl implements DraftArticleService {
             articleMapper.deleteFlagByDraftId(id);
         }
     }
+
+    @Override
+    public void updateDraftArticle(DraftArticleDTO draftArticleDTO) {
+        //保存草稿
+        DraftArticle draftArticle = new DraftArticle();
+        BeanUtils.copyProperties(draftArticleDTO, draftArticle);
+        if (draftArticleDTO.getThumbnail() != null) {
+            draftArticle.setThumbnailId(draftArticleDTO.getThumbnail().getId());
+        }
+        draftArticle.setUpdatedAt(new Date()).setDeleted(false);
+        if (draftArticleDTO.getIsPublish()) {
+            //文章 已更新
+            draftArticle.setIsNeedUpdate(false);
+        } else {
+            //待更新  是否发布状态不变
+            draftArticle.setIsNeedUpdate(true).setIsPublish(null);
+        }
+        draftArticleMapper.updateByPrimaryKey(draftArticle);
+        if (draftArticleDTO.getIsPublish()) {
+            Article article = articleMapper.selectByDraftId(draftArticle.getId());
+            //发布文章
+            if (article == null) {
+                article = new Article();
+                BeanUtils.copyProperties(draftArticle, article, "id");
+                article.setDraftId(draftArticle.getId());
+                articleMapper.insert(article);
+            } else {
+                // 更新文章
+                BeanUtils.copyProperties(draftArticle, article, "id");
+                articleMapper.updateByPrimaryKey(article);
+            }
+        }
+    }
 }

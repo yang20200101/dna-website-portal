@@ -15,6 +15,7 @@ import com.highershine.portal.config.MinIOPropertyConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -66,8 +67,10 @@ public class DraftArticleController {
         try {
             DraftArticleVo draftArticleVo = draftArticleService.findDraftArticleById(id);
             Thumbnail thumbnail = new Thumbnail();
-            thumbnail.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName()
-                    + "/" + draftArticleVo.getUrl()).setId(draftArticleVo.getThumbnailId());
+            if (StringUtils.isNotBlank(draftArticleVo.getUrl())) {
+                thumbnail.setUrl(minIOPropertyConfig.getEndPoint() + "/" + minIOPropertyConfig.getBucketName()
+                        + "/" + draftArticleVo.getUrl()).setId(draftArticleVo.getThumbnailId());
+            }
             draftArticleVo.setThumbnail(thumbnail);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, draftArticleVo);
         } catch (Exception e) {
@@ -89,6 +92,28 @@ public class DraftArticleController {
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, draftArticleVo);
         } catch (Exception e) {
             log.error("【文章草稿】新增文章异常，异常信息：", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
+
+    @ApiOperation("修改文章")
+    @PostMapping("update")
+    public Result updateDraftArticle(@Valid @RequestBody DraftArticleDTO draftArticleDTO, BindingResult bindingResult) {
+        try {
+            //校验参数
+            String message = "";
+            if (bindingResult.hasErrors()) {
+                message = bindingResult.getFieldError().getDefaultMessage();
+            } else if (draftArticleDTO.getId() == null) {
+                message = "草稿ID为空;";
+            }
+            if (StringUtils.isNotBlank(message)) {
+                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
+            }
+            draftArticleService.updateDraftArticle(draftArticleDTO);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (Exception e) {
+            log.error("【文章草稿】修改文章异常，异常信息：", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }
