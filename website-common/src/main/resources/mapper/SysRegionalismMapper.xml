@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.highershine.portal.common.mapper.SysRegionalismMapper" >
+
+    <!--根据父编号查询行政区划列表-->
+    <select id="selectSysRegionalismVoListByParentCode" parameterType="string"
+            resultType="com.highershine.portal.common.entity.vo.SysRegionalismVo">
+          select
+            sr.id               as id,
+            sr.regionalism_code as regionalismCode,
+            sr.regionalism_name as regionalismName,
+            sr.parent_code      as parentCode
+          from sys_regionalism sr
+          where sr.active_flag is true
+            and sr.delete_flag is false
+            and sr.parent_code = #{pcode}
+            order by sr.regionalism_code
+    </select>
+
+    <!--根据父编号查询行政区划列表（直辖市）-->
+    <select id="selectMunicipalitySysRegionalismVoListByParentCode" parameterType="string"
+            resultType="com.highershine.portal.common.entity.vo.SysRegionalismVo">
+          select
+            sr.id               as id,
+            sr.regionalism_code as regionalismCode,
+            sr.regionalism_name as regionalismName,
+            sr.parent_code      as parentCode
+          from sys_regionalism sr
+          where sr.active_flag is true
+            and sr.delete_flag is false
+            and sr.parent_code like '${_parameter}%'
+            and sr.parent_code &lt;&gt; '000000'
+            order by sr.regionalism_code
+    </select>
+
+    <!--根据行政区划列表-->
+    <select id="selectSysRegionalismVoList"
+            resultType="com.highershine.portal.common.entity.vo.SysRegionalismVo">
+          select
+            sr.id               as id,
+            sr.regionalism_code as regionalismCode,
+            sr.regionalism_name as regionalismName,
+            sr.parent_code      as parentCode
+          from sys_regionalism sr
+          where sr.active_flag is true
+            and sr.delete_flag is false
+    </select>
+
+    <!--查询全部行政区划列表-->
+    <select id="selectAllSysRegionalismList"
+            resultType="com.highershine.portal.common.entity.po.SysRegionalism">
+          select
+            sr.id               as id,
+            sr.regionalism_code as regionalismCode,
+            sr.regionalism_name as regionalismName,
+            sr.parent_code      as parentCode
+          from sys_regionalism sr
+          where sr.active_flag is true
+            and sr.delete_flag is false
+    </select>
+
+</mapper>

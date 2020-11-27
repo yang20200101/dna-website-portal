@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/advertisement")
-@Api("飘窗管理相关接口")
+@Api(description = "飘窗管理相关接口")
 public class AdvertisementController {
     @Resource
     private AdvertisementService advertisementService;
@@ -97,7 +97,7 @@ public class AdvertisementController {
 
     @GetMapping("find/{id}")
     @ApiOperation("查询详细信息")
-    public Result findAdvertisementById(@PathVariable("id") long id) {
+    public Result<AdvertisementVo> findAdvertisementById(@PathVariable("id") long id) {
         try {
             AdvertisementVo advertisementVo = advertisementService.findAdvertisementById(id);
             Thumbnail thumbnail = advertisementVo.getThumbnail();

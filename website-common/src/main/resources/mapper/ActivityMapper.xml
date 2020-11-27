@@ -43,7 +43,7 @@
       #{title,jdbcType=VARCHAR},  #{date,jdbcType=TIMESTAMP},
       #{thumbnailId,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR},
       #{content,jdbcType=VARCHAR}, #{applyNumber,jdbcType=INTEGER},
-      #{deleted,jdbcType=BIT}
+      #{deleted,jdbcType=BIT},
       #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
   </insert>
 
@@ -51,12 +51,11 @@
     update po_activity
     set
       title = #{title,jdbcType=VARCHAR},
-      date = #{date,jdbcType=TIMESTAMP}
+      date = #{date,jdbcType=TIMESTAMP},
       thumbnail_id = #{thumbnailId,jdbcType=BIGINT},
       description = #{description,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       apply_number = #{applyNumber,jdbcType=INTEGER},
-      deleted = #{deleted,jdbcType=BIT},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -73,6 +72,27 @@
 	where pa.id = pau.activity_id and pa.deleted = false
     <if test="title != null and title != ''">
       and pa.title like concat('%',#{title, jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="getActivityUserList" parameterType="com.highershine.portal.common.entity.po.Application"
+          resultType="com.highershine.portal.common.entity.vo.ActivityUserVo">
+    select
+    pa.user_id as userId,
+    su.nickname,
+    su.province,
+    pa.is_latest as isLatest,
+    to_char(pa.created_at, 'YYYY-MM-DD HH24:MI') as createdAtStr,
+    pa.thumbnail_id as thumbnailId
+    from po_application pa,sys_user su
+    where pa.user_id = su.id
+    and pa.deleted = false
+    and pa.activity_id = #{activityId,jdbcType=BIGINT}
+    <if test="userId != null">
+      and pa.user_id = #{userId,jdbcType=BIGINT}
+    </if>
+    <if test="isLatest != null">
+      and pa.is_latest = #{isLatest,jdbcType=BIT}
     </if>
   </select>
 </mapper>

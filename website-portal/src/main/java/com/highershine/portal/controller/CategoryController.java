@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("category")
-@Api("栏目相关接口")
+@Api(description = "栏目相关接口")
 public class CategoryController {
 
     @Autowired

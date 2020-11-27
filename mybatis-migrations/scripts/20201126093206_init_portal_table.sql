@@ -289,6 +289,22 @@ INSERT INTO "public"."sys_role" VALUES (4, '普通用户', '普通用户', 't', 
 INSERT INTO "public"."sys_role" VALUES (5, '行业专家', '行业专家', 't', 5, now(), 'system', now(), 'system', 'expert');
 commit;
 
+ CREATE TABLE IF NOT EXISTS SYS_REGIONALISM
+(
+	id SERIAL8 NOT NULL PRIMARY KEY,
+	regionalism_code VARCHAR(12),
+	regionalism_name VARCHAR(300),
+	parent_code      VARCHAR(12),
+	spell_short      VARCHAR(300),
+	active_flag      BOOLEAN default TRUE not null,
+	delete_flag      BOOLEAN default FALSE not null,
+	remark           VARCHAR(500),
+	CREATE_USER	VARCHAR(64) NOT NULL,
+	CREATE_DATETIME	TIMESTAMP NOT NULL,
+	UPDATE_USER	VARCHAR(64),
+	UPDATE_DATETIME	TIMESTAMP
+);
+ALTER TABLE public.SYS_REGIONALISM OWNER to dna_portal;
 
 -- //@UNDO
 -- SQL to undo the change goes here.

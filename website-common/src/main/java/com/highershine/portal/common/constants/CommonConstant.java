@@ -1,5 +1,7 @@
 package com.highershine.portal.common.constants;
 
+import java.io.File;
+
 /**
  * 通用常量
  *
@@ -16,5 +18,6 @@ public final class CommonConstant {
     //资源结果
     public static final String MODELREF_RESULT = "Result";
 
-    public static final String APPLICATION_JSON = "application/json";
+    //系统临时目录
+    public static final String TMP_PATH = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
 }

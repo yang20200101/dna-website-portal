@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("draft")
-@Api("文章草稿相关接口")
+@Api(description = "文章草稿相关接口")
 public class DraftArticleController {
     @Autowired
     private DraftArticleService draftArticleService;

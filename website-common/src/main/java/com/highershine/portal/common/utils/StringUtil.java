@@ -45,4 +45,13 @@ public final class StringUtil {
         }
         return convert;
     }
+
+    /**
+     * 处理文件名特殊字符
+     * @param str
+     * @return
+     */
+    public static String dealFileName(String str) {
+        return str.replaceAll("[/\\\\:*?|]", "");
+    }
 }

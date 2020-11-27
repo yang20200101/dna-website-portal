@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("article")
-@Api("文章相关接口")
+@Api(description = "文章相关接口")
 public class ArticleController {
 
     @Autowired

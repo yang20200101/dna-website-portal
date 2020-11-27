@@ -17,4 +17,18 @@ public interface ThumbnailService {
      * @return
      */
     ThumbnailVo upload(MultipartFile file, String bucketName) throws Exception;
+
+    /**
+     * 下载活动报名信息接口
+     * @param bucketName
+     * @param activityId
+     */
+    void downloadActivityInfo(String bucketName, Long activityId) throws Exception;
+
+    /**
+     * 附件下载
+     * @param bucketName
+     * @param id
+     */
+    void download(String bucketName, Long id) throws Exception;
 }

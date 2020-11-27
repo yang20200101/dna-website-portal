@@ -3,7 +3,9 @@ package com.highershine.portal.common.mapper;
 
 import com.highershine.portal.common.entity.dto.ArticleDTO;
 import com.highershine.portal.common.entity.po.Activity;
+import com.highershine.portal.common.entity.po.Application;
 import com.highershine.portal.common.entity.vo.ActivityListVo;
+import com.highershine.portal.common.entity.vo.ActivityUserVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,4 +33,11 @@ public interface ActivityMapper {
      * @return
      */
     List<ActivityListVo> getActivityList(ArticleDTO articleDTO);
+
+    /**
+     * 查询活动报名列表
+     * @param application
+     * @return
+     */
+    List<ActivityUserVo> getActivityUserList(Application application);
 }

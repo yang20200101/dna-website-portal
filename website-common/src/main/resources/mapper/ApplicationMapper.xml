@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.ApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.Application">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="activity_id" jdbcType="BIGINT" property="activityId" />
+    <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId" />
+    <result column="is_latest" jdbcType="BIT" property="illatest" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      id,user_id,activity_id,thumbnail_id,is_latest,deleted,created_at,updated_at
+  </sql>
+
+  <update id="deleteTrueByActivityId" parameterType="java.lang.Long">
+    update po_application
+    set deleted = true, updated_at = now()
+    where activity_id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="insert" parameterType="com.highershine.portal.common.entity.po.Application" useGeneratedKeys="true" keyProperty="id">
+    insert into po_application ( user_id,activity_id,
+    thumbnail_id,is_latest,deleted,created_at,
+    updated_at)
+    values (
+      #{userId,jdbcType=BIGINT},  #{activityId,jdbcType=BIGINT},
+      #{thumbnailId,jdbcType=BIGINT}, #{isLatest,jdbcType=BIT},
+      #{deleted,jdbcType=BIT},
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateIsLatestByActivityId" parameterType="com.highershine.portal.common.entity.po.Application">
+    update po_application
+    set
+      is_latest = #{isLatest,jdbcType=BIT}
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </update>
+</mapper>
