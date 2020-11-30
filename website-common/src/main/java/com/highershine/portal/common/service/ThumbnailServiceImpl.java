@@ -124,14 +124,16 @@ public class ThumbnailServiceImpl implements ThumbnailService {
      */
     private void getMaterialFile(String path, String fileName, String bucketName, Long thumbnailId) throws Exception {
         Thumbnail thumbnail = thumbnailMapper.selectByPrimaryKey(thumbnailId);
-        String srcFilename = thumbnail.getFileName();
-        String suffix = "";
-        int index = srcFilename.lastIndexOf('.');
-        if (index > 0) {
-            suffix = srcFilename.substring(index);
+        if (thumbnail != null) {
+            String srcFilename = thumbnail.getFileName();
+            String suffix = "";
+            int index = srcFilename.lastIndexOf('.');
+            if (index > 0) {
+                suffix = srcFilename.substring(index);
+            }
+            //下载文件到临时目录
+            minIODownload(bucketName, thumbnail.getUrl(), path, fileName + suffix);
         }
-        //下载文件到临时目录
-        minIODownload(bucketName, thumbnail.getUrl(), path, fileName + suffix);
     }
 
     /**

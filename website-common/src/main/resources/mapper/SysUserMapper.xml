@@ -6,7 +6,9 @@
     select
     id,nickname
     from sys_user
-    where id = #{id,jdbcType=BIGINT}
+    where delete_flag = false
+    and status = true
+    order by convert_to(nickname, 'GBK')
   </select>
 
 </mapper>

@@ -83,30 +83,14 @@
   </update>
 <!--  获取文章列表-->
   <select id="getArticleList" parameterType="com.highershine.portal.common.entity.dto.ArticleDTO"
-          resultType="com.highershine.portal.common.entity.vo.ArticleVo">
+          resultMap="BaseResultMap">
     select
-    pc.name as categoryName,
-    pa.id,
-    pa.publish_date as publishDate,
-    pa.deleted,
-    pa.category_id as categoryId,
-    pa.is_publish as isPublish,
-    pa.is_need_update as isNeedUpdate,
-    pa.is_top as isTop,
-    pa.title,
-    pa.source,
-    pa.link,
-    pa.description,
-    pa.thumbnail_id as thumbnailId,
-    pa.is_focus as isFocus,
-    pa.content,
-    pa.level,
-    pa.draft_id as draftId,
-    pa.created_at as createdAt,
-    pa.updated_at as updatedAt
-    from po_article pa
-    left join po_category pc
-    on pa.category_id = pc.id
+    <include refid="Base_Column_List" />
+    from po_article
+    where deleted = false
+    <if test="categoryId != null">
+     and category_id = #{categoryId,jdbcType=BIGINT}
+    </if>
   </select>
 
  <!--根据草稿ID假删除-->

@@ -2,11 +2,7 @@ package com.highershine.portal.common.service;
 
 
 import com.highershine.portal.common.entity.dto.ActivityDTO;
-import com.highershine.portal.common.entity.dto.ArticleDTO;
-import com.highershine.portal.common.entity.vo.ActivityListVo;
-import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
-import com.highershine.portal.common.entity.vo.ActivityUserVo;
-import com.highershine.portal.common.entity.vo.ActivityVo;
+import com.highershine.portal.common.entity.vo.*;
 
 import java.util.List;
 
@@ -17,10 +13,10 @@ public interface ActivityService {
 
     /**
      * 查询活动列表
-     * @param articleDTO
+     * @param dto
      * @return
      */
-    List<ActivityListVo> getActivityList(ArticleDTO articleDTO);
+    List<ActivityListVo> getActivityList(ActivityDTO dto);
 
     /**
      * 删除活动
@@ -52,7 +48,7 @@ public interface ActivityService {
      * 新增活动
      * @param dto
      */
-    void insertActivity(ActivityDTO dto);
+    ActivityVo insertActivity(ActivityDTO dto);
 
     /**
      * 修改活动
@@ -66,4 +62,11 @@ public interface ActivityService {
      * @param thumbnailId
      */
     void activityEnroll(Long activityId, Long thumbnailId);
+
+    /**
+     * 活动报名校验
+     * @param activityId
+     * @return
+     */
+    ActivityEnrollValidVo activityEnrollValid(Long activityId);
 }

@@ -38,4 +38,19 @@
       is_latest = #{isLatest,jdbcType=BIT}
     where activity_id = #{activityId,jdbcType=BIGINT}
   </update>
+
+  <!--查询已报名人数-->
+  <select id="selectApplyNumber"  parameterType="java.lang.Long" resultType="int">
+    select count(distinct user_id) FROM po_application
+    where deleted = false
+    and activity_id = #{activityId,jdbcType=BIGINT}
+  </select>
+
+  <!--查询是否报名过-->
+  <select id="selectEnrollNum"  parameterType="java.lang.Long" resultType="int">
+    select count(1) FROM po_application
+    where deleted = false
+    and activity_id = #{activityId,jdbcType=BIGINT}
+    and user_id = #{userId,jdbcType=BIGINT}
+  </select>
 </mapper>

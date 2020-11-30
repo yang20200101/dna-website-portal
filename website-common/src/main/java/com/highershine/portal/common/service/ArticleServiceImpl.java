@@ -3,16 +3,17 @@ package com.highershine.portal.common.service;
 
 import com.highershine.portal.common.entity.dto.ArticleDTO;
 import com.highershine.portal.common.entity.po.Article;
-import com.highershine.portal.common.entity.po.Category;
 import com.highershine.portal.common.entity.vo.ArticleVo;
 import com.highershine.portal.common.mapper.ArticleMapper;
 import com.highershine.portal.common.mapper.CategoryMapper;
+import com.highershine.portal.common.utils.DateTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,8 +37,15 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public List<ArticleVo> getArticleList(ArticleDTO articleDTO) throws Exception {
-       List<ArticleVo> articleVoList =  articleMapper.getArticleList(articleDTO);
-        return articleVoList;
+        List<ArticleVo> voList = new ArrayList<>();
+        List<Article> articleList = articleMapper.getArticleList(articleDTO);
+        for (Article article : articleList) {
+            ArticleVo vo = new ArticleVo();
+            BeanUtils.copyProperties(article, vo);
+            vo.setPublishDateFormat(DateTools.dateToString(article.getPublishDate(), "MM/dd"));
+            voList.add(vo);
+        }
+        return voList;
     }
 
     /**
@@ -50,8 +58,6 @@ public class ArticleServiceImpl implements ArticleService {
         Article article =  articleMapper.selectByPrimaryKey(id);
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
-        Category category = categoryMapper.selectByPrimaryKey(article.getCategoryId());
-        articleVo.setCategoryName(category.getName());
         return articleVo;
     }
 }

@@ -4,12 +4,8 @@ package com.highershine.portal.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.highershine.portal.common.entity.dto.ActivityDTO;
-import com.highershine.portal.common.entity.dto.ArticleDTO;
 import com.highershine.portal.common.entity.po.Thumbnail;
-import com.highershine.portal.common.entity.vo.ActivityListVo;
-import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
-import com.highershine.portal.common.entity.vo.ActivityUserVo;
-import com.highershine.portal.common.entity.vo.ActivityVo;
+import com.highershine.portal.common.entity.vo.*;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.result.Result;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Description 活动Controller
@@ -46,18 +41,18 @@ public class ActivityController {
 
     /**
      * 获取活动列表
-     * @param articleDTO
+     * @param dto
      * @return
      */
     @PostMapping("list")
     @ApiOperation("查询活动列表（薛博仁）")
-    public Result<PageInfo<ActivityListVo>> getActivityList(@RequestBody(required = false) ArticleDTO articleDTO) {
-        if (articleDTO == null) {
-            articleDTO = new ArticleDTO();
+    public Result<PageInfo<ActivityListVo>> getActivityList(@RequestBody(required = false) ActivityDTO dto) {
+        if (dto == null) {
+            dto = new ActivityDTO();
         }
         try {
-            PageHelper.startPage(articleDTO.getCurrent(), articleDTO.getPageSize());
-            List<ActivityListVo> voList = activityService.getActivityList(articleDTO);
+            PageHelper.startPage(dto.getCurrent(), dto.getPageSize());
+            List<ActivityListVo> voList = activityService.getActivityList(dto);
             PageInfo<ActivityListVo> pageInfo = new PageInfo<>(voList);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, pageInfo);
         } catch (Exception e) {
@@ -131,14 +126,14 @@ public class ActivityController {
 
     @PostMapping("insert")
     @ApiOperation("新增活动（薛博仁）")
-    public Result insertActivity(@Valid @RequestBody ActivityDTO dto, BindingResult bindingResult) {
+    public Result<ActivityVo> insertActivity(@Valid @RequestBody ActivityDTO dto, BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
                 String message = bindingResult.getFieldError().getDefaultMessage();
                 return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
             }
-            activityService.insertActivity(dto);
-            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+            ActivityVo vo = activityService.insertActivity(dto);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
             log.error("【活动】新增活动异常，异常信息：", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
@@ -170,18 +165,23 @@ public class ActivityController {
     @ApiOperation("活动报名（薛博仁）")
     public Result activityEnroll(@PathVariable("activityId") Long activityId, @PathVariable("thumbnailId") Long thumbnailId) {
         try {
-            // TODO   由于用户模块暂未接入，无法获取用户信息， 使用随机结果进行测试
-            Random ra =new Random();
-            int num = ra.nextInt(3)+1;
-            if (num/3 != 1) {
-                String message = "您没有权限报名，请联系管理员";
-                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
-            }
             //活动报名
             activityService.activityEnroll(activityId, thumbnailId);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
         } catch (Exception e) {
             log.error("【活动】活动报名异常，异常信息：", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
+
+    @GetMapping("enroll/valid/{activityId}")
+    @ApiOperation("活动报名校验（薛博仁）")
+    public Result<ActivityEnrollValidVo> activityEnrollValid(@PathVariable("activityId") Long activityId) {
+        try {
+            ActivityEnrollValidVo vo = activityService.activityEnrollValid(activityId);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
+        } catch (Exception e) {
+            log.error("【活动】活动报名校验异常，异常信息：", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }

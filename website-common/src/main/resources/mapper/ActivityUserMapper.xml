@@ -21,4 +21,24 @@
      activity_id as activityId
     from po_activity_user
   </select>
+
+    <select id="selectPlayersByActivityId" parameterType="java.lang.Long" resultType="com.highershine.portal.common.entity.vo.ActivityPlayerVo">
+     select
+     su.id,
+     su.nickname
+    from po_activity_user pu,sys_user su
+    where pu.user_id = su.id
+    and su.delete_flag = false
+    and su.status = true
+    and pu.activity_id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <!--查询是否有权限报名-->
+    <select id="selectPowerNum" resultType="int">
+    select
+    count(1)
+    from po_activity_user
+    where activity_id = #{activityId,jdbcType=BIGINT}
+    and user_id = #{userId,jdbcType=BIGINT}
+  </select>
 </mapper>

@@ -60,6 +60,14 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+  <!--修改已报名人数-->
+  <update id="updateApplyNumber">
+    update po_activity
+    set
+      apply_number = #{applyNumber,jdbcType=INTEGER
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
   <select id="getActivityList" parameterType="com.highershine.portal.common.entity.dto.ActivityDTO"
           resultType="com.highershine.portal.common.entity.vo.ActivityListVo">
      select
@@ -73,6 +81,7 @@
     <if test="title != null and title != ''">
       and pa.title like concat('%',#{title, jdbcType=VARCHAR},'%')
     </if>
+    order by updated_at desc
   </select>
 
   <select id="getActivityUserList" parameterType="com.highershine.portal.common.entity.po.Application"

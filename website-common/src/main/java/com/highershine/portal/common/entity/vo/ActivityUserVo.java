@@ -28,5 +28,5 @@ public class ActivityUserVo {
     private Long thumbnailId;
 
     @ApiModelProperty(value = "非最新报名信息", example = "130000")
-    private List<ActivityUserVo> userList;
+    private List<ActivityUserVo> children;
 }
