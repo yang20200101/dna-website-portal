@@ -3,6 +3,7 @@ package com.highershine.portal.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.highershine.portal.common.entity.dto.BaseDTO;
 import com.highershine.portal.common.entity.dto.DraftArticleDTO;
 import com.highershine.portal.common.entity.po.Thumbnail;
 import com.highershine.portal.common.entity.vo.DraftArticleVo;
@@ -45,7 +46,7 @@ public class DraftArticleController {
             draftArticleDTO = new DraftArticleDTO();
         }
         try {
-            PageHelper.startPage(draftArticleDTO.getCurrent(), draftArticleDTO.getPageSize());
+            PageHelper.startPage(new BaseDTO().getCurrent(), new BaseDTO().getPageSize());
             List<DraftArticleVo> draftArticleVoList = draftArticleService.getDraftArticleList(draftArticleDTO);
             PageInfo<DraftArticleVo> draftArticleVoPageInfo = new PageInfo<>(draftArticleVoList);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, draftArticleVoPageInfo);

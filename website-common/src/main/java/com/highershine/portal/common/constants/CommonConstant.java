@@ -12,8 +12,10 @@ public final class CommonConstant {
 
     }
 
+    public static final String APPLICATION_JSON = "application/json";
+
     // JSESSIONID
-    public static final String JSESSIONID = "jsessionid";
+    public static final String JSESSIONID = "jsessionId";
 
     //资源结果
     public static final String MODELREF_RESULT = "Result";

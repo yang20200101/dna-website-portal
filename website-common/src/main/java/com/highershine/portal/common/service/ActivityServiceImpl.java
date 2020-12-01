@@ -8,15 +8,16 @@ import com.highershine.portal.common.entity.po.Application;
 import com.highershine.portal.common.entity.po.Thumbnail;
 import com.highershine.portal.common.entity.vo.*;
 import com.highershine.portal.common.mapper.*;
+import com.highershine.portal.common.utils.SysUserUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Author xueboren
@@ -38,6 +39,8 @@ public class ActivityServiceImpl implements ActivityService {
     private SysUserMapper sysUserMapper;
     @Resource
     private ThumbnailMapper thumbnailMapper;
+    @Autowired
+    private SysUserUtil sysUserUtil;
 
     @Override
     public List<ActivityListVo> getActivityList(ActivityDTO dto) {
@@ -130,17 +133,12 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public void activityEnroll(Long activityId, Long thumbnailId) {
+    public void activityEnroll(Long activityId, Long thumbnailId) throws IOException {
         //修改曾经上传的报名表状态为 非最新
         Application application = new Application();
         application.setActivityId(activityId).setIsLatest(false);
         applicationMapper.updateIsLatestByActivityId(application);
-        //TODO  测试保存随机用户
-        List<ActivityUser> list = activityUserMapper.selectByActivityId(activityId);
-        Long userId = 0L;
-        if (CollectionUtils.isNotEmpty(list)) {
-            userId = list.get(0).getUserId();
-        }
+        Long userId = sysUserUtil.getSysUserByRedis().getSysUser().getId();
         //保存最新的报名表信息
         application.setUserId(userId).setThumbnailId(thumbnailId).setIsLatest(false);
         application.setIsLatest(true).setDeleted(false).setCreatedAt(new Date()).setUpdatedAt(new Date());
@@ -151,33 +149,17 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ActivityEnrollValidVo activityEnrollValid(Long activityId) {
+    public ActivityEnrollValidVo activityEnrollValid(Long activityId) throws IOException {
         ActivityEnrollValidVo vo = new ActivityEnrollValidVo();
-        // TODO   由于用户模块暂未接入，无法获取用户信息， 使用随机结果进行测试
-//        Long userId = 0L;
-//        int powerNum = activityUserMapper.selectPowerNum(activityId, userId);
-//        if (powerNum > 0) {
-//            //有权限
-//            vo.setPowerFlag(true);
-//        }
-//        int enrollNum = applicationMapper.selectEnrollNum(activityId, userId);
-//        if (enrollNum > 0) {
-//            //报名过
-//            vo.setEnrollFlag(true);
-//        }
-        Random ra =new Random();
-        int num = ra.nextInt(3)+1;
-        if (num == 1) {
-            //测试没权限
-            vo.setPowerFlag(false);
-        } else if (num == 2) {
-            //测试报名过
+        List<ActivityUser> activityUsers = activityUserMapper.selectByActivityId(activityId);
+        Long userId = sysUserUtil.getSysUserByRedis().getSysUser().getId();
+        if (activityUsers.stream().anyMatch(u -> u.getUserId().equals(userId))) {
             vo.setPowerFlag(true);
+        }
+        int enrollNum = applicationMapper.selectEnrollNum(activityId, userId);
+        if (enrollNum > 0) {
+            //报名过
             vo.setEnrollFlag(true);
-        } else {
-            //测试可以报名
-            vo.setPowerFlag(true);
-            vo.setEnrollFlag(false);
         }
         return vo;
     }

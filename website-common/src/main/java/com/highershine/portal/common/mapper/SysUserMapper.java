@@ -1,6 +1,7 @@
 package com.highershine.portal.common.mapper;
 
 
+import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,11 @@ public interface SysUserMapper {
      * @return
      */
     List<ActivityPlayerVo> getActivityPlayerList();
+
+    /**
+     * 根据用户名查询
+     * @param username
+     * @return
+     */
+    SysUser selectByUsername(String username);
 }

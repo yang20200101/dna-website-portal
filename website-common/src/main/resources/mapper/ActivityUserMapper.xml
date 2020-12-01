@@ -20,6 +20,7 @@
      user_id as userId,
      activity_id as activityId
     from po_activity_user
+    where activity_id = #{id,jdbcType=BIGINT}
   </select>
 
     <select id="selectPlayersByActivityId" parameterType="java.lang.Long" resultType="com.highershine.portal.common.entity.vo.ActivityPlayerVo">

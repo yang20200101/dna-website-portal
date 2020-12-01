@@ -11,4 +11,35 @@
     order by convert_to(nickname, 'GBK')
   </select>
 
+  <select id="selectByUsername" resultType="com.highershine.portal.common.entity.po.SysUser">
+    select
+    id,
+    username,
+    nickname,
+    password,
+    province,
+    server_nos as serverNos,
+    id_card_no as idCardNo,
+    birth_date as birthDate,
+    gender,
+    phone,
+    org_code as orgCode,
+    lab_name as labName,
+    remark,
+    city,
+    is_add_org as isAddOrg,
+    area,
+    job,
+    org_add_code as orgAddCode,
+    org_add_name as orgAddName,
+    lab_code as labCode,
+    status,
+    delete_flag as deleteFlag,
+    create_datetime as createDatetime,
+    update_datetime as updateDatetime
+    from sys_user
+    where delete_flag = false
+    and status = true
+    and username = #{username, jdbcType=VARCHAR}
+  </select>
 </mapper>

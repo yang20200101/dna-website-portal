@@ -4,6 +4,7 @@ package com.highershine.portal.common.service;
 import com.highershine.portal.common.entity.dto.ActivityDTO;
 import com.highershine.portal.common.entity.vo.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -61,12 +62,12 @@ public interface ActivityService {
      * @param activityId
      * @param thumbnailId
      */
-    void activityEnroll(Long activityId, Long thumbnailId);
+    void activityEnroll(Long activityId, Long thumbnailId) throws IOException;
 
     /**
      * 活动报名校验
      * @param activityId
      * @return
      */
-    ActivityEnrollValidVo activityEnrollValid(Long activityId);
+    ActivityEnrollValidVo activityEnrollValid(Long activityId) throws IOException;
 }
