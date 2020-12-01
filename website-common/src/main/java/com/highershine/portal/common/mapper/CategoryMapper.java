@@ -21,6 +21,8 @@ public interface CategoryMapper {
 
     Category selectByPrimaryKey(Long id);
 
+    CategoryVo selectVoByPrimaryKey(Long id);
+
     int updateByPrimaryKey(Category record);
 
     /**

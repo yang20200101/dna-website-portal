@@ -69,4 +69,7 @@ public class ArticleDTO extends BaseDTO{
     //添加栏目别名查询字段
     @ApiModelProperty(value = "文章栏目别名", name = "categoryAlias", example = "GZDT", dataType = "string")
     private String categoryAlias;
+
+    @ApiModelProperty(value = "首页搜索关键字", example = "改革开放", required = false)
+    private String keyword;
 }

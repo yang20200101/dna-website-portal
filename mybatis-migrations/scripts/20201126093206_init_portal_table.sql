@@ -306,6 +306,45 @@ commit;
 );
 ALTER TABLE public.SYS_REGIONALISM OWNER to dna_portal;
 
+ CREATE TABLE IF NOT EXISTS SYS_DICT_CATEGORY (
+    id SERIAL8 NOT NULL PRIMARY KEY,
+		DICT_CATEGORY_CODE	VARCHAR(64) NOT NULL,
+		DICT_CATEGORY_NAME	VARCHAR(256) NOT NULL,
+		DICT_CATEGORY_DESC	VARCHAR(256),
+		ord	INT8 NOT NULL
+);
+ALTER TABLE public.SYS_DICT_CATEGORY
+    OWNER to dna_portal;
+
+-- 字典详情表
+ CREATE TABLE IF NOT EXISTS SYS_DICT (
+ id SERIAL8 NOT NULL PRIMARY KEY,
+	DICT_CATEGORY	VARCHAR(64) NOT NULL,
+	DICT_KEY	VARCHAR(64),
+	DICT_NATIONAL_KEY	VARCHAR(64),
+	DICT_VALUE1	VARCHAR(512),
+	DICT_VALUE2	VARCHAR(2000),
+	DICT_VALUE3	VARCHAR(512),
+	ORD	INT8 NOT NULL,
+	ACTIVE_FLAG	BOOLEAN,
+	REMARK	VARCHAR(256),
+	CREATE_USER	VARCHAR(64) NOT NULL,
+	CREATE_DATETIME	TIMESTAMP NOT NULL,
+	UPDATE_USER	VARCHAR(64),
+	UPDATE_DATETIME	TIMESTAMP,
+	DELETE_FLAG	BOOLEAN DEFAULT FALSE
+);
+ALTER TABLE public.SYS_DICT
+    OWNER to dna_portal;
+
+INSERT INTO public.sys_dict_category(dict_category_code,dict_category_name,dict_category_desc,ord)
+VALUES ('GENDER', '性别', '', 1);
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
+VALUES ('GENDER', '1', '1', '男', NULL, NULL, 1, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
+VALUES ('GENDER', '2', '2', '女', NULL, NULL, 2, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+commit;
+
 -- //@UNDO
 -- SQL to undo the change goes here.
 

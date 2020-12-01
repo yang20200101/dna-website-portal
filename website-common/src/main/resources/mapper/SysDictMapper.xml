@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.highershine.portal.common.mapper.SysDictMapper" >
+  <!--插入-->
+  <insert id="insertSysDict" parameterType="com.highershine.portal.common.entity.po.SysDict"
+          useGeneratedKeys="true" keyProperty="id">
+    insert into sys_dict (
+      DICT_CATEGORY,
+      DICT_KEY,
+      DICT_NATIONAL_KEY,
+      DICT_VALUE1,
+      DICT_VALUE2,
+      DICT_VALUE3,
+      ORD,
+      ACTIVE_FLAG,
+      REMARK,
+      CREATE_USER,
+      CREATE_DATETIME,
+      UPDATE_USER,
+      UPDATE_DATETIME,
+      DELETE_FLAG
+      )
+    values (
+      #{dictCategory,jdbcType=VARCHAR},
+      #{dictKey,jdbcType=VARCHAR},
+      #{dictNationalKey,jdbcType=VARCHAR},
+      #{dictValue1,jdbcType=VARCHAR},
+      #{dictValue2,jdbcType=VARCHAR},
+      #{dictValue3,jdbcType=VARCHAR},
+      #{ord,jdbcType=BIGINT},
+      #{activeFlag,jdbcType=BIT},
+      #{remark,jdbcType=VARCHAR},
+      #{createUser,jdbcType=VARCHAR},
+      #{createDatetime,jdbcType=TIMESTAMP},
+      #{updateUser,jdbcType=VARCHAR},
+      #{updateDatetime,jdbcType=TIMESTAMP},
+      #{deleteFlag,jdbcType=BIT}
+      )
+  </insert>
+
+  <!--更新-->
+  <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.SysDict" >
+    update sys_dict
+    <set>
+      DICT_CATEGORY = #{dictCategory,jdbcType=VARCHAR},
+      DICT_KEY = #{dictKey,jdbcType=VARCHAR},
+      DICT_NATIONAL_KEY = #{dictNationalKey,jdbcType=VARCHAR},
+      DICT_VALUE1 = #{dictValue1,jdbcType=VARCHAR},
+      DICT_VALUE2 = #{dictValue2,jdbcType=VARCHAR},
+      DICT_VALUE3 = #{dictValue3,jdbcType=VARCHAR},
+      ORD = #{ord,jdbcType=BIGINT},
+      ACTIVE_FLAG = #{activeFlag,jdbcType=BIT},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_DATETIME = #{createDatetime,jdbcType=TIMESTAMP},
+      UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      UPDATE_DATETIME = #{updateDatetime,jdbcType=TIMESTAMP},
+      DELETE_FLAG = #{deleteFlag,jdbcType=BIT},
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <!--根据id查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long"
+          resultType="com.highershine.portal.common.entity.po.SysDict"> 
+    select
+      sd.id as id,
+      sd.DICT_CATEGORY as dictCategory,
+      sd.DICT_KEY as dictKey,
+      sd.DICT_NATIONAL_KEY as dictNationalKey,
+      sd.DICT_VALUE1 as dictValue1,
+      sd.DICT_VALUE2 as dictValue2,
+      sd.DICT_VALUE3 as dictValue3,
+      sd.ORD as ord,
+      sd.ACTIVE_FLAG as activeFlag,
+      sd.REMARK as remark,
+      sd.CREATE_USER as createUser,
+      sd.CREATE_DATETIME as createDatetime,
+      sd.UPDATE_USER as updateUser,
+      sd.UPDATE_DATETIME as updateDatetime,
+      sd.DELETE_FLAG as deleteFlag
+    from sys_dict sd
+    where sd.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--根据类别查询-->
+  <select id="selectSysDictListByCategory" parameterType="string"
+          resultType="com.highershine.portal.common.entity.po.SysDict">
+    select
+      sd.id as id,
+      sd.DICT_CATEGORY as dictCategory,
+      sd.DICT_KEY as dictKey,
+      sd.DICT_NATIONAL_KEY as dictNationalKey,
+      sd.DICT_VALUE1 as dictValue1,
+      sd.DICT_VALUE2 as dictValue2,
+      sd.DICT_VALUE3 as dictValue3,
+      sd.ORD as ord,
+      sd.ACTIVE_FLAG as activeFlag,
+      sd.REMARK as remark,
+      sd.CREATE_USER as createUser,
+      sd.CREATE_DATETIME as createDatetime,
+      sd.UPDATE_USER as updateUser,
+      sd.UPDATE_DATETIME as updateDatetime,
+      sd.DELETE_FLAG as deleteFlag
+    from sys_dict sd
+    where sd.delete_flag is false
+      and sd.dict_category = #{category}
+      order by sd.ord
+  </select>
+
+  <!--根据类别查询-->
+  <select id="selectSysDictVoListByCategory" parameterType="string"
+          resultType="com.highershine.portal.common.entity.vo.SysDictVo">
+    select
+      sd.id as id,
+      sd.DICT_KEY as dictKey,
+      sd.DICT_VALUE1 as dictValue1,
+      sd.ORD as ord
+    from sys_dict sd
+    where sd.delete_flag is false
+      and sd.active_flag is true
+      and sd.dict_category = #{category}
+      order by sd.ord
+  </select>
+
+
+
+  <!--根据id删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_dict sd where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+</mapper>

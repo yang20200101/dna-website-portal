@@ -41,3 +41,10 @@ minio:
   maxConnections: 10
   maxErrorRetry: 50
   socketTimeOut: 10000
+
+# person_query接口调用配置
+person:
+  query:
+    addr: http://192.168.10.58/person_query/personQuery
+    salt: 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/
+    systemkey: 3e977d01-7f7b-4d59-ad7c-36e6e46a929d

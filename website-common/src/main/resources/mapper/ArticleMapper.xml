@@ -91,6 +91,13 @@
     <if test="categoryId != null">
      and category_id = #{categoryId,jdbcType=BIGINT}
     </if>
+    <if test="isFocus != null">
+      and is_focus = #{isFocus,jdbcType=BIT}
+    </if>
+    <if test="keyword != null and keyword != ''">
+      and  (title like concat('%',#{keyword, jdbcType=VARCHAR},'%')
+      or content like concat('%',#{keyword, jdbcType=VARCHAR},'%'))
+    </if>
   </select>
 
  <!--根据草稿ID假删除-->

@@ -15,9 +15,11 @@ public interface ArticleService {
     /**
      * 获取文章列表
      * @return
+     * @param endPoint
+     * @param bucketName
      * @param articleDTO
      */
-    List<ArticleVo> getArticleList(ArticleDTO articleDTO) throws Exception;
+    List<ArticleVo> getArticleList(String endPoint, String bucketName, ArticleDTO articleDTO) throws Exception;
 
     /**
      * 根据ID查询文章详情

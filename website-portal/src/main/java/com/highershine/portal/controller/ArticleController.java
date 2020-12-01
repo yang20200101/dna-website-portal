@@ -10,6 +10,7 @@ import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.ArticleService;
 import com.highershine.portal.common.utils.ResultUtil;
+import com.highershine.portal.config.MinIOPropertyConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +29,10 @@ import java.util.List;
 @RequestMapping("article")
 @Api(description = "文章相关接口")
 public class ArticleController {
-
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private MinIOPropertyConfig minIOPropertyConfig;
 
     /**
      * 获取文章列表
@@ -45,7 +47,8 @@ public class ArticleController {
         }
         try {
             PageHelper.startPage(articleDTO.getCurrent(), articleDTO.getPageSize());
-            List<ArticleVo> articleVoList = articleService.getArticleList(articleDTO);
+            List<ArticleVo> articleVoList = articleService.getArticleList(minIOPropertyConfig.getEndPoint(),
+                    minIOPropertyConfig.getBucketName(), articleDTO);
             PageInfo<ArticleVo> articleVoPageInfo = new PageInfo<>(articleVoList);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, articleVoPageInfo);
         } catch (Exception e) {

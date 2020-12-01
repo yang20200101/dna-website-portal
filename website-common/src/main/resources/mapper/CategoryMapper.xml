@@ -113,4 +113,19 @@
       and id != #{id,jdbcType=BIGINT}
     </if>
   </select>
+
+  <select id="selectVoByPrimaryKey" parameterType="java.lang.Long" resultType="com.highershine.portal.common.entity.vo.CategoryVo">
+    select
+    id,
+    name,
+    alias,
+    sort,
+    remark,
+    deleted,
+    status,
+    created_at as createdAt,
+    updated_at as updatedAt
+    from po_category
+    where id = #{id,jdbcType=BIGINT}
+  </select>
 </mapper>
