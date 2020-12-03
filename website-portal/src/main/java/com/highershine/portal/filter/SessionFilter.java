@@ -40,6 +40,7 @@ public class SessionFilter implements Filter {
     // 不需要登录就可以访问的路径(比如:注册登录等)
     String[] includeUrls = new String[]{
             "/web-portal/su/login",
+            "/web-portal/su/logout",
             "/su/login",
             "/web-portal/region/getTree",
             "region/getTree",
@@ -50,6 +51,12 @@ public class SessionFilter implements Filter {
             "/su/delete",
             "/su/register/valid",
             "/version",
+            "/article/getList",
+            "/article/find",
+            "/advertisement/list",
+            "/categoryget/getCategoryList",
+            "/categoryget/find",
+            "/advertisement/list",
             "/_health"};
 
     // swagger 相关接口

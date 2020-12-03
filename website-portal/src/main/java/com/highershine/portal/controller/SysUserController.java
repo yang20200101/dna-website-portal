@@ -130,6 +130,23 @@ public class SysUserController {
         return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, sysUserLoginVo);
     }
 
+    /**
+     * 系统登出接口异常
+     * @return
+     */
+    @GetMapping("logout")
+    @ApiOperation("系统登出接口(薛博仁)")
+    public Result logout() {
+        try {
+            valueOperations.set(RedisConstant.REDIS_LOGIN
+                    + sysUserUtil.getJessionId(), "", 1, TimeUnit.MICROSECONDS);
+        } catch (Exception e) {
+            log.error("【用户登录】系统登出接口异常， 异常信息：{}", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+    }
+
 
     /**
      * 获取用户信息
