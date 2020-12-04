@@ -47,3 +47,17 @@ person:
     addr: http://192.168.10.58/person_query/personQuery
     salt: 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/
     systemkey: 3e977d01-7f7b-4d59-ad7c-36e6e46a929d
+
+oauth2-server-url: http://192.168.10.182:8080
+
+security:
+  oauth2:
+    client:
+      client-id: website
+      client-secret: 2020
+      user-authorization-uri: ${oauth2-server-url}/oauth/authorize
+      access-token-uri: ${oauth2-server-url}/oauth/token
+    resource:
+      jwt:
+        key-uri: ${oauth2-server-url}/oauth/token_key
+        key-value: highershine-jwt-key

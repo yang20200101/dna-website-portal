@@ -1,23 +1,44 @@
 package com.highershine.portal.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @Description: Cross-origin resource sharing Setting
  * @Author: mizhanlei
  * @Date: 2019/12/2 14:57
  */
-@Configuration
-public class CorsConfig extends WebMvcConfigurerAdapter {
+@Component
+public class CorsConfig implements Filter {
+
+    Logger logger= LoggerFactory.getLogger(CorsConfig.class);
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowCredentials(true)
-                .allowedMethods("GET", "POST", "DELETE", "PUT")
-                .maxAge(3600);
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request= (HttpServletRequest) servletRequest;
+        HttpServletResponse response= (HttpServletResponse) servletResponse;
+        response.setHeader("Access-Control-Allow-Origin",request.getHeader("origin"));
+        response.setHeader("Access-Control-Allow-Origin","*");  //允许跨域访问的域
+        response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,DELETE,PUT");  //允许使用的请求方法
+        response.setHeader("Access-Control-Expose-Headers","*");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,Cache-Control,Pragma,Content-Type,Authorization");  //允许使用的请求方法
+        response.setHeader("Access-Control-Allow-Credentials","true");//是否允许请求带有验证信息
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }

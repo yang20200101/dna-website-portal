@@ -7,6 +7,7 @@ import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.SysDictCategoryService;
 import com.highershine.portal.common.service.SysDictService;
 import com.highershine.portal.common.utils.ResultUtil;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -67,8 +70,18 @@ public class SysDictController {
             @ApiParam(value = "字典类别",
                     example = "GENDER",
                     required = true)
-            @PathVariable("category") String category) {
+            @PathVariable("category") String category, HttpServletRequest request) {
         List<SysDictVo> list;
+        try {
+            String header = request.getHeader("Authorization");
+            String token = header.substring(header.lastIndexOf("bearer") + 7);
+            log.error("JWT【" + Jwts.parser()
+                    .setSigningKey("highershine-jwt-key".getBytes(StandardCharsets.UTF_8))
+                    .parseClaimsJws(token)
+                    .getBody()+ "】");
+        } catch (Exception e) {
+
+        }
         try {
             // 执行查询
             list = this.sysDictService.selectSysDictVoListByCategory(category);

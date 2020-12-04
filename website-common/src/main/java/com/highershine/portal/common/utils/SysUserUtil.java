@@ -2,9 +2,9 @@ package com.highershine.portal.common.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highershine.portal.common.constants.CommonConstant;
-import com.highershine.portal.common.constants.RedisConstant;
 import com.highershine.portal.common.entity.bo.SysUserBo;
 import com.highershine.portal.common.entity.po.SysUserRole;
+import com.highershine.portal.common.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -26,13 +26,16 @@ public class SysUserUtil {
     private ValueOperations valueOperations;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private SysUserService sysUserService;
     // mapper 声明
     private final ObjectMapper mapper = new ObjectMapper();
 
     public SysUserBo getSysUserByRedis() throws IOException {
         String jsessionid = getJessionId();
         //获取用户权限
-        SysUserBo sysUserBo = mapper.readValue(valueOperations.get(RedisConstant.REDIS_LOGIN + jsessionid).toString(), SysUserBo.class);
+        SysUserBo sysUserBo = sysUserService.selectByUsername("admin");
+//        SysUserBo sysUserBo = mapper.readValue(valueOperations.get(RedisConstant.REDIS_LOGIN + jsessionid).toString(), SysUserBo.class);
         return sysUserBo;
     }
 

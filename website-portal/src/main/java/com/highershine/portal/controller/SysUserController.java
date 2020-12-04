@@ -67,7 +67,7 @@ public class SysUserController {
     public Result submitLogin() {
         // 与mongoDB加密保持一致
         String password = "123456";
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2B);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         //encodeResult 为需要存入数据中加盐加密后的密码
         String encodeResult = bCryptPasswordEncoder.encode(password);
         //登录时 将用户输入的密码 与 数据库中存储的密码 做校验
