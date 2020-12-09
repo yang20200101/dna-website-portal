@@ -1,5 +1,6 @@
 package com.highershine.oauth2.server.config;
 
+import com.highershine.oauth2.server.utils.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -24,7 +25,7 @@ public class JwtTokenStoreConfig {
         JwtAccessTokenConverter accessTokenConverter = new
                 JwtAccessTokenConverter();
         //配置JWT使用的秘钥
-        accessTokenConverter.setSigningKey("highershine-jwt-key");
+        accessTokenConverter.setSigningKey(JwtUtils.SECRET);
         return accessTokenConverter;
     }
 

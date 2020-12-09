@@ -1,14 +1,17 @@
 package com.highershine.oauth2.server.service;
 
+import com.highershine.oauth2.server.entity.SysRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description: userDetailsService实现类
@@ -32,7 +35,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //        String password = "$2b$10$JPrw5a13QDfMHtmoTPzGoOG586HxExfXmRQ/fpf7oQH3UzSejpX36";
         log.info("【登录】MM：{}", password);
         log.info("【登录】MM：{}", passwordEncoder.encode("2020"));
-        return new SysUser("admin", password,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_admin, /index.html"));
+        List<SysRole> authorities = new ArrayList<>();
+        authorities.add(new SysRole(1L,"ROLE_admin"));
+        authorities.add(new SysRole(2L,"admin"));
+        SysUser sysUser = new SysUser();
+        sysUser.setUsername(username);
+        sysUser.setPassword(password);
+        sysUser.setAuthorities(authorities);
+        return sysUser;
     }
 }
