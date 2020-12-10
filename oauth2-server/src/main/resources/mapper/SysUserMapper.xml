@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.oauth2.server.mapper.SysUserMapper">
+
+  <resultMap id="selectByUsernameMap" type="com.highershine.oauth2.server.entity.SysUser">
+    <id property="id" column="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="server_nos" jdbcType="VARCHAR" property="serverNos" />
+    <result column="id_card_no" jdbcType="VARCHAR" property="idCardNo" />
+    <result column="birth_date" jdbcType="TIMESTAMP" property="birthDate" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+    <result column="lab_name" jdbcType="VARCHAR" property="labName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="is_add_org" jdbcType="BIT" property="isAddOrg" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="org_add_code" jdbcType="VARCHAR" property="orgAddCode" />
+    <result column="org_add_name" jdbcType="VARCHAR" property="orgAddName" />
+    <result column="lab_code" jdbcType="VARCHAR" property="labCode" />
+    <collection property="sysRoleList" ofType="com.highershine.oauth2.server.entity.SysRole">
+      <id property="id" column="roleId"/>
+      <result property="role" column="role"/>
+    </collection>
+  </resultMap>
+
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="selectByUsernameMap">
+    select
+    su.id,
+    su.username,
+    su.nickname,
+    su.password,
+    su.province,
+    su.server_nos,
+    su.id_card_no,
+    su.birth_date,
+    su.gender,
+    su.phone,
+    su.org_code,
+    su.lab_name,
+    su.remark,
+    su.city,
+    su.is_add_org,
+    su.area,
+    su.job,
+    su.org_add_code,
+    su.org_add_name,
+    su.lab_code,
+    sr.id as roleId,
+    sr.ext_id as role
+    from sys_user su
+    left join sys_user_role sur on sur.user_id = su.id
+    left join sys_role sr on  sur.role_id =sr.id
+    where su.delete_flag = false
+    and su.status = true
+    and sr.active_flag = true
+    and su.username = #{username, jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -12,8 +12,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -54,10 +57,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //登录超时 未登录
         http.exceptionHandling().authenticationEntryPoint(new LoginExpireHandler());
         // rest无状态 无session
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // 配置token验证过滤器
-//        http.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterAfter(createApiAuthenticationFilter(), FilterSecurityInterceptor.class);
+        http.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(createApiAuthenticationFilter(), FilterSecurityInterceptor.class);
 
        /* http.authorizeRequests()
                 .antMatchers("/oauth/**", "/login/**", "/logout/**", "/user/**")
