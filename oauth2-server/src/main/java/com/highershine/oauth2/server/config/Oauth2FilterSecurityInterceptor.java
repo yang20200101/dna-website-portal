@@ -75,7 +75,7 @@ public class Oauth2FilterSecurityInterceptor extends AbstractSecurityInterceptor
         response.setHeader("Access-Control-Allow-Origin", origin);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "*");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token,Authorization");
         response.setHeader("Access-Control-Expose-Headers", "*");
     }
 
