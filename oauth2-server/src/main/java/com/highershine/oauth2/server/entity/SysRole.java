@@ -7,10 +7,5 @@ import org.springframework.security.core.GrantedAuthority;
 public class SysRole implements GrantedAuthority {
     private Long id;
 
-    private String role;
-
-    @Override
-    public String getAuthority() {
-        return role;
-    }
+    private String authority;
 }

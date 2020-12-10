@@ -23,9 +23,9 @@
     <result column="org_add_code" jdbcType="VARCHAR" property="orgAddCode" />
     <result column="org_add_name" jdbcType="VARCHAR" property="orgAddName" />
     <result column="lab_code" jdbcType="VARCHAR" property="labCode" />
-    <collection property="sysRoleList" ofType="com.highershine.oauth2.server.entity.SysRole">
+    <collection property="authorities" ofType="com.highershine.oauth2.server.entity.SysRole">
       <id property="id" column="roleId"/>
-      <result property="role" column="role"/>
+      <result property="authority" column="role"/>
     </collection>
   </resultMap>
 
