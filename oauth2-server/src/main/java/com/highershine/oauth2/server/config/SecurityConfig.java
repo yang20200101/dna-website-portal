@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -28,16 +29,16 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     @Autowired
     private DataSource dataSource;
-
-
     @Autowired
     private PersistentTokenRepository jdbcTokenRepository;
-
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private Oauth2AccessDecisionManager accessDecisionManager;
+    @Autowired
+    private Oauth2FilterInvocationSecurityMetadataSource securityMetadataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -57,6 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // 配置token验证过滤器
         http.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(createApiAuthenticationFilter(), FilterSecurityInterceptor.class);
 
        /* http.authorizeRequests()
                 .antMatchers("/oauth/**", "/login/**", "/logout/**", "/user/**")
@@ -75,6 +77,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable();*/
     }
 
+    /**
+     * API权限控制
+     * 过滤器优先度在 FilterSecurityInterceptor 之后
+     * spring-security 的默认过滤器列表见 https://docs.spring.io/spring-security/site/docs/5.0.0.M1/reference/htmlsingle/#ns-custom-filters
+     *
+     * @return
+     */
+    private Oauth2FilterSecurityInterceptor createApiAuthenticationFilter() throws Exception {
+        Oauth2FilterSecurityInterceptor interceptor = new Oauth2FilterSecurityInterceptor();
+        interceptor.setAuthenticationManager(authenticationManagerBean());
+        interceptor.setAccessDecisionManager(accessDecisionManager);
+        interceptor.setSecurityMetadataSource(securityMetadataSource);
+        return interceptor;
+    }
 
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
