@@ -1,9 +1,12 @@
 package com.highershine.oauth2.server.entity;
 
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,11 +22,44 @@ public class SysUser implements UserDetails {
     /* 用户名 */
     private String username;
 
-    /* 用户密码 */
     private String password;
 
+    private String nickname;
+
+    private String province;
+
+    private String serverNos;
+
+    private String idCardNo;
+
+    private Date birthDate;
+
+    private String gender;
+
+    private String phone;
+
+    private String orgCode;
+
+    private String labName;
+
+    private String remark;
+
+    private String city;
+
+    private Boolean isAddOrg;
+
+    private String area;
+
+    private String job;
+
+    private String orgAddCode;
+
+    private String orgAddName;
+
+    private String labCode;
+
     /* 角色列表 */
-    private List<SysRole> authorities = new ArrayList<>();
+    private List<SysRole> sysRoleList = new ArrayList<>();
 
     /* 指示是否未过期的用户的凭据(密码),过期的凭据防止认证 默认true 默认表示未过期 */
     private boolean credentialsNonExpired = true;
@@ -38,5 +74,9 @@ public class SysUser implements UserDetails {
     private boolean enabled = true;
 
 
-
+    /* 获取当前用户角色列表 */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return sysRoleList;
+    }
 }

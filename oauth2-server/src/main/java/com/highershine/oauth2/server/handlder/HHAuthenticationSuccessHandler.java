@@ -34,11 +34,6 @@ public class HHAuthenticationSuccessHandler implements AuthenticationSuccessHand
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         SysUser user = (SysUser) authentication.getPrincipal();
-        log.info("【登录】用户名：{}", user.getUsername());
-        // 密码保护， 输出null
-        log.info("【登录】密码：{}", user.getPassword());
-        log.info("【登录】权限：{}", user.getAuthorities());
-
         Result result = null;
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         boolean loginBoolean = true;
@@ -52,7 +47,7 @@ public class HHAuthenticationSuccessHandler implements AuthenticationSuccessHand
         payload.put("exp",now + JwtUtils.EXPIRE_TIME); //过期时间
         payload.put("nbf",now); //生效时间
         payload.put("iat",now); //签发时间
-        payload.put("jti", "001"); //编号
+        payload.put("jti", user.getId()); //编号
         payload.put("sub","JWT-TEST"); //主题
         payload.put("user",user); //用户对象
 
@@ -63,6 +58,11 @@ public class HHAuthenticationSuccessHandler implements AuthenticationSuccessHand
         }
         if (loginBoolean){
             result = ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+            log.info("【登录】用户名：{}登录成功", user.getUsername());
+            // 密码保护， 输出null
+            log.info("【登录】密码：{}", user.getPassword());
+            log.info("【登录】权限：{}", user.getAuthorities());
+
         }else{
             result = ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }

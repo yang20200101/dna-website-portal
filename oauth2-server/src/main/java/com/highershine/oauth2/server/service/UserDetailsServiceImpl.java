@@ -1,17 +1,17 @@
 package com.highershine.oauth2.server.service;
 
-import com.highershine.oauth2.server.entity.SysRole;
 import com.highershine.oauth2.server.entity.SysUser;
+import com.highershine.oauth2.server.exception.MyUsernameNotFoundException;
+import com.highershine.oauth2.server.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Description: userDetailsService实现类
@@ -21,27 +21,21 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private SysUserMapper sysUserMapper;
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (!"admin".equals(username)) {
-            throw new UsernameNotFoundException(username + " is not exists!");
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
+        if (sysUser == null) {
+            throw new MyUsernameNotFoundException(username + " is not exists!");
+        }
+        if (!BCrypt.checkpw(request.getParameter("password"), sysUser.getPassword())) {
+            throw new MyUsernameNotFoundException(username + " password error!");
         }
 
-        String password = passwordEncoder.encode("123456");
-//        String password = "$2b$10$JPrw5a13QDfMHtmoTPzGoOG586HxExfXmRQ/fpf7oQH3UzSejpX36";
-        log.info("【登录】MM：{}", password);
-        log.info("【登录】MM：{}", passwordEncoder.encode("2020"));
-        List<SysRole> authorities = new ArrayList<>();
-        authorities.add(new SysRole(1L,"ROLE_admin"));
-        authorities.add(new SysRole(2L,"admin"));
-        SysUser sysUser = new SysUser();
-        sysUser.setUsername(username);
-        sysUser.setPassword(password);
-        sysUser.setAuthorities(authorities);
         return sysUser;
     }
 }

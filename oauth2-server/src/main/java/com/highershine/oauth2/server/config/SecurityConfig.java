@@ -2,6 +2,7 @@ package com.highershine.oauth2.server.config;
 
 import com.highershine.oauth2.server.handlder.HHAuthenticationSuccessHandler;
 import com.highershine.oauth2.server.handlder.LoginExpireHandler;
+import com.highershine.oauth2.server.handlder.LoginFailureHandler;
 import com.highershine.oauth2.server.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated();
         //登录页面
         http.formLogin().loginProcessingUrl("/login");
-        // 登录成功处理
-        http.formLogin().successHandler(new HHAuthenticationSuccessHandler());
+        // 登录成功或失败处理
+        http.formLogin().successHandler(new HHAuthenticationSuccessHandler())
+                .failureHandler(new LoginFailureHandler());
         // 登出授权
         http.logout().permitAll();
         //登录超时 未登录

@@ -2,9 +2,11 @@ package com.highershine.oauth2.server.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.highershine.oauth2.server.entity.Result;
 import com.highershine.oauth2.server.entity.SysUser;
+import com.highershine.oauth2.server.enums.ResultEnum;
 import com.highershine.oauth2.server.utils.JwtUtils;
+import com.highershine.oauth2.server.utils.ResultUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,15 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class SysUserController {
 
-    public final ObjectMapper MAPPER = new ObjectMapper();
-
     @RequestMapping("/user/userInfo")
-    public Object getUserInfo(HttpServletRequest request) throws Exception {
+    public Result<SysUser> getUserInfo(HttpServletRequest request) throws Exception {
         String token = request.getHeader(JwtUtils.HEADER_TOKEN_NAME);
         String tokenBody = JwtUtils.testJwt(token);
         JSONObject user = JSON.parseObject(tokenBody).getJSONObject("user");
         SysUser sysUser = JSON.toJavaObject(user,SysUser.class);
-        return MAPPER.writeValueAsString(sysUser);
+        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, sysUser);
     }
 
 
