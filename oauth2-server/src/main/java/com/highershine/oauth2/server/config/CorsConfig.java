@@ -1,14 +1,8 @@
-package com.highershine.portal.config;
+package com.highershine.oauth2.server.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-/**
- * @Description: Cross-origin resource sharing Setting
- * @Author: mizhanlei
- * @Date: 2019/12/2 14:57
- */
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {

@@ -5,7 +5,7 @@ server:
     context-path: /web-portal
     session:
       cookie:
-        name: OAUTH2-ZTHZ-SESSIONID
+        name: OAUTH2-PORTAL-SESSIONID
 
 #执行Profiles为dev的yml配置文件
 # application-{profiles}.yml

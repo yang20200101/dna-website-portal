@@ -7,21 +7,21 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.io.IOException;
+
 /**
- * @Description: TODO
- * @Author: mizhanlei
- * @Date: 2020/12/1 22:13
+ * jwt token配置
  */
 @Configuration
 public class JwtTokenStoreConfig {
 
     @Bean
-    public TokenStore jwtTokenStore() {
+    public TokenStore jwtTokenStore()throws IOException {
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+    public JwtAccessTokenConverter jwtAccessTokenConverter() throws IOException {
         JwtAccessTokenConverter accessTokenConverter = new
                 JwtAccessTokenConverter();
         //配置JWT使用的秘钥

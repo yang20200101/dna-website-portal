@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 /**
  * @Author zxk
  * @Date 2020/11/12 15:20
- * @Description TODO
+ * @Description
  */
 @Data
 @ApiModel("飘窗DTO类")

@@ -6,6 +6,7 @@ import com.highershine.portal.common.constants.RedisConstant;
 import com.highershine.portal.common.constants.RedisTimeoutConstant;
 import com.highershine.portal.common.entity.bo.SysUserBo;
 import com.highershine.portal.common.entity.dto.LoginDTO;
+import com.highershine.portal.common.entity.dto.TokenDTO;
 import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.entity.vo.SysUserLoginVo;
 import com.highershine.portal.common.entity.vo.SysUserVo;
@@ -23,10 +24,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -35,6 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,10 +55,10 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("su")
 @Api(description = "系统用户相关接口")
 public class SysUserController {
-
     @Autowired
     private ValueOperations valueOperations;
-
+    @Autowired
+    private RestTemplate restTemplate;
     @Autowired
     private SysUserService sysUserService;
     @Autowired
@@ -61,6 +69,36 @@ public class SysUserController {
 
     @Value("${manage.session.timeout}")
     private long timeout;
+
+
+    @GetMapping("token")
+    @ApiOperation("获取token")
+    public Result submitLogin(String code) throws Exception {
+        RequestEntity httpEntity = new RequestEntity<>(getHttpBody(code), getHttpHeaders(),
+                HttpMethod.POST, URI.create("http://192.168.10.182:8080/oauth/token"));
+        ResponseEntity<TokenDTO> exchange = restTemplate.exchange(httpEntity, TokenDTO.class);
+        if (exchange.getStatusCode().is2xxSuccessful()) {
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, exchange.getBody());
+        }
+        throw new RuntimeException("请求令牌失败！");
+    }
+
+    private MultiValueMap<String, String> getHttpBody(String code) throws UnsupportedEncodingException {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", code);
+        params.add("grant_type", "authorization_code");
+        params.add("redirect_uri", "http://192.168.10.182:8008/web-portal/su/token");
+        params.add("scope", "all");
+        return params;
+    }
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBasicAuth("website", "2020");
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        return httpHeaders;
+    }
 
     @PostMapping("register")
     @ApiOperation("用户注册接口(待开发)")
@@ -154,7 +192,7 @@ public class SysUserController {
      * @param request
      * @return
      */
-    @GetMapping("userInfo")
+    @GetMapping(value={"userInfo", "userInfo/admin"})
     @ApiOperation("获取用户信息接口(薛博仁)")
     public Result<SysUserVo> queryUserInfo(HttpServletRequest request) {
         try {

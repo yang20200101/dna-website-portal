@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * @Author zxk
  * @Date 2020/11/12 14:49
- * @Description TODO
+ * @Description
  */
 @Data
 public class BaseDTO {

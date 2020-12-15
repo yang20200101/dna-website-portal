@@ -2,7 +2,7 @@ package com.highershine.oauth2.server.handlder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highershine.oauth2.server.entity.Result;
-import com.highershine.oauth2.server.enums.HttpStatusEnum;
+import com.highershine.oauth2.server.enums.ExceptionEnum;
 import com.highershine.oauth2.server.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -24,11 +24,11 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        Result result = ResultUtil.errorResult(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(),
+        Result result = ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION.getCode(),
                 "登录失败");
         String username = request.getParameter("username");
         if (e.getMessage().contains("is not exists") || e.getMessage().contains("password error")) {
-            result = ResultUtil.errorResult(HttpStatusEnum.NOT_FOUND.getCode(),
+            result = ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION.getCode(),
                     "用户或密码错误");
         }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

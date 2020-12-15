@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Description: TODO
- * @Author: mizhanlei
- * @Date: 2020/12/1 22:32
+ * jwt token 定制
  */
 public class JwtTokenEnhancer implements TokenEnhancer {
 
@@ -20,10 +18,7 @@ public class JwtTokenEnhancer implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
         SysUser sysUser = (SysUser) oAuth2Authentication.getPrincipal();
         Map<String, Object> map = new HashMap<>();
-        map.put("name", sysUser.getUsername());
-        map.put("authorities", sysUser.getAuthorities());
-        map.put("idCardNo", "sysUser.idCardNo");
-        map.put("orgCode", "sysUser.orgCode");
+        map.put("user", sysUser);
         ((DefaultOAuth2AccessToken)oAuth2AccessToken).setAdditionalInformation(map);
         return oAuth2AccessToken;
     }
