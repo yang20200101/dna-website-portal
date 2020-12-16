@@ -1,7 +1,7 @@
 package com.highershine.oauth2.server.handlder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.highershine.oauth2.server.entity.Result;
+import com.highershine.oauth2.server.entity.SysRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import com.highershine.oauth2.server.enums.ResultEnum;
 import com.highershine.oauth2.server.utils.ResultUtil;
@@ -33,17 +33,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         SysUser user = (SysUser) authentication.getPrincipal();
-        Result result = null;
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        HashMap<Object, Object> map = new HashMap<>();
-        List<String> list = new ArrayList<>();
-        list.add("admin");
-        map.put("roles", list);
-        result = ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, map);
         log.info("【登录】用户名：{}登录成功", user.getUsername());
-        // 密码保护， 输出null
-        log.info("【登录】密码：{}", user.getPassword());
         log.info("【登录】权限：{}", user.getAuthorities());
-        response.getWriter().write(MAPPER.writeValueAsString(result));
+        // 返回权限
+        HashMap<Object, Object> map = new HashMap<>();
+        List<SysRole> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (SysRole role : authorities) {
+            roles.add(role.getAuthority());
+        }
+        map.put("roles", roles);
+        // 返回给前端
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.getWriter().write(MAPPER.writeValueAsString(ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, map)));
     }
 }

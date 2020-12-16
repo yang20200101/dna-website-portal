@@ -56,6 +56,14 @@ public class SysUser implements UserDetails {
 
     private String labCode;
 
+    private Boolean status;
+
+    private Boolean deleteFlag;
+
+    private Date createDatetime;
+
+    private Date updateDatetime;
+
     /* 角色列表 */
     private List<SysRole> authorities = new ArrayList<>();
 

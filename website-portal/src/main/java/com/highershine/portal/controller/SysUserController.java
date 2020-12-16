@@ -1,5 +1,7 @@
 package com.highershine.portal.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highershine.portal.common.constants.CommonConstant;
 import com.highershine.portal.common.constants.RedisConstant;
@@ -7,20 +9,20 @@ import com.highershine.portal.common.constants.RedisTimeoutConstant;
 import com.highershine.portal.common.entity.bo.SysUserBo;
 import com.highershine.portal.common.entity.dto.LoginDTO;
 import com.highershine.portal.common.entity.dto.TokenDTO;
-import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.entity.vo.SysUserLoginVo;
 import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.SysUserService;
+import com.highershine.portal.common.utils.JwtUtils;
 import com.highershine.portal.common.utils.ResultUtil;
 import com.highershine.portal.common.utils.SHA256Util;
 import com.highershine.portal.common.utils.SysUserUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
@@ -39,11 +41,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 用户接口
@@ -168,23 +172,6 @@ public class SysUserController {
         return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, sysUserLoginVo);
     }
 
-    /**
-     * 系统登出接口异常
-     * @return
-     */
-    @GetMapping("logout")
-    @ApiOperation("系统登出接口(薛博仁)")
-    public Result logout() {
-        try {
-            valueOperations.set(RedisConstant.REDIS_LOGIN
-                    + sysUserUtil.getJessionId(), "", 1, TimeUnit.MICROSECONDS);
-        } catch (Exception e) {
-            log.error("【用户登录】系统登出接口异常， 异常信息：{}", e);
-            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
-        }
-        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
-    }
-
 
     /**
      * 获取用户信息
@@ -196,12 +183,22 @@ public class SysUserController {
     @ApiOperation("获取用户信息接口(薛博仁)")
     public Result<SysUserVo> queryUserInfo(HttpServletRequest request) {
         try {
-            SysUserBo sysUserBo = sysUserUtil.getSysUserByRedis();
-            SysUserVo sysUserVo = new SysUserVo();
-            BeanUtils.copyProperties(sysUserBo.getSysUser(), sysUserVo);
-            sysUserVo.setUserRole(sysUserBo.getSysUserRoleList().stream().map(SysUserRole::getRoleId).toArray(String[]::new));
-            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, sysUserVo);
-        } catch (IOException e) {
+            SysUserVo vo = null;
+            String header = request.getHeader(JwtUtils.HEADER_TOKEN_NAME);
+            if (StringUtils.isNotBlank(header)) {
+                //token串
+                String token = header.substring(header.lastIndexOf("bearer") + 7);
+                String tokenBody = JwtUtils.testJwt(token);
+                //token串转对象
+                JSONObject user = JSON.parseObject(tokenBody).getJSONObject("user");
+                List<Map<String, String>> authorities = (List) user.get("authorities");
+                //SysUserVo对象
+                List<String> roles = authorities.stream().map(map -> map.get("authority")).collect(Collectors.toList());
+                vo = JSON.toJavaObject(user, SysUserVo.class);
+                vo.setUserRole(roles);
+            }
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
+        } catch (Exception e) {
             log.error("【用户查询】查询用户信息异常， 异常信息：{}", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }

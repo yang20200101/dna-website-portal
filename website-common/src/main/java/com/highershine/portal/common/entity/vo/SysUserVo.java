@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description: 用户实体类
@@ -62,5 +63,5 @@ public class SysUserVo implements Serializable {
     private Date updateDatetime;
 
     @ApiModelProperty(value = "用户角色列表")
-    private String[] userRole;
+    private List<String> userRole;
 }
