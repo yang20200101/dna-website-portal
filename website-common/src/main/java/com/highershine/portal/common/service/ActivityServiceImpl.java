@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -133,12 +132,12 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public void activityEnroll(Long activityId, Long thumbnailId) throws IOException {
+    public void activityEnroll(Long activityId, Long thumbnailId) throws Exception {
         //修改曾经上传的报名表状态为 非最新
         Application application = new Application();
         application.setActivityId(activityId).setIsLatest(false);
         applicationMapper.updateIsLatestByActivityId(application);
-        Long userId = sysUserUtil.getSysUserByRedis().getSysUser().getId();
+        Long userId = sysUserUtil.getSysUserVo(null).getId();
         //保存最新的报名表信息
         application.setUserId(userId).setThumbnailId(thumbnailId).setIsLatest(false);
         application.setIsLatest(true).setDeleted(false).setCreatedAt(new Date()).setUpdatedAt(new Date());
@@ -149,10 +148,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ActivityEnrollValidVo activityEnrollValid(Long activityId) throws IOException {
+    public ActivityEnrollValidVo activityEnrollValid(Long activityId) throws Exception {
         ActivityEnrollValidVo vo = new ActivityEnrollValidVo();
         List<ActivityUser> activityUsers = activityUserMapper.selectByActivityId(activityId);
-        Long userId = sysUserUtil.getSysUserByRedis().getSysUser().getId();
+        Long userId = sysUserUtil.getSysUserVo(null).getId();
         if (activityUsers.stream().anyMatch(u -> u.getUserId().equals(userId))) {
             vo.setPowerFlag(true);
         }

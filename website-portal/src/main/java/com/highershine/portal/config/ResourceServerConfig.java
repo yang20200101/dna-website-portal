@@ -26,6 +26,20 @@ import org.springframework.web.client.RestTemplate;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
+    public static String[] passUrl =  {"/su/token/**",
+                                "/region/getTree",
+                                "/app/status",
+                                "/sd/getDictList/**",
+                                "/version",
+                                "/article/getList",
+                                "/article/find/**",
+                                "/advertisement/list",
+                                "/category/getCategoryList",
+                                "/category/find/**",
+                                "/advertisement/list",
+                                "/_health",
+                                "/v2/api-docs", "/swagger-resources/configuration/ui","/swagger-resources", "/swagger-resources/configuration/security",
+                                "/swagger-ui.html","/css/**", "/js/**","/images/**", "/webjars/**", "**/favicon.ico"};
 
     @Bean
     @LoadBalanced
@@ -75,22 +89,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll() // 对option不校验
-                .antMatchers(
-                        "/su/token/**",
-                        "/su/userInfo",
-                        "/region/getTree",
-                        "/app/status",
-                        "/sd/getDictList/**",
-                        "/version",
-                        "/article/getList",
-                        "/article/find/**",
-                        "/advertisement/list",
-//                        "/category/getCategoryList",
-                        "/category/find/**",
-                        "/advertisement/list",
-                        "/_health",
-                        "/v2/api-docs", "/swagger-resources/configuration/ui","/swagger-resources", "/swagger-resources/configuration/security",
-                        "/swagger-ui.html","/css/**", "/js/**","/images/**", "/webjars/**", "**/favicon.ico").permitAll()
+                .antMatchers(passUrl).permitAll()
                 .anyRequest().authenticated();
 
         //jwt校验

@@ -1,19 +1,18 @@
 package com.highershine.portal.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.highershine.portal.common.constants.CommonConstant;
-import com.highershine.portal.common.entity.bo.SysUserBo;
-import com.highershine.portal.common.entity.po.SysUserRole;
-import com.highershine.portal.common.service.SysUserService;
+import com.highershine.portal.common.entity.vo.SysUserVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 获取用户信息工具类
@@ -23,42 +22,35 @@ import java.util.List;
 @Service("sysUserUtil")
 public class SysUserUtil {
     @Autowired
-    private ValueOperations valueOperations;
-    @Autowired
-    private HttpServletRequest request;
-    @Autowired
-    private SysUserService sysUserService;
+    private HttpServletRequest request1;
     // mapper 声明
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public SysUserBo getSysUserByRedis() throws IOException {
-        String jsessionid = getJessionId();
-        //获取用户权限
-        SysUserBo sysUserBo = sysUserService.selectByUsername("admin");
-//        SysUserBo sysUserBo = mapper.readValue(valueOperations.get(RedisConstant.REDIS_LOGIN + jsessionid).toString(), SysUserBo.class);
-        return sysUserBo;
-    }
-
-    public String getNickName() throws IOException {
-        return getSysUserByRedis().getSysUser().getNickname();
-    }
-
-    public List<String> getRoleList() throws IOException {
-        List<String> roleList = new ArrayList<>();
-        SysUserBo sysUserBo = getSysUserByRedis();
-        List<SysUserRole> sysUserRoleList = sysUserBo.getSysUserRoleList();
-        sysUserRoleList.stream().forEach(list -> roleList.add(list.getRoleId()));
-        return roleList;
-    }
-
-    public String getJessionId() {
-        String jsessionid = "";
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (CommonConstant.JSESSIONID.equals(cookie.getName())) {
-                jsessionid = cookie.getValue();
-            }
+    public SysUserVo getSysUserVo(HttpServletRequest request) throws Exception {
+        SysUserVo vo = null;
+        System.out.println("--------------");
+        Enumeration<String> er = request.getHeaderNames();//获取请求头的所有name值
+        while(er.hasMoreElements()) {
+            String name = (String) er.nextElement();
+            String value = request.getHeader(name);
+            System.out.println(name + "=" + value);
         }
-        return jsessionid;
+
+        System.out.println("--------------");
+        String header = request.getHeader(JwtUtils.HEADER_TOKEN_NAME);
+        System.out.println("【getSysUserVo】header:" + header);
+        if (StringUtils.isNotBlank(header)) {
+            //token串
+            String token = header.substring(header.lastIndexOf("bearer") + 7);
+            String tokenBody = JwtUtils.testJwt(token);
+            //token串转对象
+            JSONObject user = JSON.parseObject(tokenBody).getJSONObject("user");
+            List<Map<String, String>> authorities = (List) user.get("authorities");
+            //SysUserVo对象
+            List<String> roles = authorities.stream().map(map -> map.get("authority")).collect(Collectors.toList());
+            vo = JSON.toJavaObject(user, SysUserVo.class);
+            vo.setUserRole(roles);
+        }
+        return vo;
     }
 }
