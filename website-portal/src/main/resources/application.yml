@@ -1,6 +1,6 @@
 # 本应用占用端口
 server:
-  port: 8008
+  port: 8058
   servlet:
     context-path: /web-portal
     session:

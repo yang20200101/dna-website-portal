@@ -1,7 +1,8 @@
 # 本应用占用端口
 server:
-  port: 8080
-
+  port: 8068
+  servlet:
+    context-path: /oauth2-server
 #执行Profiles为dev的yml配置文件
 # application-{profiles}.yml
 spring:
