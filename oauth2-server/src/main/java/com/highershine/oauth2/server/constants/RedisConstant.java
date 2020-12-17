@@ -1,4 +1,4 @@
-package com.highershine.portal.common.constants;
+package com.highershine.oauth2.server.constants;
 
 /**
  * redis常量

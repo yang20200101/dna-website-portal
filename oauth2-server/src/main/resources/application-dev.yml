@@ -1,0 +1,14 @@
+spring:
+  #配置数据源
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://192.168.10.68:5432/dna_portal
+    username: dna_portal
+    password: dna_portal
+    driverClassName: org.postgresql.Driver
+
+  # redis 相关配置
+  redis:
+    host: 192.168.10.22
+    port: 6381
+    password: highershine

@@ -1,8 +1,19 @@
 package com.highershine.portal.filter;
 
-import com.highershine.portal.common.utils.JwtUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.highershine.portal.common.constants.RedisConstant;
+import com.highershine.portal.common.entity.vo.SysUserVo;
+import com.highershine.portal.common.utils.ResultUtil;
+import com.highershine.portal.common.utils.SysUserUtil;
 import com.highershine.portal.config.ResourceServerConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -20,21 +31,18 @@ import java.util.Set;
 @Slf4j
 public class JWTAuthenticationFilter implements Filter {
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         log.info("【JWT过滤器】start");
-        //TODO 查看redis中，token是否过期
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        //如果是放行接口，构造出无token的request后直接放行（这样做的话不会调用/oauth/check_token接口进行校验）
         String uri = request.getRequestURI();
         log.info("uri_{}:{}, request.getContentType(): {}", request.getMethod(), uri, request.getContentType());
-        String header = request.getHeader(JwtUtils.HEADER_TOKEN_NAME);
         if (!isNeedFilter(uri, ResourceServerConfig.passUrl)) {
-            if (uri.contains("userInfo")) {
-                log.error("isNeedFilter【{}】", header);
-            }
-            //如果是放行接口，构造出无token的request
             request = new HttpServletRequestWrapper(request) {
                 private Set<String> headerNameSet;
 
@@ -70,12 +78,49 @@ public class JWTAuthenticationFilter implements Filter {
                     return super.getHeader(name);
                 }
             };
+            filterChain.doFilter(request, response);
+        } else {
+            //非放行的接口
+            String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+            //是否过期
+            boolean expireFlag = false;
+            try {
+                if (StringUtils.isNotBlank(header)) {
+                    //token串
+                    String token = header.substring(header.lastIndexOf("bearer") + 8);
+                    // 获取ValueOperations bean
+                    ServletContext context = request.getServletContext();
+                    ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
+                    ValueOperations valueOperations = (ValueOperations) ctx.getBean("valueOperations");
+                    SysUserUtil sysUserUtil = (SysUserUtil) ctx.getBean("sysUserUtil");
+                    SysUserVo user = sysUserUtil.getSysUserVoByToken(token);
+                    String redisToken = (String) valueOperations.get(RedisConstant.REDIS_LOGIN + user.getUsername());
+                    // token失效 或 token不正确
+                    if (StringUtils.isBlank(redisToken) || !token.equals(redisToken)) {
+                        expireFlag = true;
+                    }
+                } else {
+                    // 没有token
+                    expireFlag = true;
+                }
+            } catch (Exception e) {
+                expireFlag = true;
+                log.error("【jwtToken】校验出错，异常信息:{}", e);
+            }
+            if (expireFlag) {
+                response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write(this.mapper.writeValueAsString(ResultUtil.errorResult(
+                        HttpStatus.UNAUTHORIZED.value(), "token失效")));
+            } else {
+                filterChain.doFilter(request, response);
+            }
         }
-        if (uri.contains("userInfo")) {
-            System.out.println("【jwtFilter header】"+header);
-        }
-        filterChain.doFilter(request, response);
     }
+
+
+
 
 
     /**

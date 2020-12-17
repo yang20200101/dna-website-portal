@@ -65,17 +65,6 @@ public class JwtUtils {
      */
     public static String testJwt(String jwt) throws Exception {
         String[] jwts = jwt.split("\\.");
-
-        /* 验证签名 */
-        if (!HMACSHA256(jwts[0]+"."+jwts[1],SECRET).equals(jwts[2])){
-            return null;
-        }
-
-        /* 验证头部信息 */
-        if (!jwts[0].equals(encode(DEFAULT_HEADER))){
-            return null;
-        }
-
         return decode(jwts[1]);
     }
 }

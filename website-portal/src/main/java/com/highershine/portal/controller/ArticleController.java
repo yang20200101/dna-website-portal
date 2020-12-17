@@ -11,7 +11,6 @@ import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.ArticleService;
 import com.highershine.portal.common.utils.ResultUtil;
 import com.highershine.portal.config.MinIOPropertyConfig;
-import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -73,16 +71,6 @@ public class ArticleController {
             log.error("authentication【" + authentication  + "】");
             ArticleVo articleVo = null;
             articleVo = articleService.findArticleById(id);
-            try {
-                String header = request.getHeader("Authorization");
-                String token = header.substring(header.lastIndexOf("bearer") + 7);
-                log.error("JWT【" + Jwts.parser()
-                        .setSigningKey("highershine-jwt-key".getBytes(StandardCharsets.UTF_8))
-                        .parseClaimsJws(token)
-                        .getBody()+ "】");
-            } catch (Exception e) {
-
-            }
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, articleVo);
         } catch (Exception e) {
             log.error("【文章】获取文章详情异常，异常信息：", e);

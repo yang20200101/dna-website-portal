@@ -1,13 +1,13 @@
 package com.highershine.portal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.highershine.portal.common.constants.RedisConstant;
 import com.highershine.portal.common.entity.dto.TokenDTO;
 import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.SysUserService;
-import com.highershine.portal.common.utils.JwtUtils;
 import com.highershine.portal.common.utils.ResultUtil;
 import com.highershine.portal.common.utils.SysUserUtil;
 import io.swagger.annotations.Api;
@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: 用户接口
@@ -41,6 +43,7 @@ import java.util.Arrays;
 public class SysUserController {
     @Autowired
     private ValueOperations valueOperations;
+    private RedisTemplate redisTemplate;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -62,6 +65,12 @@ public class SysUserController {
                 HttpMethod.POST, URI.create("http://192.168.10.182:8080/oauth/token"));
         ResponseEntity<TokenDTO> exchange = restTemplate.exchange(httpEntity, TokenDTO.class);
         if (exchange.getStatusCode().is2xxSuccessful()) {
+            // redis管理jwtToken失效
+            TokenDTO tokenDTO = exchange.getBody();
+            String accessToken = tokenDTO.getAccessToken();
+            SysUserVo user = sysUserUtil.getSysUserVoByToken(accessToken);
+            String expiresIn = tokenDTO.getExpiresIn();
+            valueOperations.set(RedisConstant.REDIS_LOGIN + user.getUsername(), accessToken, Long.parseLong(expiresIn), TimeUnit.SECONDS);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, exchange.getBody());
         }
         throw new RuntimeException("请求令牌失败！");
@@ -124,9 +133,7 @@ public class SysUserController {
     @ApiOperation("获取用户信息接口(薛博仁)")
     public Result<SysUserVo> queryUserInfo(HttpServletRequest request) {
         try {
-            String header = request.getHeader(JwtUtils.HEADER_TOKEN_NAME);
-            System.out.println("【queryUserInfo】header:" + header);
-            SysUserVo vo = sysUserUtil.getSysUserVo(request);
+            SysUserVo vo = sysUserUtil.getSysUserVo();
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
             log.error("【用户管理】查询用户信息异常， 异常信息：{}", e);

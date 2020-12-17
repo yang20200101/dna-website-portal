@@ -137,7 +137,7 @@ public class ActivityServiceImpl implements ActivityService {
         Application application = new Application();
         application.setActivityId(activityId).setIsLatest(false);
         applicationMapper.updateIsLatestByActivityId(application);
-        Long userId = sysUserUtil.getSysUserVo(null).getId();
+        Long userId = sysUserUtil.getSysUserVo().getId();
         //保存最新的报名表信息
         application.setUserId(userId).setThumbnailId(thumbnailId).setIsLatest(false);
         application.setIsLatest(true).setDeleted(false).setCreatedAt(new Date()).setUpdatedAt(new Date());
@@ -151,7 +151,7 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityEnrollValidVo activityEnrollValid(Long activityId) throws Exception {
         ActivityEnrollValidVo vo = new ActivityEnrollValidVo();
         List<ActivityUser> activityUsers = activityUserMapper.selectByActivityId(activityId);
-        Long userId = sysUserUtil.getSysUserVo(null).getId();
+        Long userId = sysUserUtil.getSysUserVo().getId();
         if (activityUsers.stream().anyMatch(u -> u.getUserId().equals(userId))) {
             vo.setPowerFlag(true);
         }

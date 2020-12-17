@@ -1,0 +1,14 @@
+# 本应用占用端口
+server:
+  port: 8080
+
+#执行Profiles为dev的yml配置文件
+# application-{profiles}.yml
+spring:
+  profiles:
+    active: dev
+
+# 日志文件配置
+logging:
+  config: classpath:logback.xml
+
