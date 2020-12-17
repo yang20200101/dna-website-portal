@@ -52,3 +52,6 @@ oauth2:
     clientSecret: 2020
     # oauth2-server服务的地址
     tokenAddr: http://192.168.10.58/oauth/token
+    checkTokenAddr: http://192.168.10.58/oauth/check_token
+    # jwt密钥
+    jwtSecret: highershine-jwt-key

@@ -5,6 +5,7 @@ import com.highershine.portal.handlder.AuthExceptionEntryPoint;
 import com.highershine.portal.handlder.CustomerResponseErrorHandler;
 import com.highershine.portal.handlder.LoginExpireHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,15 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+    @Value("${oauth2.server.checkTokenAddr}")
+    private String checkTokenAddr;
+    @Value("${oauth2.server.clientId}")
+    private String clientId;
+    @Value("${oauth2.server.clientSecret}")
+    private String clientSecret;
+    @Value("${oauth2.server.jwtSecret}")
+    private String jwtSecret;
 
     public static String[] passUrl =  {"/su/token/**",
                                 "/region/getTree",
@@ -55,7 +65,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId("website");
+        resources.resourceId(clientId);
 
         resources.tokenStore(new JwtTokenStore(accessTokenConverter())).stateless(true);
 
@@ -63,9 +73,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         RemoteTokenServices remoteTokenServices = new RemoteTokenServices();
         remoteTokenServices.setAccessTokenConverter(accessTokenConverter());
         remoteTokenServices.setRestTemplate(restTemplate);
-        remoteTokenServices.setCheckTokenEndpointUrl("http://127.0.0.1:8080/oauth/check_token");
-        remoteTokenServices.setClientId("website");
-        remoteTokenServices.setClientSecret("2020");
+        remoteTokenServices.setCheckTokenEndpointUrl(checkTokenAddr);
+        remoteTokenServices.setClientId(clientId);
+        remoteTokenServices.setClientSecret(clientSecret);
 
         resources.tokenServices(remoteTokenServices).stateless(true);
         //check_token异常类
@@ -75,7 +85,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("highershine-jwt-key");
+        converter.setSigningKey(jwtSecret);
         return converter;
     }
 
