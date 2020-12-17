@@ -26,4 +26,10 @@ public interface SysUserMapper {
      * @return
      */
     SysUser selectByUsername(String username);
+
+    /**
+     * 查询oauth回调地址
+     * @return
+     */
+    String selectOauthRedirectUri(String clientId);
 }

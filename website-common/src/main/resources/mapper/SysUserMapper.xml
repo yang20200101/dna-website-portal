@@ -42,4 +42,11 @@
     and status = true
     and username = #{username, jdbcType=VARCHAR}
   </select>
+
+  <!-- 查询oauth回调地址 -->
+  <select id="selectOauthRedirectUri" resultType="java.lang.String">
+    select web_server_redirect_uri
+    from oauth_client_details
+    where client_id = #{clientId, jdbcType=VARCHAR}
+  </select>
 </mapper>

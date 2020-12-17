@@ -1,6 +1,6 @@
 package com.highershine.oauth2.server.config;
 
-import com.highershine.oauth2.server.utils.JwtUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -14,6 +14,8 @@ import java.io.IOException;
  */
 @Configuration
 public class JwtTokenStoreConfig {
+    @Value("${oauth2.server.jwtSecret}")
+    public String jwtSecret;
 
     @Bean
     public TokenStore jwtTokenStore()throws IOException {
@@ -25,7 +27,7 @@ public class JwtTokenStoreConfig {
         JwtAccessTokenConverter accessTokenConverter = new
                 JwtAccessTokenConverter();
         //配置JWT使用的秘钥
-        accessTokenConverter.setSigningKey(JwtUtils.SECRET);
+        accessTokenConverter.setSigningKey(jwtSecret);
         return accessTokenConverter;
     }
 

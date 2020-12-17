@@ -46,4 +46,13 @@ public class SysUserServiceImpl implements SysUserService {
         }
         return sysUserBo;
     }
+
+    /**
+     * 查询oauth回调地址
+     * @return
+     */
+    @Override
+    public String selectOauthRedirectUri(String clientId) {
+        return this.sysUserMapper.selectOauthRedirectUri(clientId);
+    }
 }

@@ -16,4 +16,10 @@ public interface SysUserService {
      * @param username
      */
     SysUserBo selectByUsername(String username);
+
+    /**
+     * 查询oauth回调地址
+     * @return
+     */
+    String selectOauthRedirectUri(String clientId);
 }

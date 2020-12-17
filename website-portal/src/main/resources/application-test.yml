@@ -26,11 +26,6 @@ spring:
       max-file-size: 20MB
       max-request-size: 20MB
 
-# session 超时时间hours
-manage:
-  session:
-    timeout: 8
-
 #MinIO配置
 minio:
   endPoint: http://192.168.10.22:9000
@@ -48,3 +43,12 @@ person:
     addr: http://192.168.10.58/person_query/personQuery
     salt: 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/
     systemkey: 3e977d01-7f7b-4d59-ad7c-36e6e46a929d
+
+oauth2:
+  server:
+    # oauth_client_details配置的clientId
+    clientId: website
+    # oauth_client_details配置的client_secret(明文)
+    clientSecret: 2020
+    # oauth2-server服务的地址
+    tokenAddr: http://ip:port/oauth/token

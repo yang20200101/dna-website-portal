@@ -52,10 +52,6 @@ public class LogoutSuccessHandler implements org.springframework.security.web.au
             // 清除redis中的token
             ServletContext context = httpServletRequest.getServletContext();
             ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
-            String[] beanDefinitionNames = ctx.getBeanDefinitionNames();
-            for (String beanDefinitionName : beanDefinitionNames) {
-                System.out.println(beanDefinitionName);
-            }
             ValueOperations valueOperations = (ValueOperations) ctx.getBean("valueOperations");
             valueOperations.set(RedisConstant.REDIS_LOGIN
                     + user.get("username"), "", 1, TimeUnit.MICROSECONDS);

@@ -1,26 +1,22 @@
 package com.highershine.oauth2.server.utils;
+
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@Component
 public class JwtUtils {
 
     /* 默认head */
     public static final String DEFAULT_HEADER = "{\"alg\": \"HS256\",\"typ\": \"JWT\"}";
-
-    /* HmacSHA256 加密算法 秘钥 */
-    public static final String SECRET = "highershine-jwt-key";
 
     /* token有效时间  1天 */
     public static final long EXPIRE_TIME = 1000*60*60*24;
 
     /* token在header中的名字 */
     public static final String HEADER_TOKEN_NAME = "Authorization";
-
-
-
-
-
 
     /** Base64URL 编码 */
     public static String encode(String input) {
@@ -54,8 +50,8 @@ public class JwtUtils {
 
 
     /** 获取签名 */
-    public static String getSignature(String payload) throws Exception {
-        return HMACSHA256(encode(DEFAULT_HEADER)+"."+encode(payload),SECRET);
+    public static String getSignature(String payload, String secret) throws Exception {
+        return HMACSHA256(encode(DEFAULT_HEADER)+"."+encode(payload),secret);
     }
 
 

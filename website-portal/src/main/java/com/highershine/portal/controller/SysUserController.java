@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -43,26 +42,27 @@ import java.util.concurrent.TimeUnit;
 public class SysUserController {
     @Autowired
     private ValueOperations valueOperations;
-    private RedisTemplate redisTemplate;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
     private SysUserService sysUserService;
     @Autowired
     private SysUserUtil sysUserUtil;
+    @Value("${oauth2.server.tokenAddr}")
+    private String tokenAddr;
+    @Value("${oauth2.server.clientId}")
+    private String clientId;
+    @Value("${oauth2.server.clientSecret}")
+    private String clientSecret;
 
     // mapper 声明
     private final ObjectMapper mapper = new ObjectMapper();
-
-    @Value("${manage.session.timeout}")
-    private long timeout;
-
 
     @GetMapping("token")
     @ApiOperation("获取token")
     public Result submitLogin(String code) throws Exception {
         RequestEntity httpEntity = new RequestEntity<>(getHttpBody(code), getHttpHeaders(),
-                HttpMethod.POST, URI.create("http://192.168.10.182:8080/oauth/token"));
+                HttpMethod.POST, URI.create(tokenAddr));
         ResponseEntity<TokenDTO> exchange = restTemplate.exchange(httpEntity, TokenDTO.class);
         if (exchange.getStatusCode().is2xxSuccessful()) {
             // redis管理jwtToken失效
@@ -80,14 +80,15 @@ public class SysUserController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
         params.add("grant_type", "authorization_code");
-        params.add("redirect_uri", "http://192.168.10.182:8008/web-portal/su/token");
+        String redirectUri = sysUserService.selectOauthRedirectUri(clientId);
+        params.add("redirect_uri", redirectUri);
         params.add("scope", "all");
         return params;
     }
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBasicAuth("website", "2020");
+        httpHeaders.setBasicAuth(clientId, clientSecret);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         return httpHeaders;

@@ -13,3 +13,8 @@ spring:
     cluster:
       max-redirects: 10
       nodes: 192.168.50.140:8001,192.168.50.140:8004,192.168.50.141:8002,192.168.50.141:8005,192.168.50.142:8003,192.168.50.142:8006
+
+oauth2:
+  server:
+    # jwt密钥
+    jwtSecret: highershine-jwt-key

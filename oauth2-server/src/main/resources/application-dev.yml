@@ -12,3 +12,8 @@ spring:
     host: 192.168.10.22
     port: 6381
     password: highershine
+
+oauth2:
+  server:
+    # jwt密钥
+    jwtSecret: highershine-jwt-key
