@@ -1,5 +1,6 @@
 package com.highershine.oauth2.server.service;
 
+import com.highershine.oauth2.server.entity.SysRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import com.highershine.oauth2.server.exception.MyUsernameNotFoundException;
 import com.highershine.oauth2.server.mapper.SysUserMapper;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @Description: userDetailsService实现类
@@ -29,6 +31,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUser sysUser = sysUserMapper.selectByUsername(username);
+        List<SysRole> authorities = sysUser.getAuthorities();
+        authorities.forEach(a -> a.setAuthority("ROLE_" + a.getAuthority()));
         if (sysUser == null) {
             throw new MyUsernameNotFoundException(username + " is not exists!");
         }
