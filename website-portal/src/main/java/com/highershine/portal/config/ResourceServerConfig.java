@@ -1,6 +1,7 @@
 package com.highershine.portal.config;
 
 import com.highershine.portal.filter.JWTAuthenticationFilter;
+import com.highershine.portal.handlder.ApiAccessDeniedHandler;
 import com.highershine.portal.handlder.AuthExceptionEntryPoint;
 import com.highershine.portal.handlder.CustomerResponseErrorHandler;
 import com.highershine.portal.handlder.LoginExpireHandler;
@@ -12,11 +13,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -36,6 +37,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Value("${oauth2.server.jwtSecret}")
     private String jwtSecret;
 
+    //放行接口
     public static String[] passUrl =  {"/su/token/**",
                                 "/region/getTree",
                                 "/app/status",
@@ -58,6 +60,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         /*为RestTemplate配置异常处理器0*/
         restTemplate.setErrorHandler(new CustomerResponseErrorHandler());
         return restTemplate;
+    }
+
+    //不使用权限校验的ROLE_前缀  (http.servletApi().rolePrefix("");该方式无效果，使用@Bean方式)
+    @Bean
+    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
     }
 
     @Autowired
@@ -97,6 +105,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
 
+        //放行接口配置
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll() // 对option不校验
                 .antMatchers(passUrl).permitAll()
@@ -105,7 +114,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         //jwt校验
         http.addFilterBefore(new JWTAuthenticationFilter(), AbstractPreAuthenticatedProcessingFilter.class);
         //登录超时未登录处理
-        http.exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
         http.exceptionHandling().authenticationEntryPoint(new LoginExpireHandler());
+        //权限不足处理器 配合注解使用@Secured("admin")
+        http.exceptionHandling().accessDeniedHandler(new ApiAccessDeniedHandler());
     }
 }
