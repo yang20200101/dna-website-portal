@@ -1,5 +1,6 @@
 package com.highershine.oauth2.server.service;
 
+import com.highershine.oauth2.server.entity.SysClientRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import com.highershine.oauth2.server.exception.MyUsernameNotFoundException;
 import com.highershine.oauth2.server.mapper.SysUserMapper;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @Description: userDetailsService实现类
@@ -35,7 +37,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (!BCrypt.checkpw(request.getParameter("password"), sysUser.getPassword())) {
             throw new MyUsernameNotFoundException(username + " password error!");
         }
-
+        //查询系统对应角色信息
+        List<SysClientRole> clientRoles = sysUserMapper.selectClientRoleByUserId(sysUser.getId());
+        sysUser.setClientRoles(clientRoles);
         return sysUser;
     }
 }

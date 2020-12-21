@@ -1,5 +1,6 @@
 package com.highershine.portal.common.entity.vo;
 
+import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -64,4 +65,7 @@ public class SysUserVo implements Serializable {
 
     @ApiModelProperty(value = "用户角色列表")
     private List<String> userRole;
+
+    @ApiModelProperty(value = "系统对应角色信息")
+    private List<ClientRoleBo> clientRoles;
 }

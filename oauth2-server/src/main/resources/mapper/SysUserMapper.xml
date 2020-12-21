@@ -62,11 +62,22 @@
     sr.id as roleId,
     sr.ext_id as role
     from sys_user su
-    left join sys_user_role sur on sur.user_id = su.id
+    left join sys_user_role sur on sur.user_id = su.id and sur.client_id = 'website'
     left join sys_role sr on  sur.role_id =sr.id
     where su.delete_flag = false
     and su.status = true
     and sr.active_flag = true
     and su.username = #{username, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectClientRoleByUserId" parameterType="java.lang.Long" resultType="com.highershine.oauth2.server.entity.SysClientRole">
+    select
+    sur.role_id as roleId,
+    sc.client_id as clientId,
+    sc.client_name as client_name
+    from sys_user_role sur,sys_client sc
+    where sur.client_id = sc.id
+    and sc.delete_flag = false
+    and sur.user_id  = #{id, jdbcType=BIGINT}
   </select>
 </mapper>

@@ -26,7 +26,6 @@ public class LoginExpireHandler implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        log.error("Spring Securtiy异常", e);
         response.setStatus(HttpStatusEnum.UNAUTHORIZED.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         Result result = ResultUtil.errorResult(HttpStatusEnum.UNAUTHORIZED.getCode(),

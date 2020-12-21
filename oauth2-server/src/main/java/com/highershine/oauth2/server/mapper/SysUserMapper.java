@@ -1,8 +1,11 @@
 package com.highershine.oauth2.server.mapper;
 
 
+import com.highershine.oauth2.server.entity.SysClientRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @Description
@@ -17,4 +20,11 @@ public interface SysUserMapper {
      * @return
      */
     SysUser selectByUsername(String username);
+
+    /**
+     * 根据userId查询系统角色
+     * @param id
+     * @return
+     */
+    List<SysClientRole> selectClientRoleByUserId(Long id);
 }

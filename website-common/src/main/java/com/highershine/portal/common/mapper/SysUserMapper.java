@@ -3,6 +3,7 @@ package com.highershine.portal.common.mapper;
 
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +15,20 @@ import java.util.List;
  **/
 @Repository
 public interface SysUserMapper {
+    /**
+     * 根据ID查询
+     * @param id
+     * @return
+     */
+    SysUser selectByPrimaryKey(Long id);
+
+    /**
+     * 新增
+     * @param record
+     * @return
+     */
+    int insert(SysUser record);
+
     /**
      * 查询活动参与人
      * @return
@@ -32,4 +47,11 @@ public interface SysUserMapper {
      * @return
      */
     String selectOauthRedirectUri(String clientId);
+
+    /**
+     * 重置密码
+     * @param id
+     * @param password
+     */
+    void updatePassword(@Param("id") Long id, @Param("password")String password);
 }

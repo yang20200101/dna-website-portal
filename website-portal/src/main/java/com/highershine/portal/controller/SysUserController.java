@@ -3,6 +3,7 @@ package com.highershine.portal.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highershine.portal.common.constants.RedisConstant;
 import com.highershine.portal.common.entity.dto.TokenDTO;
+import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
@@ -17,14 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.*;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
@@ -94,45 +95,45 @@ public class SysUserController {
         return httpHeaders;
     }
 
-//    @PostMapping("password/update")
-//    @ApiOperation("修改密码(待开发)")
-//    public Result updatePassword() {
-//        // 与mongoDB加密保持一致
-//        String password = "123456";
-//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-//        //encodeResult 为需要存入数据中加盐加密后的密码
-//        String encodeResult = bCryptPasswordEncoder.encode(password);
-//        //登录时 将用户输入的密码 与 数据库中存储的密码 做校验
-//        if (BCrypt.checkpw(password, encodeResult)) {
-//            log.info("校验通过");
-//        } else {
-//            log.info("密码错误");
-//        }
-//        return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
-//    }
-//
-//    @GetMapping("password/reset/{id}")
-//    @ApiOperation("密码重置")
-//    public Result resetPassword(@PathVariable("id") Long id) {
-//        try {
-//            sysUserService.resetPassword(id);
-//            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
-//        } catch (Exception e) {
-//            log.error("【用户管理】密码重置异常， 异常信息：{}", e);
-//            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
-//        }
-//    }
+    @PostMapping("password/update")
+    @ApiOperation("修改密码")
+    public Result updatePassword(@RequestBody @Valid UpdatePasswordDTO dto, BindingResult bindingResult) {
+        try {
+            if (bindingResult.hasErrors()) {
+                String message = bindingResult.getFieldError().getDefaultMessage();
+                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
+            }
+            if (!sysUserService.validSrcPassword(dto)) {
+                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), "原始密码错误");
+            }
+            sysUserService.updatePassword(dto);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (Exception e) {
+            log.error("【用户管理】修改密码异常， 异常信息：{}", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
 
+    @GetMapping("password/reset/{id}")
+    @ApiOperation("密码重置")
+    @Secured("admin")
+    public Result resetPassword(@PathVariable("id") Long id) {
+        try {
+            sysUserService.resetPassword(id);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (Exception e) {
+            log.error("【用户管理】密码重置异常， 异常信息：{}", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
 
     /**
      * 获取用户信息
-     *
-     * @param request
      * @return
      */
     @GetMapping(value={"userInfo", "userInfo/admin"})
     @ApiOperation("获取用户信息接口(薛博仁)")
-    public Result<SysUserVo> queryUserInfo(HttpServletRequest request) {
+    public Result<SysUserVo> queryUserInfo() {
         try {
             SysUserVo vo = sysUserUtil.getSysUserVo();
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
@@ -141,4 +142,6 @@ public class SysUserController {
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }
+
+
 }

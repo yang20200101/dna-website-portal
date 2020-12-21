@@ -1,12 +1,15 @@
 package com.highershine.portal.common.service;
 
 import com.highershine.portal.common.entity.bo.SysUserBo;
+import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.mapper.SysUserMapper;
 import com.highershine.portal.common.mapper.SysUserRoleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,5 +57,41 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public String selectOauthRedirectUri(String clientId) {
         return this.sysUserMapper.selectOauthRedirectUri(clientId);
+    }
+
+    /**
+     * 重置密码
+     * @param id
+     */
+    @Override
+    public void resetPassword(Long id) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        //encodeResult 为需要存入数据中加盐加密后的密码
+        String encodeResult = bCryptPasswordEncoder.encode("111111");
+        this.sysUserMapper.updatePassword(id, encodeResult);
+    }
+
+    /**
+     * 校验原始密码
+     * @param dto
+     * @return
+     */
+    @Override
+    public boolean validSrcPassword(UpdatePasswordDTO dto) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(dto.getId());
+        if (BCrypt.checkpw(dto.getSrcPassword(), sysUser.getPassword())) {
+            //原密码正确
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 修改密码
+     * @param dto
+     */
+    @Override
+    public void updatePassword(UpdatePasswordDTO dto) {
+        sysUserMapper.updatePassword(dto.getId(), dto.getPassword());
     }
 }

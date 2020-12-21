@@ -64,6 +64,8 @@ public class SysUser implements UserDetails {
 
     private Date updateDatetime;
 
+    private List<SysClientRole> clientRoles = new ArrayList<>();
+
     /* 角色列表 */
     private List<SysRole> authorities = new ArrayList<>();
 

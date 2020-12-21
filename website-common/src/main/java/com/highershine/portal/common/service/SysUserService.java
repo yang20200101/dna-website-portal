@@ -1,6 +1,7 @@
 package com.highershine.portal.common.service;
 
 import com.highershine.portal.common.entity.bo.SysUserBo;
+import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 
 
 /**
@@ -22,4 +23,23 @@ public interface SysUserService {
      * @return
      */
     String selectOauthRedirectUri(String clientId);
+
+    /**
+     * 重置密码
+     * @param id
+     */
+    void resetPassword(Long id);
+
+    /**
+     * 校验原始密码
+     * @param dto
+     * @return
+     */
+    boolean validSrcPassword(UpdatePasswordDTO dto);
+
+    /**
+     * 修改密码
+     * @param dto
+     */
+    void updatePassword(UpdatePasswordDTO dto);
 }
