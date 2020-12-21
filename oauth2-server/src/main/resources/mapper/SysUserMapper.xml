@@ -73,7 +73,7 @@
   <select id="selectClientRoleByUserId" parameterType="java.lang.Long" resultType="com.highershine.oauth2.server.entity.SysClientRole">
     select
     sur.role_id as roleId,
-    sc.client_id as clientId,
+    sc.id as clientId,
     sc.client_name as client_name
     from sys_user_role sur,sys_client sc
     where sur.client_id = sc.id
