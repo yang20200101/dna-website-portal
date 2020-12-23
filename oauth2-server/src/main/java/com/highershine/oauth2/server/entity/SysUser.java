@@ -17,6 +17,8 @@ public class SysUser implements UserDetails {
     /* 用户id */
     private Long id;
 
+    private String extId;
+
     /* 用户名 */
     private String username;
 

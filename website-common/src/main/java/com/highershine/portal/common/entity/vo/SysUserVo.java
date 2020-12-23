@@ -17,6 +17,8 @@ import java.util.List;
 public class SysUserVo implements Serializable {
     private Long id;
 
+    private String extId;
+
     private String username;
 
     private String nickname;

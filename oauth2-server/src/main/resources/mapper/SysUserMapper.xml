@@ -4,6 +4,7 @@
 
   <resultMap id="selectByUsernameMap" type="com.highershine.oauth2.server.entity.SysUser">
     <id property="id" column="id" />
+    <result column="ext_id" jdbcType="VARCHAR" property="extId" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="password" jdbcType="VARCHAR" property="password" />
@@ -36,6 +37,7 @@
   <select id="selectByUsername" parameterType="java.lang.String" resultMap="selectByUsernameMap">
     select
     su.id,
+    su.ext_id,
     su.username,
     su.nickname,
     su.password,
