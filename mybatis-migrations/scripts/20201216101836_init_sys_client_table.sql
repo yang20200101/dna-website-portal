@@ -78,7 +78,7 @@ COMMENT ON COLUMN sys_client.update_datetime	 is  '修改时间';
 INSERT INTO public.sys_client(id,client_name,role_url,sort,delete_flag,create_datetime, update_datetime)
 VALUES ('website', '门户', '', 1, false, now(), now());
 INSERT INTO public.sys_client(id,client_name,role_url,sort,delete_flag,create_datetime, update_datetime)
-VALUES ('zthz', 'DNA会战平台', '', 2, false, now(), now());
+VALUES ('zthz', 'DNA会战平台', 'http://ip:port/??/??', 2, false, now(), now());
 
 ALTER TABLE sys_user_role ADD COLUMN IF NOT EXISTS client_id varchar(64);
 ALTER TABLE sys_user_role ALTER role_id TYPE varchar(256);

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.SysClientMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.SysClient">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="client_name" jdbcType="VARCHAR" property="clientName" />
+    <result column="role_url" jdbcType="VARCHAR" property="roleUrl" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_datetime" jdbcType="TIMESTAMP" property="createDatetime" />
+    <result column="update_datetime" jdbcType="TIMESTAMP" property="updateDatetime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      id,client_name,role_url,sort,delete_flag,create_datetime,update_datetime
+  </sql>
+  <select id="getClientList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_client
+    where delete_flag = false
+    order by sort
+  </select>
+</mapper>

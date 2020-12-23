@@ -55,3 +55,11 @@ oauth2:
     checkTokenAddr: http://ip:port/oauth2-server/oauth/check_token
     # jwt密钥
     jwtSecret: highershine-jwt-key
+
+interface:
+  # 校验注册的用户是否在填报系统中对应实验室填报过
+  validPersonInLab:
+    addr: http://ip:port/web-manage/su/register
+  # 用户注册同步到填报子系统
+  userSyncStatistics:
+    addr: http://ip:port/web-manage/su/submitLogin

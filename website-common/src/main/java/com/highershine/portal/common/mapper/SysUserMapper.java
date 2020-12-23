@@ -1,8 +1,10 @@
 package com.highershine.portal.common.mapper;
 
 
+import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
+import com.highershine.portal.common.entity.vo.SysUserListVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -54,4 +56,39 @@ public interface SysUserMapper {
      * @param password
      */
     void updatePassword(@Param("id") Long id, @Param("password")String password);
+
+    /**
+     * 根据身份证号查询
+     * @param idCardNo
+     * @return
+     */
+    SysUser selectByIdCardNo(String idCardNo);
+
+    /**
+     * 根据单位编码和工作岗位查询
+     * @param orgCode
+     * @param job
+     * @return
+     */
+    int selectByOrgCodeJob(@Param("orgCode") String orgCode, @Param("job") String job);
+
+    /**
+     * 查询用户列表
+     * @param dto
+     * @return
+     */
+    List<SysUserListVo> selectListByDto(SysUserListDTO dto);
+
+    /**
+     * 更新ext_id
+     * @param id
+     */
+    int updateExtId(Long id);
+
+    /**
+     * 用户删除
+     * @param id
+     * @return
+     */
+    int deleteUserById(Long id);
 }

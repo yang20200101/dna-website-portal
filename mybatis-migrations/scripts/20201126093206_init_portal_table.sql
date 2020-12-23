@@ -78,7 +78,7 @@ COMMENT ON COLUMN "po_activity"."updated_at" IS '更新日期';
 COMMENT ON COLUMN "po_activity"."deleted" IS 'true-已删除、默认false';
 COMMENT ON COLUMN "po_activity"."apply_number" IS '报名人数';
 
-CREATE TABLE "public"."po_activity_user" (
+CREATE TABLE  IF NOT EXISTS  "po_activity_user" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "activity_id" int8,
   "ext_activity_id" varchar(64),
@@ -92,7 +92,7 @@ COMMENT ON COLUMN "po_activity_user"."ext_activity_id" IS '源活动ID';
 COMMENT ON COLUMN "po_activity_user"."user_id" IS '用户ID';
 COMMENT ON COLUMN "po_activity_user"."ext_user_id" IS '源用户ID';
 
-CREATE TABLE "public"."po_advertisement" (
+CREATE TABLE  IF NOT EXISTS  "po_advertisement" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "ext_id" varchar(64),
   "title" varchar(255),
@@ -118,7 +118,7 @@ COMMENT ON COLUMN "po_advertisement"."created_at" IS '创建日期';
 COMMENT ON COLUMN "po_advertisement"."updated_at" IS '更新日期';
 COMMENT ON COLUMN "po_advertisement"."deleted" IS 'true-已删除、默认false';
 
-CREATE TABLE "public"."po_article" (
+CREATE TABLE  IF NOT EXISTS  "po_article" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "ext_id" varchar(64),
   "publish_date" timestamp(6) NOT NULL,
@@ -165,7 +165,7 @@ COMMENT ON COLUMN po_article.deleted	 is '删除标识';
 COMMENT ON COLUMN po_article.created_at	 is '创建时间';
 COMMENT ON COLUMN po_article.updated_at	 is '更新时间';
 
-CREATE TABLE "public"."po_category" (
+CREATE TABLE  IF NOT EXISTS  "po_category" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "ext_id" varchar(64),
   "name" varchar(64) NOT NULL,
@@ -192,7 +192,7 @@ COMMENT ON COLUMN po_category.updated_at	 is '更新时间';
 
 
 
-CREATE TABLE "public"."po_draft_article" (
+CREATE TABLE  IF NOT EXISTS  "po_draft_article" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "ext_id" varchar(64),
   "publish_date" timestamp(6) NOT NULL,
@@ -235,7 +235,7 @@ COMMENT ON COLUMN po_draft_article.deleted	 is '删除标识';
 COMMENT ON COLUMN po_draft_article.created_at	 is '创建时间';
 COMMENT ON COLUMN po_draft_article.updated_at	 is '更新时间';
 
-CREATE TABLE "public"."po_thumbnail" (
+CREATE TABLE  IF NOT EXISTS  "po_thumbnail" (
   "id" serial8 NOT NULL PRIMARY KEY,
   "bucket_name" varchar(256) NOT NULL,
   "file_name" varchar(256) NOT NULL,
@@ -254,7 +254,7 @@ COMMENT ON COLUMN "po_thumbnail"."deleted" IS '软删除';
 COMMENT ON COLUMN "po_thumbnail"."created_at" IS '创建时间';
 COMMENT ON COLUMN "po_thumbnail"."updated_at" IS '更新时间';
 
-CREATE TABLE "public"."po_application" (
+CREATE TABLE  IF NOT EXISTS  "po_application" (
    "id" serial8 NOT NULL PRIMARY KEY,
    "ext_id" varchar(64),
    "user_id" int8,
@@ -343,6 +343,15 @@ INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "d
 VALUES ('GENDER', '1', '1', '男', NULL, NULL, 1, 't', NULL, 'admin', now(), 'admin', now(), 'f');
 INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
 VALUES ('GENDER', '2', '2', '女', NULL, NULL, 2, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+INSERT INTO public.sys_dict_category(dict_category_code,dict_category_name,dict_category_desc,ord)
+VALUES ('LAB_JOB', '工作岗位', '', 1);
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
+VALUES ('LAB_JOB', '1', '1', 'DNA实验室负责人', NULL, NULL, 1, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
+VALUES ('LAB_JOB', '2', '2', '数据库管理员', NULL, NULL, 2, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag")
+VALUES ('LAB_JOB', '3', '3', '检验人员', NULL, NULL, 3, 't', NULL, 'admin', now(), 'admin', now(), 'f');
+
 commit;
 
 -- //@UNDO

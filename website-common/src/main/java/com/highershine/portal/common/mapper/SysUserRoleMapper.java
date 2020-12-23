@@ -1,5 +1,6 @@
 package com.highershine.portal.common.mapper;
 
+import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import com.highershine.portal.common.entity.po.SysUserRole;
 import org.springframework.stereotype.Repository;
 
@@ -7,17 +8,29 @@ import java.util.List;
 
 /**
  * @Description: 用户角色mapper
- * @Author: mizhanlei
- * @Date: 2019/11/26 17:14
+ * @Author: xueboren
+ * @Date: 2019/12/22 10:14
  */
 @Repository
 public interface SysUserRoleMapper {
 
     /**
-     * 根据用户id查询用户角色列表
-     *
-     * @param userId
+     * 批量插入
+     * @param list
+     */
+    void batchInsert(List<SysUserRole> list);
+
+    /**
+     * 根据user_id删除
+     * @param id
      * @return
      */
-    List<SysUserRole> selectSysUserRoleListByUserId(Long userId);
+    int deleteByUserId(Long id);
+
+    /**
+     * 客户端角色信息
+     * @param id
+     * @return
+     */
+    List<ClientRoleBo> selectClientRoleByUserId(Long id);
 }

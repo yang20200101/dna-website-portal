@@ -1,6 +1,7 @@
 package com.highershine.portal.common.entity.po;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -10,8 +11,8 @@ import java.io.Serializable;
  * @Date: 2019/11/26 15:23
  */
 @Data
+@Accessors(chain = true)
 public class SysUserRole implements Serializable {
-
     // 主键id
     private Long id;
 
@@ -20,4 +21,7 @@ public class SysUserRole implements Serializable {
 
     // 角色id
     private String roleId;
+
+    // 客户端id
+    private String clientId;
 }

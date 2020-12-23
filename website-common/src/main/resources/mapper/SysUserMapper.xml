@@ -31,7 +31,7 @@
   <sql id="Base_Column_List" >
     id, username, nickname, password, province, server_nos, id_card_no,
     birth_date, gender, phone, org_code, lab_name, remark, city, is_add_org,
-    area, job, org_add_code, org_add_name, lab_code, status, deleteFlag, createDatetime, updateDatetime
+    area, job, org_add_code, org_add_name, lab_code, status, delete_flag, create_datetime, update_datetime
   </sql>
 
   <!--主键查询-->
@@ -94,9 +94,48 @@
     update_datetime as updateDatetime
     from sys_user
     where delete_flag = false
-    and status = true
     and username = #{username, jdbcType=VARCHAR}
   </select>
+
+  <select id="selectByIdCardNo" resultType="com.highershine.portal.common.entity.po.SysUser">
+    select
+    id,
+    username,
+    nickname,
+    password,
+    province,
+    server_nos as serverNos,
+    id_card_no as idCardNo,
+    birth_date as birthDate,
+    gender,
+    phone,
+    org_code as orgCode,
+    lab_name as labName,
+    remark,
+    city,
+    is_add_org as isAddOrg,
+    area,
+    job,
+    org_add_code as orgAddCode,
+    org_add_name as orgAddName,
+    lab_code as labCode,
+    status,
+    delete_flag as deleteFlag,
+    create_datetime as createDatetime,
+    update_datetime as updateDatetime
+    from sys_user
+    where delete_flag = false
+    and id_card_no = #{idCardNo, jdbcType=VARCHAR}
+  </select>
+
+   <select id="selectByOrgCodeJob" resultType="int">
+    select
+    count(1)
+    from sys_user
+    where delete_flag = false
+    and org_code = #{orgCode, jdbcType=VARCHAR}
+    and job = #{job, jdbcType=VARCHAR}
+   </select>
 
   <!-- 查询oauth回调地址 -->
   <select id="selectOauthRedirectUri" resultType="java.lang.String">
@@ -109,4 +148,79 @@
   <update id="updatePassword">
     update sys_user set password = #{password, jdbcType=VARCHAR} where id = #{id, jdbcType=BIGINT}
   </update>
+
+  <!-- 修改ext_id -->
+  <update id="updateExtId">
+    update sys_user set ext_id = #{id, jdbcType=BIGINT} where id = #{id, jdbcType=BIGINT}
+  </update>
+
+  <!-- 用户删除 -->
+  <update id="deleteUserById">
+    update sys_user set delete_flag = true where id = #{id, jdbcType=BIGINT}
+  </update>
+
+
+  <resultMap id="selectListByDtoMap" type="com.highershine.portal.common.entity.vo.SysUserListVo">
+    <id property="id" column="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="lab_name" jdbcType="VARCHAR" property="labName" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="update_datetime" jdbcType="TIMESTAMP" property="updateDatetime" />
+    <collection property="roleNameList" ofType="java.lang.String" javaType="java.util.List"
+                select="selectRoleNameByUserId"  column="id">
+    </collection>
+  </resultMap>
+  <select id="selectListByDto" parameterType="com.highershine.portal.common.entity.dto.SysUserListDTO" resultMap="selectListByDtoMap">
+    select
+    distinct
+    su.id,
+    su.username,
+    su.nickname,
+    su.province,
+    su.phone,
+    su.lab_name,
+    su.city,
+    su.area,
+    su.status,
+    su.update_datetime
+    from sys_user su
+    left join sys_user_role sur on sur.user_id = su.id and sur.client_id = 'website'
+    left join sys_role sr on  sur.role_id =sr.id
+    where su.delete_flag = false
+    and sr.active_flag = true
+    <if test="username != null and username != ''">
+      and su.username like concat('%',#{username, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="nickname != null and nickname != ''">
+      and su.nickname like concat('%',#{nickname, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="roleIds != null">
+      and sr.id in
+      <foreach collection="roleIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    <if test="provinceFlag == true" >
+      and su.city is null
+    </if>
+    <if test="status != null" >
+     and su.status = #{status,jdbcType=BIT}
+    </if>
+    order by su.update_datetime desc
+  </select>
+  <select id="selectRoleNameByUserId" resultType="java.lang.String">
+    select
+    sr.role_name
+    from  sys_user_role sur,sys_role sr
+    where sur.role_id =sr.id
+    and sr.active_flag = true
+    and sur.client_id = 'website'
+    and sur.user_id = #{id,jdbcType=BIGINT}
+    order by sr.role_ord asc
+  </select>
 </mapper>

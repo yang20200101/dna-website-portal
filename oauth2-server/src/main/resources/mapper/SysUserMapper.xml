@@ -70,11 +70,16 @@
     and su.username = #{username, jdbcType=VARCHAR}
   </select>
 
-  <select id="selectClientRoleByUserId" parameterType="java.lang.Long" resultType="com.highershine.oauth2.server.entity.SysClientRole">
+  <resultMap id="selectClientRoleByUserIdMap" type="com.highershine.oauth2.server.entity.SysClientRole">
+    <id property="clientId" column="clientId" />
+    <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
+      <result column="roleId" />
+    </collection>
+  </resultMap>
+  <select id="selectClientRoleByUserId" parameterType="java.lang.Long" resultMap="selectClientRoleByUserIdMap">
     select
     sur.role_id as roleId,
-    sc.id as clientId,
-    sc.client_name as client_name
+    sc.id as clientId
     from sys_user_role sur,sys_client sc
     where sur.client_id = sc.id
     and sc.delete_flag = false

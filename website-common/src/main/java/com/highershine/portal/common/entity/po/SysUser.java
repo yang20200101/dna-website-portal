@@ -1,6 +1,7 @@
 package com.highershine.portal.common.entity.po;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Date;
  * @Date: 2019/11/26 8:46
  */
 @Data
+@Accessors(chain = true)
 public class SysUser implements Serializable {
     private Long id;
 

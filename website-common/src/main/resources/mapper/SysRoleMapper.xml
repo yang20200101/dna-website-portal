@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.highershine.portal.common.mapper.SysRoleMapper">
+  <resultMap id="BaseResultMap" type="com.highershine.portal.common.entity.po.SysRole">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="ext_id" jdbcType="VARCHAR" property="extId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_desc" jdbcType="VARCHAR" property="roleDesc" />
+    <result column="role_ord" jdbcType="INTEGER" property="roleOrd" />
+    <result column="active_flag" jdbcType="BIT" property="activeFlag" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="create_datetime" jdbcType="TIMESTAMP" property="createDatetime" />
+    <result column="update_datetime" jdbcType="TIMESTAMP" property="updateDatetime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      id,ext_id,role_name,role_desc,role_ord,active_flag,create_user,update_user,create_datetime,update_datetime
+  </sql>
+  <select id="getRoleList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_role
+    where active_flag = true
+    order by role_ord
+  </select>
+</mapper>
