@@ -59,7 +59,7 @@ oauth2:
 interface:
   # 校验注册的用户是否在填报系统中对应实验室填报过
   validPersonInLab:
-    addr: http://ip:port/web-manage/su/register
+    addr: http://ip:port/web-manage/su/register/valid
   # 用户注册同步到填报子系统
   userSyncStatistics:
     addr: http://ip:port/web-manage/su/submitLogin

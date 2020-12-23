@@ -68,7 +68,7 @@ public class SysRoleServiceImpl implements SysRoleService {
                     throw new RuntimeException("the url return is blank:" + sysClient.getRoleUrl());
                 }
                 Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-                Integer code = (Integer) resultMap.get("code");
+                Integer code = ((Long) resultMap.get("code")).intValue();
                 if (!HttpStatusEnum.OK.getCode().equals(code)) {
                     throw new RuntimeException("the url return code is not success:" + sysClient.getRoleUrl());
                 } else {

@@ -66,7 +66,7 @@ public class SysUserController {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @GetMapping("token")
-    @ApiOperation("获取token")
+    @ApiOperation("获取token(薛博仁)")
     public Result submitLogin(String code) throws Exception {
         RequestEntity httpEntity = new RequestEntity<>(getHttpBody(code), getHttpHeaders(),
                 HttpMethod.POST, URI.create(tokenAddr));
@@ -102,7 +102,7 @@ public class SysUserController {
     }
 
     @PostMapping("password/update")
-    @ApiOperation("修改密码")
+    @ApiOperation("修改密码(薛博仁)")
     public Result updatePassword(@RequestBody @Valid UpdatePasswordDTO dto, BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
@@ -121,7 +121,7 @@ public class SysUserController {
     }
 
     @GetMapping("password/reset/{id}")
-    @ApiOperation("密码重置")
+    @ApiOperation("密码重置(薛博仁)")
     @Secured("admin")
     public Result resetPassword(@PathVariable("id") Long id) {
         try {

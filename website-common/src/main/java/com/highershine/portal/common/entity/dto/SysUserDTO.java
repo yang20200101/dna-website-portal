@@ -72,7 +72,8 @@ public class SysUserDTO implements Serializable {
     @ApiModelProperty(value = "单位名称", example = "河北省公安厅", required = false)
     private String labName;
 
-
+    @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private String serverNos;
 
     //已废弃

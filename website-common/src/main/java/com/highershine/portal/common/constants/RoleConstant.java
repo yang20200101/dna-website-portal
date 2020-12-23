@@ -1,5 +1,6 @@
 package com.highershine.portal.common.constants;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public final class RoleConstant {
@@ -34,6 +35,7 @@ public final class RoleConstant {
 
     public static String getRoleExtId(String roleId) {
         if (roleMap == null) {
+            roleMap = new HashMap<>();
             roleMap.put(ROLE_ADMIN, ROLE_EXT_ADMIN);
             roleMap.put(ROLE_SECOND_ADMIN, ROLE_EXT_SECOND_ADMIN);
             roleMap.put(ROLE_PROVINCE, ROLE_EXT_PROVINCE);

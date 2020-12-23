@@ -167,7 +167,7 @@ public class SysUserServiceImpl implements SysUserService {
             throw new RuntimeException("the url return is blank:" + userSyncStatisticsAddr);
         }
         Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-        Integer code = (Integer) resultMap.get("code");
+        Integer code = ((Long) resultMap.get("code")).intValue();
         if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
             throw new RuntimeException("the url return code is not success:" + userSyncStatisticsAddr);
         }
@@ -232,7 +232,7 @@ public class SysUserServiceImpl implements SysUserService {
             throw new RuntimeException("the url return is blank:" + validPersonInLabAddr);
         }
         Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-        Integer code = (Integer) resultMap.get("code");
+        Integer code = ((Long) resultMap.get("code")).intValue();
         Map<String, Object> data = (Map) resultMap.get("data");
         if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
             throw new RuntimeException("the url return code is not success:" + validPersonInLabAddr);
@@ -240,9 +240,9 @@ public class SysUserServiceImpl implements SysUserService {
             return "您不属于该实验室，请联系管理员";
         }
         // 判断手动输入所在单位编号是否重复
-        if (sysUser.getIsAddOrg() != null && sysUser.getIsAddOrg()) {
-            String provinceSubCode = sysUser.getProvince().substring(0, 4);
-            String orgSubCode = sysUser.getOrgCode().substring(0, 4);
+        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+            String provinceSubCode = dto.getProvince().substring(0, 4);
+            String orgSubCode = dto.getOrgCode().substring(0, 4);
             if (!orgSubCode.equals(provinceSubCode)) {
                 return "【公安机构代码】与【所属行政地区/单位】不匹配，请检查";
             }

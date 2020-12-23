@@ -45,10 +45,10 @@
   <insert id="insert" parameterType="com.highershine.portal.common.entity.po.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user (username, nickname, password, province, server_nos, id_card_no,
       birth_date, gender, phone, org_code, lab_name, remark, city, is_add_org,
-      area, job, org_add_code, org_add_name, lab_code, status, deleteFlag, createDatetime, updateDatetime
+      area, job, org_add_code, org_add_name, lab_code, status, delete_flag, create_datetime, update_datetime
       )
     values (#{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{province,jdbcType=VARCHAR}, #{server_nos,jdbcType=VARCHAR},  #{id_card_no,jdbcType=VARCHAR},
+      #{province,jdbcType=VARCHAR}, #{serverNos,jdbcType=VARCHAR},  #{idCardNo,jdbcType=VARCHAR},
       #{birthDate,jdbcType=TIMESTAMP}, #{gender,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR},
      #{labName,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{isAddOrg,jdbcType=BIT},
       #{area,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR}, #{orgAddCode,jdbcType=VARCHAR}, #{orgAddName,jdbcType=VARCHAR},
