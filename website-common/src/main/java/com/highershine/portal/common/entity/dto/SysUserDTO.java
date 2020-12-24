@@ -29,8 +29,7 @@ public class SysUserDTO implements Serializable {
     @NotBlank(message = "姓名为空")
     private String nickname;
 
-    @ApiModelProperty(value = "*密码", example = "123456", required = true)
-    @NotBlank(message = "密码为空")
+    @ApiModelProperty(value = "*密码（新增必填）", example = "123456", required = true)
     private String password;
 
     @ApiModelProperty(value = "*省份编码", example = "130000", required = true)
@@ -72,9 +71,15 @@ public class SysUserDTO implements Serializable {
     @ApiModelProperty(value = "单位名称", example = "河北省公安厅", required = false)
     private String labName;
 
+    //业务字段 用于传参
     @JsonIgnore
     @ApiModelProperty(hidden = true)
-    private String serverNos;
+    private String serverNo;
+
+    //业务字段 用于传参
+    @JsonIgnore
+    @ApiModelProperty(hidden = true)
+    private String roles;
 
     //已废弃
     @JsonIgnore

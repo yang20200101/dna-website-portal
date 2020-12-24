@@ -66,7 +66,7 @@
     order by convert_to(nickname, 'GBK')
   </select>
 
-  <select id="selectByUsername" resultType="com.highershine.portal.common.entity.po.SysUser">
+  <select id="selectByUsername" parameterType="com.highershine.portal.common.entity.dto.SysUserDTO" resultType="com.highershine.portal.common.entity.po.SysUser">
     select
     id,
     username,
@@ -95,9 +95,12 @@
     from sys_user
     where delete_flag = false
     and username = #{username, jdbcType=VARCHAR}
+    <if test="id != null">
+      and id != #{id, jdbcType=BIGINT}
+    </if>
   </select>
 
-  <select id="selectByIdCardNo" resultType="com.highershine.portal.common.entity.po.SysUser">
+  <select id="selectByIdCardNo" parameterType="com.highershine.portal.common.entity.dto.SysUserDTO" resultType="com.highershine.portal.common.entity.po.SysUser">
     select
     id,
     username,
@@ -126,15 +129,21 @@
     from sys_user
     where delete_flag = false
     and id_card_no = #{idCardNo, jdbcType=VARCHAR}
+    <if test="id != null">
+      and id != #{id, jdbcType=BIGINT}
+    </if>
   </select>
 
-   <select id="selectByOrgCodeJob" resultType="int">
+   <select id="selectByOrgCodeJob" parameterType="com.highershine.portal.common.entity.dto.SysUserDTO" resultType="int">
     select
     count(1)
     from sys_user
     where delete_flag = false
     and org_code = #{orgCode, jdbcType=VARCHAR}
     and job = #{job, jdbcType=VARCHAR}
+     <if test="id != null">
+       and id != #{id, jdbcType=BIGINT}
+     </if>
    </select>
 
   <!-- 查询oauth回调地址 -->
@@ -157,6 +166,31 @@
   <!-- 用户删除 -->
   <update id="deleteUserById">
     update sys_user set delete_flag = true where id = #{id, jdbcType=BIGINT}
+  </update>
+
+  <!--更新-->
+  <update id="updateByPrimaryKey" parameterType="com.highershine.portal.common.entity.po.SysUser">
+    update sys_user
+    set
+      username = #{username,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      server_nos = #{serverNos,jdbcType=VARCHAR},
+      id_card_no = #{idCardNo,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      lab_name = #{labName,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      is_add_org = #{isAddOrg,jdbcType=BIT},
+      status = #{status,jdbcType=BIT},
+      birth_date = #{birthDate,jdbcType=BIT},
+      update_datetime = #{updateDatetime,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=BIT}
+    WHERE id = #{id}
   </update>
 
 

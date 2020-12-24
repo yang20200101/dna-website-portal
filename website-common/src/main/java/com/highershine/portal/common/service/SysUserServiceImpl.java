@@ -3,7 +3,8 @@ package com.highershine.portal.common.service;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.highershine.portal.common.constants.RoleConstant;
+import com.highershine.portal.common.constants.RedisConstant;
+import com.highershine.portal.common.converter.SysUserConverter;
 import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.dto.SysUserListDTO;
@@ -13,23 +14,27 @@ import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.enums.ResultEnum;
+import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.mapper.SysUserMapper;
 import com.highershine.portal.common.mapper.SysUserRoleMapper;
 import com.highershine.portal.common.utils.DateTools;
 import com.highershine.portal.common.utils.JSONUtil;
 import com.highershine.portal.common.utils.URLConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: 用户服务层
@@ -46,6 +51,8 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
+    @Autowired
+    private ValueOperations valueOperations;
     @Value("${oauth2.server.clientId:website}")
     private String clientId;
     @Value("${interface.validPersonInLab.addr}")
@@ -73,6 +80,11 @@ public class SysUserServiceImpl implements SysUserService {
         //encodeResult 为需要存入数据中加盐加密后的密码
         String encodeResult = bCryptPasswordEncoder.encode("111111");
         this.sysUserMapper.updatePassword(id, encodeResult);
+        //清楚redis中token
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(id);
+        if (sysUser != null) {
+            cleanJwtRedis(sysUser.getUsername());
+        }
     }
 
     /**
@@ -97,6 +109,11 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public void updatePassword(UpdatePasswordDTO dto) {
         sysUserMapper.updatePassword(dto.getId(), dto.getPassword());
+        //清除redis中token
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(dto.getId());
+        if (sysUser != null) {
+            cleanJwtRedis(sysUser.getUsername());
+        }
     }
 
     /**
@@ -106,62 +123,18 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Override
     public SysUser register(SysUserDTO dto) throws Exception {
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(dto, sysUser);
-        //管辖地区
-        String serverNos = sysUser.getProvince();
-        String serverNo = sysUser.getProvince();
-        if (StringUtils.isNotBlank(sysUser.getArea())) {
-            serverNos += "," + sysUser.getCity() + "," + sysUser.getArea();
-            serverNo = sysUser.getArea();
-        } else if (StringUtils.isNotBlank(sysUser.getCity())) {
-            serverNos += "," + sysUser.getCity();
-            serverNo = sysUser.getCity();
-        }
-        sysUser.setServerNos(serverNos);
-        //是否新增实验室
-        if (sysUser.getIsAddOrg() == null) {
-            sysUser.setIsAddOrg(false);
-        }
-        //是否启用
-        if (sysUser.getStatus() == null) {
-            sysUser.setStatus(true);
-        }
-        sysUser.setDeleteFlag(false).setCreateDatetime(new Date()).setUpdateDatetime(new Date());
+        SysUser sysUser = SysUserConverter.transferSysUserDto2Po(dto);
         sysUserMapper.insert(sysUser);
         //修改ext_id(登录子系统使用)
         sysUserMapper.updateExtId(sysUser.getId());
-        //门户系统用户角色初始化
-        if (CollectionUtils.isEmpty(dto.getClientRoles())) {
-            ArrayList<ClientRoleBo> clientRoles = new ArrayList<>();
-            ClientRoleBo clientRoleBo = new ClientRoleBo();
-            //门户系统 普通用户
-            clientRoleBo.setClientId(clientId);
-            List<String> roleList = new ArrayList<>(1);
-            roleList.add(RoleConstant.ROLE_AVERAGE);
-            clientRoleBo.setRoles(roleList);
-            clientRoles.add(clientRoleBo);
-            dto.setClientRoles(clientRoles);
-        }
         // 插入角色信息
-        String roles = "";
-        List<SysUserRole> sysUserRoleList = new ArrayList<>();
-        for (ClientRoleBo clientRole : dto.getClientRoles()) {
-            String client = clientRole.getClientId();
-            for (String role : clientRole.getRoles()) {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setClientId(client).setRoleId(role).setUserId(sysUser.getId());
-                if (client.equals(clientId)) {
-                    roles += RoleConstant.getRoleExtId(role) + ",";
-                }
-                sysUserRoleList.add(sysUserRole);
-            }
-        }
+        dto.setId(sysUser.getId());
+        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, clientId);
         sysUserRoleMapper.batchInsert(sysUserRoleList);
         //用户同步到填报系统
         JSONObject json = getUserSyncParam(sysUser);
-        json.put("roles", roles);
-        json.put("serverNo", serverNo);
+        json.put("roles", dto.getRoles());
+        json.put("serverNo", dto.getServerNo());
         String result = URLConnectionUtil.post(userSyncStatisticsAddr, json.toString());
         if (StringUtils.isBlank(result)) {
             throw new RuntimeException("the url return is blank:" + userSyncStatisticsAddr);
@@ -172,6 +145,23 @@ public class SysUserServiceImpl implements SysUserService {
             throw new RuntimeException("the url return code is not success:" + userSyncStatisticsAddr);
         }
         return sysUser;
+    }
+
+
+    /**
+     * 修改用户
+     * @param dto
+     * @return
+     */
+    @Override
+    public void updateUser(SysUserDTO dto) {
+        SysUser sysUser = SysUserConverter.transferSysUserDto2Po(dto);
+        sysUserMapper.updateByPrimaryKey(sysUser);
+        // 删除角色信息
+        sysUserRoleMapper.deleteByUserId(dto.getId());
+        // 插入角色信息
+        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, clientId);
+        sysUserRoleMapper.batchInsert(sysUserRoleList);
     }
 
     /**
@@ -206,20 +196,51 @@ public class SysUserServiceImpl implements SysUserService {
      * @return
      */
     @Override
-    public String registerAndValid(SysUserDTO dto) throws Exception {
-        SysUser sysUser = sysUserMapper.selectByUsername(dto.getUsername());
-        if (sysUser != null) {
-            return "该用户名已被注册";
+    public SysUser registerAndValid(SysUserDTO dto) throws Exception {
+        //注册校验
+        registerValid(dto);
+        //注册
+        return register(dto);
+    }
+
+    /**
+     * 修改用户信息和校验
+     * @param dto
+     * @throws Exception
+     */
+    @Override
+    public void updateUserAndValid(SysUserDTO dto) throws Exception {
+        //用户信息校验
+        registerValid(dto);
+        //修改用户信息
+        updateUser(dto);
+        //清除redis中token
+        cleanJwtRedis(dto.getUsername());
+    }
+
+    /**
+     * 注册校验
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    public void registerValid(SysUserDTO dto) throws Exception {
+        if (dto.getId() == null && StringUtils.isBlank(dto.getPassword())) {
+            throw new RegisterException("密码为空");
         }
-        sysUser = sysUserMapper.selectByIdCardNo(dto.getIdCardNo());
+        SysUser sysUser = sysUserMapper.selectByUsername(dto);
         if (sysUser != null) {
-            return "该身份证号已被注册";
+            throw new RegisterException("该用户名已被注册");
+        }
+        sysUser = sysUserMapper.selectByIdCardNo(dto);
+        if (sysUser != null) {
+            throw new RegisterException("该身份证号已被注册");
         }
         //判断工作岗位，每个实验室【负责人、数据库管理员】只能注册一个人
         if (!dto.getJob().equals("3")) {
-            int count = sysUserMapper.selectByOrgCodeJob(dto.getOrgCode(), dto.getJob());
+            int count = sysUserMapper.selectByOrgCodeJob(dto);
             if (count != 0) {
-                return "该实验室此工作岗位已被注册";
+                throw new RegisterException("该实验室此工作岗位已被注册");
             }
         }
         //校验用户是否是选择实验室的人员
@@ -237,19 +258,16 @@ public class SysUserServiceImpl implements SysUserService {
         if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
             throw new RuntimeException("the url return code is not success:" + validPersonInLabAddr);
         } else if ((boolean) data.get("existsFlag") == false){
-            return "您不属于该实验室，请联系管理员";
+            throw new RegisterException("您不属于该实验室，请联系管理员");
         }
         // 判断手动输入所在单位编号是否重复
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
             String provinceSubCode = dto.getProvince().substring(0, 4);
             String orgSubCode = dto.getOrgCode().substring(0, 4);
             if (!orgSubCode.equals(provinceSubCode)) {
-                return "【公安机构代码】与【所属行政地区/单位】不匹配，请检查";
+                throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
             }
         }
-        //注册
-        register(dto);
-        return null;
     }
 
     @Override
@@ -290,5 +308,10 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public void deleteUserById(Long id) {
         sysUserMapper.deleteUserById(id);
+    }
+
+    private void cleanJwtRedis (String username) {
+        //清除redis中的token
+        valueOperations.set(RedisConstant.REDIS_LOGIN + username, "", 1, TimeUnit.MICROSECONDS);
     }
 }

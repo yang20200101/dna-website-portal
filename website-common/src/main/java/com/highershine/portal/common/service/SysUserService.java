@@ -50,11 +50,31 @@ public interface SysUserService {
     SysUser register(SysUserDTO dto) throws Exception;
 
     /**
+     * 修改用户信息
+     * @param dto
+     */
+    void updateUser(SysUserDTO dto);
+
+    /**
      * 用户校验和注册
      * @param dto
      * @return
      */
-    String registerAndValid(SysUserDTO dto) throws Exception;
+    SysUser registerAndValid(SysUserDTO dto) throws Exception;
+
+    /**
+     * 修改用户信息和校验
+     * @param dto
+     * @throws Exception
+     */
+    void updateUserAndValid(SysUserDTO dto) throws Exception;
+
+    /**
+     * 注册校验
+     * @param dto
+     * @throws Exception
+     */
+    void registerValid(SysUserDTO dto) throws Exception;
 
     /**
      * 根据id查询用户信息

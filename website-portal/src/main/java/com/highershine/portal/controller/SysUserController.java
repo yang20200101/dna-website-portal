@@ -7,11 +7,13 @@ import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.dto.TokenDTO;
 import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
+import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
+import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.result.Result;
 import com.highershine.portal.common.service.SysUserService;
 import com.highershine.portal.common.utils.ResultUtil;
@@ -19,7 +21,6 @@ import com.highershine.portal.common.utils.SysUserUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
@@ -35,6 +36,8 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -155,7 +158,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("register")
-    @ApiOperation("注册用户接口(薛博仁)")
+    @ApiOperation("注册或新增用户接口(薛博仁)")
     public Result register(@Valid @RequestBody SysUserDTO dto, BindingResult bindingResult) {
         try {
             String message = "";
@@ -164,13 +167,41 @@ public class SysUserController {
                 return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
             }
             //用户校验和注册
-            message = sysUserService.registerAndValid(dto);
-            if (StringUtils.isNotBlank(message)) {
+            SysUser sysUser = sysUserService.registerAndValid(dto);
+            Map<String, Long> map = new HashMap<>();
+            map.put("id", sysUser.getId());
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, map);
+        } catch (RegisterException e) {
+            return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error("【用户管理】注册或新增用户接口异常， 异常信息：{}", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
+
+    /**
+     * 修改用户
+     * @return
+     */
+    @PostMapping("update")
+    @ApiOperation("修改用户接口(薛博仁)")
+    public Result updateUser(@Valid @RequestBody SysUserDTO dto, BindingResult bindingResult) {
+        try {
+            String message = "";
+            if (bindingResult.hasErrors()) {
+                message = bindingResult.getFieldError().getDefaultMessage();
                 return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
             }
+            if (dto.getId() == null) {
+                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), "用户id为空");
+            }
+            //修改用户信息
+            sysUserService.updateUserAndValid(dto);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
+        } catch (RegisterException e) {
+            return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("【用户管理】注册用户接口异常， 异常信息：{}", e);
+            log.error("【用户管理】修改用户接口异常， 异常信息：{}", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }

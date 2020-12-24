@@ -1,6 +1,7 @@
 package com.highershine.portal.common.mapper;
 
 
+import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
@@ -39,10 +40,10 @@ public interface SysUserMapper {
 
     /**
      * 根据用户名查询
-     * @param username
+     * @param dto
      * @return
      */
-    SysUser selectByUsername(String username);
+    SysUser selectByUsername(SysUserDTO dto);
 
     /**
      * 查询oauth回调地址
@@ -59,18 +60,17 @@ public interface SysUserMapper {
 
     /**
      * 根据身份证号查询
-     * @param idCardNo
+     * @param dto
      * @return
      */
-    SysUser selectByIdCardNo(String idCardNo);
+    SysUser selectByIdCardNo(SysUserDTO dto);
 
     /**
      * 根据单位编码和工作岗位查询
-     * @param orgCode
-     * @param job
+     * @param dto
      * @return
      */
-    int selectByOrgCodeJob(@Param("orgCode") String orgCode, @Param("job") String job);
+    int selectByOrgCodeJob(SysUserDTO dto);
 
     /**
      * 查询用户列表
@@ -91,4 +91,10 @@ public interface SysUserMapper {
      * @return
      */
     int deleteUserById(Long id);
+
+    /**
+     * 修改用户
+     * @param sysUser
+     */
+    void updateByPrimaryKey(SysUser sysUser);
 }

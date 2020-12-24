@@ -52,12 +52,6 @@ public class SysUser implements UserDetails {
 
     private String job;
 
-    private String orgAddCode;
-
-    private String orgAddName;
-
-    private String labCode;
-
     private Boolean status;
 
     private Boolean deleteFlag;

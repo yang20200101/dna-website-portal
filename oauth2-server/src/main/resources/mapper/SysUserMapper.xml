@@ -21,9 +21,6 @@
     <result column="is_add_org" jdbcType="BIT" property="isAddOrg" />
     <result column="area" jdbcType="VARCHAR" property="area" />
     <result column="job" jdbcType="VARCHAR" property="job" />
-    <result column="org_add_code" jdbcType="VARCHAR" property="orgAddCode" />
-    <result column="org_add_name" jdbcType="VARCHAR" property="orgAddName" />
-    <result column="lab_code" jdbcType="VARCHAR" property="labCode" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_datetime" jdbcType="TIMESTAMP" property="createDatetime" />
     <result column="update_datetime" jdbcType="TIMESTAMP" property="updateDatetime" />
@@ -54,9 +51,6 @@
     su.is_add_org,
     su.area,
     su.job,
-    su.org_add_code,
-    su.org_add_name,
-    su.lab_code,
     su.status,
     su.delete_flag,
     su.create_datetime,

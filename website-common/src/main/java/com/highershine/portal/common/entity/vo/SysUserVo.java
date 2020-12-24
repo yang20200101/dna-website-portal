@@ -1,5 +1,6 @@
 package com.highershine.portal.common.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,18 +52,14 @@ public class SysUserVo implements Serializable {
 
     private String job;
 
-    private String orgAddCode;
-
-    private String orgAddName;
-
-    private String labCode;
-
     private Boolean status;
 
     private Boolean deleteFlag;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDatetime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateDatetime;
 
     @ApiModelProperty(value = "用户角色列表")
