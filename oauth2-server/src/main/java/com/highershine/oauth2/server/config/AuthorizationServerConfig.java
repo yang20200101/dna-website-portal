@@ -73,10 +73,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .userDetailsService(userDetailsService)
                 //配置令牌生成
                 .accessTokenConverter(jwtAccessTokenConverter)
-                .tokenEnhancer(chain);
-
-//                //该字段设置设置refresh token是否重复使用,true:reuse;false:no reuse.
-//                .reuseRefreshTokens(true)
+                .tokenEnhancer(chain)
+                //该字段设置设置refresh token是否重复使用,true:reuse;false:no reuse.
+                .reuseRefreshTokens(false);
 
     }
 
