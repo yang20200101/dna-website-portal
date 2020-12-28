@@ -8,6 +8,7 @@ import com.highershine.portal.common.entity.po.SysUserRole;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,10 @@ public final class SysUserConverter {
     public static SysUser transferSysUserDto2Po(SysUserDTO dto) {
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(dto, sysUser);
+        //密码
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encodeResult = bCryptPasswordEncoder.encode(dto.getPassword());
+        sysUser.setPassword(encodeResult);
         //管辖地区
         String serverNos = sysUser.getProvince();
         String serverNo = sysUser.getProvince();
