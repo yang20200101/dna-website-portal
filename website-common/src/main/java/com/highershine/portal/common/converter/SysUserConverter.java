@@ -73,12 +73,21 @@ public final class SysUserConverter {
         List<SysUserRole> sysUserRoleList = new ArrayList<>();
         for (ClientRoleBo clientRole : dto.getClientRoles()) {
             String client = clientRole.getClientId();
-            for (String role : clientRole.getRoles()) {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setClientId(client).setRoleId(role).setUserId(dto.getId());
-                if (client.equals(clientId)) {
-                    roles += RoleConstant.getRoleExtId(role) + ",";
+            //避免该情况： clientRoles: [{clientId: "website", roles: []}]
+            if (CollectionUtils.isNotEmpty(clientRole.getRoles())) {
+                for (String role : clientRole.getRoles()) {
+                    SysUserRole sysUserRole = new SysUserRole();
+                    sysUserRole.setClientId(client).setRoleId(role).setUserId(dto.getId());
+                    if (client.equals(clientId)) {
+                        roles += RoleConstant.getRoleExtId(role) + ",";
+                    }
+                    sysUserRoleList.add(sysUserRole);
                 }
+            } else if (client.equals(clientId)) {
+                // 门户系统默认 普通用户
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setClientId(client).setRoleId(RoleConstant.ROLE_AVERAGE).setUserId(dto.getId());
+                roles = RoleConstant.getRoleExtId(RoleConstant.ROLE_AVERAGE);
                 sysUserRoleList.add(sysUserRole);
             }
         }
