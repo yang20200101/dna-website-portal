@@ -11,6 +11,7 @@ import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
+import com.highershine.portal.common.entity.vo.DnaPersonResultVo;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.enums.ResultEnum;
@@ -18,6 +19,7 @@ import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.mapper.SysUserMapper;
 import com.highershine.portal.common.mapper.SysUserRoleMapper;
 import com.highershine.portal.common.utils.DateTools;
+import com.highershine.portal.common.utils.HttpUtils;
 import com.highershine.portal.common.utils.JSONUtil;
 import com.highershine.portal.common.utils.URLConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +32,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +63,14 @@ public class SysUserServiceImpl implements SysUserService {
     private String validPersonInLabAddr;
     @Value("${interface.userSyncStatistics.addr}")
     private String userSyncStatisticsAddr;
+    @Value("${interface.userDelStatistics.addr}")
+    private String userDelStatisticsAddr;
+    @Value("${person.query.addr}")
+    private String personQueryAddr;
+    @Value("${person.query.salt}")
+    private String personQuerySalt;
+    @Value("${person.query.systemkey}")
+    private String personQuerySystemkey;
 
 
     /**
@@ -268,6 +280,31 @@ public class SysUserServiceImpl implements SysUserService {
                 throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
             }
         }
+        //查询户籍系统 判断身份证号姓名是否匹配
+        Map paramMap = new HashMap<String, Object>();
+        paramMap.put("cardNo", dto.getIdCardNo());
+        String signCode = DigestUtils.md5DigestAsHex((dto.getIdCardNo() + "&&" + personQuerySystemkey
+                + "&&" + personQuerySalt).getBytes());
+        paramMap.put("signCode", signCode);
+        paramMap.put("systemKey", personQuerySystemkey);
+        result = HttpUtils.doPost(personQueryAddr, paramMap);
+        if (StringUtils.isNotBlank(result)) {
+            resultMap = JSONUtil.parseJsonToMap(result);
+            code = ((Long) resultMap.get("code")).intValue();
+            if (ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
+                List<HashMap<String, String>> resultData = (List<HashMap<String, String>>) resultMap.get("data");
+                if (resultData != null && resultData.size() > 0) {
+                    DnaPersonResultVo vo = new DnaPersonResultVo();
+                    HashMap<String, String> stringStringHashMap = resultData.get(0);
+                    if (!dto.getNickname().equals(stringStringHashMap.get("xm"))) {
+                        throw new RegisterException("姓名与身份证号不匹配，请根据身份证号进行提取'");
+                    }
+                } else {
+                    throw new RegisterException("该身份证号在户籍系统中不存在，请重新填写后进行提取");
+                }
+            }
+        }
+
     }
 
     @Override
@@ -306,8 +343,19 @@ public class SysUserServiceImpl implements SysUserService {
      * @param id
      */
     @Override
-    public void deleteUserById(Long id) {
+    public void deleteUserById(Long id) throws Exception {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(id);
         sysUserMapper.deleteUserById(id);
+        // 删除子系统用户
+        String result = URLConnectionUtil.get(userDelStatisticsAddr + sysUser.getUsername(), null);
+        if (StringUtils.isBlank(result)) {
+            throw new RuntimeException("the url return is blank:" + userDelStatisticsAddr);
+        }
+        Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
+        Integer code = ((Long) resultMap.get("code")).intValue();
+        if (!ResultEnum.SUCCESS_STATUS.equals(code)) {
+            throw new RuntimeException("the url return code is not success:" + userDelStatisticsAddr);
+        }
     }
 
     private void cleanJwtRedis (String username) {

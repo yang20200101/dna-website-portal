@@ -95,5 +95,5 @@ public interface SysUserService {
      * @param id
      * @return
      */
-    void deleteUserById(Long id);
+    void deleteUserById(Long id) throws Exception;
 }
