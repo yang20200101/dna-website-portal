@@ -11,7 +11,6 @@ import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
-import com.highershine.portal.common.entity.vo.DnaPersonResultVo;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.enums.ResultEnum;
@@ -294,7 +293,6 @@ public class SysUserServiceImpl implements SysUserService {
             if (ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
                 List<HashMap<String, String>> resultData = (List<HashMap<String, String>>) resultMap.get("data");
                 if (resultData != null && resultData.size() > 0) {
-                    DnaPersonResultVo vo = new DnaPersonResultVo();
                     HashMap<String, String> stringStringHashMap = resultData.get(0);
                     if (!dto.getNickname().equals(stringStringHashMap.get("xm"))) {
                         throw new RegisterException("姓名与身份证号不匹配，请根据身份证号进行提取'");

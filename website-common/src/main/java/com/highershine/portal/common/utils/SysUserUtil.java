@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ public class SysUserUtil {
         //SysUserVo对象
         List<String> roles = authorities.stream().map(map -> map.get("authority")).collect(Collectors.toList());
         SysUserVo vo = JSON.toJavaObject(user, SysUserVo.class);
+        vo.setServerNoList(Arrays.asList(vo.getServerNos().split(",")));
         vo.setUserRole(roles);
         return vo;
     }

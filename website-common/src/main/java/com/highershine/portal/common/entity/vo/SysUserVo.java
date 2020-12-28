@@ -30,6 +30,8 @@ public class SysUserVo implements Serializable {
 
     private String serverNos;
 
+    private List<String> serverNoList;
+
     private String idCardNo;
 
     private Date birthDate;
