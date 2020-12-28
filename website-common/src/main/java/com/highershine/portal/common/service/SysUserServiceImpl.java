@@ -180,8 +180,8 @@ public class SysUserServiceImpl implements SysUserService {
         paramMap.put("status", true);
         paramMap.put("deleted", false);
         paramMap.put("password", "");
-        paramMap.put("createdBy", sysUser.getCreateDatetime());
-        paramMap.put("updatedBy", sysUser.getUpdateDatetime());
+        paramMap.put("createdBy", DateTools.dateToString(sysUser.getCreateDatetime(), DateTools.DF_TIME));
+        paramMap.put("updatedBy", DateTools.dateToString(sysUser.getUpdateDatetime(), DateTools.DF_TIME));
         paramMap.put("birthDate", sysUser.getBirthDate());
         paramMap.put("gender", sysUser.getGender());
         paramMap.put("idCardNo", sysUser.getIdCardNo());
