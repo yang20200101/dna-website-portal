@@ -32,9 +32,11 @@ public final class SysUserConverter {
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(dto, sysUser);
         //密码
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String encodeResult = bCryptPasswordEncoder.encode(dto.getPassword());
-        sysUser.setPassword(encodeResult);
+        if (StringUtils.isNotBlank(dto.getPassword())) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String encodeResult = bCryptPasswordEncoder.encode(dto.getPassword());
+            sysUser.setPassword(encodeResult);
+        }
         //管辖地区
         String serverNos = sysUser.getProvince();
         String serverNo = sysUser.getProvince();
