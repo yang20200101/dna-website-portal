@@ -4,6 +4,7 @@ import com.highershine.oauth2.server.entity.SysClientRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import com.highershine.oauth2.server.exception.MyUsernameNotFoundException;
 import com.highershine.oauth2.server.mapper.SysUserMapper;
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,7 +35,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (sysUser == null) {
             throw new MyUsernameNotFoundException(username + " is not exists!");
         }
-        if (!BCrypt.checkpw(request.getParameter("password"), sysUser.getPassword())) {
+        if (StringUtils.isNotBlank(request.getParameter("password"))
+                && !BCrypt.checkpw(request.getParameter("password"), sysUser.getPassword())) {
             throw new MyUsernameNotFoundException(username + " password error!");
         }
         //查询系统对应角色信息

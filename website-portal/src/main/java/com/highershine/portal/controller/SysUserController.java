@@ -86,6 +86,25 @@ public class SysUserController {
         throw new RuntimeException("请求令牌失败！");
     }
 
+
+    @PostMapping("refreshToken")
+    @ApiOperation("刷新token(薛博仁)")
+    public Result refreshToken(@RequestBody Map<String,String> param) throws Exception {
+        RequestEntity httpEntity = new RequestEntity<>(getrefreshHttpBody(param.get("refreshToken")), getHttpHeaders(),
+                HttpMethod.POST, URI.create(tokenAddr));
+        ResponseEntity<TokenDTO> exchange = restTemplate.exchange(httpEntity, TokenDTO.class);
+        if (exchange.getStatusCode().is2xxSuccessful()) {
+            // redis管理jwtToken失效
+            TokenDTO tokenDTO = exchange.getBody();
+            String accessToken = tokenDTO.getAccessToken();
+            SysUserVo user = sysUserUtil.getSysUserVoByToken(accessToken);
+            String expiresIn = tokenDTO.getExpiresIn();
+            valueOperations.set(RedisConstant.REDIS_LOGIN + user.getUsername(), accessToken, Long.parseLong(expiresIn), TimeUnit.SECONDS);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, exchange.getBody());
+        }
+        throw new RuntimeException("请求令牌失败！");
+    }
+
     private MultiValueMap<String, String> getHttpBody(String code) throws UnsupportedEncodingException {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
@@ -95,6 +114,16 @@ public class SysUserController {
         params.add("scope", "all");
         return params;
     }
+
+    private MultiValueMap<String, String> getrefreshHttpBody(String refreshToken) throws UnsupportedEncodingException {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        return params;
+    }
+
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
