@@ -119,7 +119,10 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Override
     public void updatePassword(UpdatePasswordDTO dto) {
-        sysUserMapper.updatePassword(dto.getId(), dto.getPassword());
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        //encodeResult 为需要存入数据中加盐加密后的密码
+        String encodeResult = bCryptPasswordEncoder.encode(dto.getPassword());
+        sysUserMapper.updatePassword(dto.getId(), encodeResult);
         //清除redis中token
         SysUser sysUser = sysUserMapper.selectByPrimaryKey(dto.getId());
         if (sysUser != null) {
