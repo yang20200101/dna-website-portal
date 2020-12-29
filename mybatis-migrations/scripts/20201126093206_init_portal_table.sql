@@ -281,14 +281,6 @@ COMMENT ON COLUMN "po_application"."deleted" IS 'true-已删除、默认false';
 COMMENT ON COLUMN "po_application"."created_at" IS '创建时间';
 COMMENT ON COLUMN "po_application"."updated_at" IS '更新时间';
 
-
-INSERT INTO "public"."sys_role" VALUES (1, '管理员', '管理员', 't', 1, now(), 'system', now(), 'system', 'admin');
-INSERT INTO "public"."sys_role" VALUES (2, '二所管理员（七处）', '二所管理员（七处）', 't', 2, now(), 'system', now(), 'system', 'secondAdmin');
-INSERT INTO "public"."sys_role" VALUES (3, '省级管理员', '省级管理员', 't', 3, now(), 'system', now(), 'system', 'province');
-INSERT INTO "public"."sys_role" VALUES (4, '普通用户', '普通用户', 't', 4, now(), 'system', now(), 'system', 'averageUser');
-INSERT INTO "public"."sys_role" VALUES (5, '行业专家', '行业专家', 't', 5, now(), 'system', now(), 'system', 'expert');
-commit;
-
  CREATE TABLE IF NOT EXISTS SYS_REGIONALISM
 (
 	id SERIAL8 NOT NULL PRIMARY KEY,
