@@ -85,18 +85,41 @@
   <select id="getArticleList" parameterType="com.highershine.portal.common.entity.dto.ArticleDTO"
           resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from po_article
-    where deleted = false
+    pa.id,
+    pa.publish_date,
+    pa.deleted,
+    pa.category_id,
+    pa.is_publish,
+    pa.is_need_update,
+    pa.is_top,
+    pa.title,
+    pa.source,
+    pa.link,
+    pa.description,
+    pa.thumbnail_id,
+    pa.is_focus,
+    pa.level,
+    pa.content,
+    pa.draft_id,
+    pa.created_at,
+    pa.updated_at
+    from po_article pa,po_category pc
+    where pa.category_id = pc.id and pa.deleted = false and pc.deleted = false
     <if test="categoryId != null">
-     and category_id = #{categoryId,jdbcType=BIGINT}
+     and pa.category_id = #{categoryId,jdbcType=BIGINT}
+    </if>
+    <if test="alias != null and alias != ''">
+      and pc.alias = #{alias,jdbcType=VARCHAR}
+    </if>
+    <if test="categoryId != null">
+      and pa.category_id = #{categoryId,jdbcType=BIGINT}
     </if>
     <if test="isFocus != null">
-      and is_focus = #{isFocus,jdbcType=BIT}
+      and pa.is_focus = #{isFocus,jdbcType=BIT}
     </if>
     <if test="keyword != null and keyword != ''">
-      and  (title like concat('%',#{keyword, jdbcType=VARCHAR},'%')
-      or content like concat('%',#{keyword, jdbcType=VARCHAR},'%'))
+      and  (pa.title like concat('%',#{keyword, jdbcType=VARCHAR},'%')
+      or pa.content like concat('%',#{keyword, jdbcType=VARCHAR},'%'))
     </if>
   </select>
 

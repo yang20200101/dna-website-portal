@@ -18,6 +18,9 @@ public class ArticleDTO extends BaseDTO{
     @ApiModelProperty(value = "主键", name = "id", example = "1", dataType = "long")
     private Long id;
 
+    @ApiModelProperty(value = "别名", name = "alias", example = "TPXW", dataType = "long")
+    private String alias;
+
     @ApiModelProperty(value = "发布时间", name = "publishDate", dataType = "date")
     private Date publishDate;
 
