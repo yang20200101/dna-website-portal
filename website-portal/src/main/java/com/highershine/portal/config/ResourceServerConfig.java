@@ -40,6 +40,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     //放行接口
     public static String[] passUrl =  {"/su/token/**",
                                 "/su/refreshToken",
+                                "/thumbnail/download/**",
                                 "/personQuery/query/idCardNo",
                                 "/region/getTree",
                                 "/su/register",
