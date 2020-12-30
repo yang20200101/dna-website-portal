@@ -27,4 +27,7 @@ public class SysUserListDTO extends BaseDTO implements Serializable {
 
     @ApiModelProperty(value = "仅省级用户,默认false", example = "10086", required = false)
     private boolean provinceFlag;
+
+    @ApiModelProperty(value = "实验室名称", example = "大兴", required = false)
+    private String labName;
 }
