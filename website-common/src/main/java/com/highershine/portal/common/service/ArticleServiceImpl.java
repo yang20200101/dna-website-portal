@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,23 +44,16 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public List<ArticleVo> getArticleList(String endPoint, String bucketName, ArticleDTO articleDTO) throws Exception {
-        List<ArticleVo> voList = new ArrayList<>();
-        List<Article> articleList = articleMapper.getArticleList(articleDTO);
-        for (Article article : articleList) {
-            ArticleVo vo = new ArticleVo();
-            BeanUtils.copyProperties(article, vo);
+        List<ArticleVo> voList = articleMapper.getArticleList(articleDTO);
+        for (ArticleVo vo : voList) {
             //封装缩略图对象
             ThumbnailVo thumbnail = new ThumbnailVo();
-            if (article.getThumbnailId() != null) {
-                Thumbnail img = thumbnailMapper.selectByPrimaryKey(article.getThumbnailId());
+            if (vo.getThumbnailId() != null) {
+                Thumbnail img = thumbnailMapper.selectByPrimaryKey(vo.getThumbnailId());
                 thumbnail.setId(img.getId());
                 thumbnail.setUrl(endPoint + "/" + bucketName + "/" + img.getUrl());
             }
             vo.setThumbnail(thumbnail);
-            //封装栏目对象
-            CategoryVo category = categoryMapper.selectVoByPrimaryKey(article.getCategoryId());
-            vo.setCategory(category);
-            voList.add(vo);
         }
         return voList;
     }

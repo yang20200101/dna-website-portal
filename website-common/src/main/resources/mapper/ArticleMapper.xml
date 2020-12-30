@@ -21,6 +21,21 @@
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
+  <resultMap id="voMap" type="com.highershine.portal.common.entity.vo.ArticleVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="link" jdbcType="VARCHAR" property="link" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="thumbnail_id" jdbcType="BIGINT" property="thumbnailId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <!-- 这是映射 -->
+    <association property="category" javaType="com.highershine.portal.common.entity.vo.CategoryVo">
+      <id column="categoryId" jdbcType="BIGINT" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="alias" jdbcType="VARCHAR" property="alias" />
+    </association>
+  </resultMap>
   <sql id="Base_Column_List">
     id, publish_date, deleted, category_id, is_publish, is_need_update,
     is_top, title, source, link, description, thumbnail_id, is_focus, level, content,
@@ -83,26 +98,18 @@
   </update>
 <!--  获取文章列表-->
   <select id="getArticleList" parameterType="com.highershine.portal.common.entity.dto.ArticleDTO"
-          resultMap="BaseResultMap">
+          resultMap="voMap">
     select
     pa.id,
     pa.publish_date,
-    pa.deleted,
-    pa.category_id,
-    pa.is_publish,
-    pa.is_need_update,
-    pa.is_top,
     pa.title,
-    pa.source,
     pa.link,
     pa.description,
     pa.thumbnail_id,
-    pa.is_focus,
-    pa.level,
     pa.content,
-    pa.draft_id,
-    pa.created_at,
-    pa.updated_at
+    pc.name,
+    pa.category_id categoryId,
+    pc.alias
     from po_article pa,po_category pc
     where pa.category_id = pc.id and pa.deleted = false and pc.deleted = false
     <if test="categoryId != null">

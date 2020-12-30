@@ -1,5 +1,6 @@
 package com.highershine.portal.common.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,4 +38,8 @@ public class ArticleVo {
 
     @ApiModelProperty(value = "文章内容", name = "content",  dataType = "string")
     private String content;
+
+    @JsonIgnore
+    @ApiModelProperty(hidden = true)
+    private Long thumbnailId;
 }
