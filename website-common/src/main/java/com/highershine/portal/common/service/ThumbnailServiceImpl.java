@@ -18,12 +18,14 @@ import com.highershine.portal.common.utils.FileUtil;
 import com.highershine.portal.common.utils.StringUtil;
 import com.highershine.portal.common.utils.ZIPUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
@@ -42,6 +44,8 @@ import java.util.List;
 public class ThumbnailServiceImpl implements ThumbnailService {
     @Autowired
     private AmazonS3 amazonS3;
+    @Autowired
+    private HttpServletRequest request;
     @Autowired
     private HttpServletResponse response;
     @Autowired
@@ -111,7 +115,11 @@ public class ThumbnailServiceImpl implements ThumbnailService {
     @Override
     public void download(String bucketName, Long id) throws Exception {
         Thumbnail thumbnail = thumbnailMapper.selectByPrimaryKey(id);
-        minIODownload(bucketName, thumbnail.getUrl(), thumbnail.getFileName());
+        if (StringUtils.isNotBlank(request.getParameter("filename"))) {
+            minIODownload(bucketName, thumbnail.getUrl(), request.getParameter("filename"));
+        } else {
+            minIODownload(bucketName, thumbnail.getUrl(), thumbnail.getFileName());
+        }
     }
 
     /**
