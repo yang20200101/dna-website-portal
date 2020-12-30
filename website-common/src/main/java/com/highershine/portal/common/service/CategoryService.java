@@ -52,4 +52,11 @@ public interface CategoryService {
      * @return
      */
     String uniqueValid(CategoryDTO categoryDTO);
+
+    /**
+     * 根据别名获取栏目信息
+     * @param alias
+     * @return
+     */
+    CategoryVo findCategoryByAlias(String alias);
 }

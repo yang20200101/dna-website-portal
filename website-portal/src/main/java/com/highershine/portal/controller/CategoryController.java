@@ -145,4 +145,18 @@ public class CategoryController {
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }
+
+
+    @GetMapping("alias/{alias}")
+    @ApiOperation("根据别名获取栏目详情（薛博仁）")
+    public Result<CategoryVo> findCategoryById(@PathVariable("alias") String alias) {
+
+        try {
+            CategoryVo categoryVo = categoryService.findCategoryByAlias(alias);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, categoryVo);
+        } catch (Exception e) {
+            log.error("【栏目】根据别名获取栏目详情异常，异常信息：", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
 }

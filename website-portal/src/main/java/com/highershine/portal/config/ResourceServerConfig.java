@@ -52,6 +52,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                                 "/advertisement/list",
                                 "/category/getCategoryList",
                                 "/category/find/**",
+                                "/category/alias/**",
                                 "/advertisement/list",
                                 "/_health",
                                 "/v2/api-docs", "/swagger-resources/configuration/ui","/swagger-resources", "/swagger-resources/configuration/security",

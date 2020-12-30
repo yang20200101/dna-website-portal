@@ -111,4 +111,18 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return message;
     }
+
+    /**
+     * 根据别名获取栏目详情
+     * @param alias
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public CategoryVo findCategoryByAlias(String alias) {
+        Category category =  categoryMapper.findCategoryByAlias(alias);
+        CategoryVo categoryVo = new CategoryVo();
+        BeanUtils.copyProperties(category, categoryVo);
+        return categoryVo;
+    }
 }

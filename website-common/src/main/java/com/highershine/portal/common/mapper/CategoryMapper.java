@@ -50,4 +50,11 @@ public interface CategoryMapper {
      * @return
      */
     int uniqueValid(Category category);
+
+    /**
+     * 根据别名获取栏目详情
+     * @param alias
+     * @return
+     */
+    Category findCategoryByAlias(String alias);
 }
