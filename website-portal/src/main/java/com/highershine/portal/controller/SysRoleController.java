@@ -36,7 +36,7 @@ public class SysRoleController {
             List<SysRoleListVo> vo = sysRoleService.getRoleList();
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
-            log.error("【用户管理】修改密码异常， 异常信息：{}", e);
+            log.error("【角色查询】获取所有角色异常， 异常信息：{}", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }
