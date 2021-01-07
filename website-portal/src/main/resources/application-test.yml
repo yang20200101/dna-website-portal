@@ -46,10 +46,10 @@ person:
 
 oauth2:
   server:
-    # oauth_client_details配置的clientId
-    clientId: website
+    # oauth_client_details配置的client_id
+    clientId: highershine_2598FC0F06E7
     # oauth_client_details配置的client_secret(明文)
-    clientSecret: 2020
+    clientSecret: highershine
     # oauth2-server服务的地址
     tokenAddr: http://ip:port/oauth2-server/oauth/token
     checkTokenAddr: http://ip:port/oauth2-server/oauth/check_token

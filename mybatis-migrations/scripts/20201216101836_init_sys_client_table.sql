@@ -34,7 +34,7 @@ CREATE TABLE oauth_client_details (
 ALTER TABLE public.oauth_client_details OWNER to dna_portal;
 insert into oauth_client_details (client_id,resource_ids,client_secret,scope,authorized_grant_types,
 web_server_redirect_uri,authorities,access_token_validity,refresh_token_validity,additional_information,autoapprove) values
-('website', 'website', '$2a$10$.ebjcgCVOHuEscJ6xLyQcu21nW93XuHZ2qk2TRbTofDLVhPY0C5S2', 'all', 'authorization_code,refresh_token',
+('highershine_2598FC0F06E7', 'highershine_2598FC0F06E7', '$2a$10$6mVNHQ6RmbL2.ZWbR17xXe.MUkYC18oMYrDkWfY9Mp4LmPCYdEBo6', 'all', 'authorization_code,refresh_token',
 'http://192.168.10.58/web-portal/su/token', 'admin,ROLE_admin',36000, null, null, true);
 
 CREATE TABLE oauth_client_token (
