@@ -12,6 +12,8 @@ public final class CommonConstant {
 
     }
 
+    public static final String CLIENT_WEBSITE = "website";
+
     public static final String APPLICATION_JSON = "application/json";
 
     // JSESSIONID

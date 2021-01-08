@@ -1,6 +1,7 @@
 package com.highershine.portal.common.service;
 
 
+import com.highershine.portal.common.constants.CommonConstant;
 import com.highershine.portal.common.constants.RoleConstant;
 import com.highershine.portal.common.entity.po.SysClient;
 import com.highershine.portal.common.entity.po.SysRole;
@@ -14,7 +15,6 @@ import com.highershine.portal.common.utils.URLConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +37,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     private SysRoleMapper sysRoleMapper;
     @Autowired
     private SysClientMapper sysClientMapper;
-    @Value("${oauth2.server.clientId}")
-    private String clientId;
+
     //缓存其他系统角色
     private Map<String, SysRoleListVo> cacheClientRoleMap = new HashMap<>();
 
@@ -77,7 +76,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             SysRoleListVo vo = new SysRoleListVo();
             vo.setClientId(sysClient.getId()).setClientName(sysClient.getClientName());
             // 门户角色
-            if (clientId.equals(sysClient.getId())) {
+            if (CommonConstant.CLIENT_WEBSITE.equals(sysClient.getId())) {
                 List<SysRoleVo> roleVos = new ArrayList<>();
                 for (SysRole sysRole : roleList) {
                     SysRoleVo sysRoleVo = new SysRoleVo();
