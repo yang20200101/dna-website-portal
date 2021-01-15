@@ -262,6 +262,7 @@ public class SysUserServiceImpl implements SysUserService {
         json.put("orgCode", dto.getOrgCode());
         json.put("fullname", dto.getNickname());
         json.put("idCardNo", dto.getIdCardNo());
+        json.put("job", dto.getJob());
         String result = URLConnectionUtil.post(validPersonInLabAddr, json.toString());
         if (StringUtils.isBlank(result)) {
             throw new RuntimeException("the url return is blank:" + validPersonInLabAddr);
