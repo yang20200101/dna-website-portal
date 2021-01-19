@@ -277,9 +277,15 @@ public class SysUserServiceImpl implements SysUserService {
         }
         // 判断手动输入所在单位编号是否重复
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-            String provinceSubCode = dto.getProvince().substring(0, 4);
+            String serverNo = sysUser.getProvince();
+            if (StringUtils.isNotBlank(sysUser.getArea())) {
+                serverNo = sysUser.getArea();
+            } else if (StringUtils.isNotBlank(sysUser.getCity())) {
+                serverNo = sysUser.getCity();
+            }
+            String serverCode = serverNo.substring(0, 4);
             String orgSubCode = dto.getOrgCode().substring(0, 4);
-            if (!orgSubCode.equals(provinceSubCode)) {
+            if (!orgSubCode.equals(serverCode)) {
                 throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
             }
         }
