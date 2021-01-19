@@ -3,6 +3,7 @@ package com.highershine.portal.common.service;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.highershine.portal.common.constants.CommonConstant;
 import com.highershine.portal.common.constants.RedisConstant;
 import com.highershine.portal.common.converter.SysUserConverter;
 import com.highershine.portal.common.entity.bo.ClientRoleBo;
@@ -143,7 +144,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserMapper.updateExtId(sysUser.getId());
         // 插入角色信息
         dto.setId(sysUser.getId());
-        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, clientId);
+        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, CommonConstant.CLIENT_WEBSITE);
         sysUserRoleMapper.batchInsert(sysUserRoleList);
         //用户同步到填报系统
         JSONObject json = getUserSyncParam(sysUser);
