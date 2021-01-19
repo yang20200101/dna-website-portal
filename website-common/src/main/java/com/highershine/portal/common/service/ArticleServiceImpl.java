@@ -10,12 +10,14 @@ import com.highershine.portal.common.entity.vo.ThumbnailVo;
 import com.highershine.portal.common.mapper.ArticleMapper;
 import com.highershine.portal.common.mapper.CategoryMapper;
 import com.highershine.portal.common.mapper.ThumbnailMapper;
+import com.highershine.portal.common.utils.DateTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +56,10 @@ public class ArticleServiceImpl implements ArticleService {
                 thumbnail.setUrl(endPoint + "/" + bucketName + "/" + img.getUrl());
             }
             vo.setThumbnail(thumbnail);
+            //7天以内的数据增加new标记
+            if (DateTools.isLatestWeek(vo.getPublishDate(), new Date())) {
+                vo.setNewFlag(true);
+            }
         }
         return voList;
     }

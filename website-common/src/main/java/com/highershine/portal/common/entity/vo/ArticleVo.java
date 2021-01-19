@@ -39,6 +39,9 @@ public class ArticleVo {
     @ApiModelProperty(value = "文章内容", name = "content",  dataType = "string")
     private String content;
 
+    @ApiModelProperty(value = "new标记", name = "content",  dataType = "boolean")
+    private boolean newFlag;
+
     @JsonIgnore
     @ApiModelProperty(hidden = true)
     private Long thumbnailId;
