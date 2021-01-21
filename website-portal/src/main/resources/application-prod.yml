@@ -64,5 +64,8 @@ interface:
   userSyncStatistics:
     addr: http://ip:port/web-manage/su/submitLogin
   # 用户删除同步到填报子系统
-  userDelStatisticsAddr:
-    addr: http://192.168.10.58/web-manage/su/delete/
+  userDelStatistics:
+    addr: http://ip:port/web-manage/su/delete/
+  # 新增实验室
+  saveLab:
+    addr: http://ip:port/web-manage/sysLabInfos/save

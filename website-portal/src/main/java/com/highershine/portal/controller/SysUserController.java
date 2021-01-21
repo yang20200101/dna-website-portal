@@ -195,6 +195,9 @@ public class SysUserController {
                 message = bindingResult.getFieldError().getDefaultMessage();
                 return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), message);
             }
+            if (dto.getIsAddOrg() != null && dto.getIsAddOrg() == false && dto.getOrgCode() == null) {
+                return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), "单位编码为空");
+            }
             //用户校验和注册
             SysUser sysUser = sysUserService.registerAndValid(dto);
             Map<String, Long> map = new HashMap<>();
