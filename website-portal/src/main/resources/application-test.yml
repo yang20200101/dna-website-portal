@@ -56,5 +56,6 @@ oauth2:
     # jwt密钥
     jwtSecret: highershine-jwt-key
 
+# 子系统地址
 website:
   managePath: ip:port/web-manage
