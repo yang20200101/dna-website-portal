@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.highershine.portal.common.constants.CommonConstant;
 import com.highershine.portal.common.constants.RedisConstant;
+import com.highershine.portal.common.converter.InterfacePropertyConverter;
 import com.highershine.portal.common.converter.SysUserConverter;
 import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import com.highershine.portal.common.entity.dto.SysUserDTO;
@@ -61,20 +62,15 @@ public class SysUserServiceImpl implements SysUserService {
     private ValueOperations valueOperations;
     @Value("${oauth2.server.clientId:website}")
     private String clientId;
-    @Value("${interface.validPersonInLab.addr}")
-    private String validPersonInLabAddr;
-    @Value("${interface.saveLab.addr}")
-    private String saveLabAddr;
-    @Value("${interface.userSyncStatistics.addr}")
-    private String userSyncStatisticsAddr;
-    @Value("${interface.userDelStatistics.addr}")
-    private String userDelStatisticsAddr;
     @Value("${person.query.addr}")
     private String personQueryAddr;
     @Value("${person.query.salt}")
     private String personQuerySalt;
     @Value("${person.query.systemkey}")
     private String personQuerySystemkey;
+    @Autowired
+    private InterfacePropertyConverter urls;
+
 
 
     /**
@@ -154,14 +150,14 @@ public class SysUserServiceImpl implements SysUserService {
         JSONObject json = getUserSyncParam(sysUser);
         json.put("roles", dto.getRoles());
         json.put("serverNo", dto.getServerNo());
-        String result = URLConnectionUtil.post(userSyncStatisticsAddr, json.toString());
+        String result = URLConnectionUtil.post(urls.getUserSyncStatisticsUrl(), json.toString());
         if (StringUtils.isBlank(result)) {
-            throw new RuntimeException("the url return is blank:" + userSyncStatisticsAddr);
+            throw new RuntimeException("the url return is blank:" + urls.getUserSyncStatisticsUrl());
         }
         Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
         Integer code = ((Long) resultMap.get("code")).intValue();
         if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
-            throw new RuntimeException("the url return code is not success:" + userSyncStatisticsAddr);
+            throw new RuntimeException("the url return code is not success:" + urls.getUserSyncStatisticsUrl());
         }
         return sysUser;
     }
@@ -268,15 +264,15 @@ public class SysUserServiceImpl implements SysUserService {
         json.put("fullname", dto.getNickname());
         json.put("idCardNo", dto.getIdCardNo());
         json.put("job", dto.getJob());
-        String result = URLConnectionUtil.post(validPersonInLabAddr, json.toString());
+        String result = URLConnectionUtil.post(urls.getValidPersonInLabUrl(), json.toString());
         if (StringUtils.isBlank(result)) {
-            throw new RuntimeException("the url return is blank:" + validPersonInLabAddr);
+            throw new RuntimeException("the url return is blank:" + urls.getValidPersonInLabUrl());
         }
         Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
         Integer code = ((Long) resultMap.get("code")).intValue();
         Map<String, Object> data = (Map) resultMap.get("data");
         if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
-            throw new RuntimeException("the url return code is not success:" + validPersonInLabAddr);
+            throw new RuntimeException("the url return code is not success:" + urls.getValidPersonInLabUrl());
         } else if ((boolean) data.get("existsFlag") == false){
             throw new RegisterException("您不属于该实验室，请联系管理员");
         }
@@ -311,10 +307,10 @@ public class SysUserServiceImpl implements SysUserService {
             } else if (StringUtils.isNotBlank(dto.getCity())) {
                 serverNo = dto.getCity();
             }
-            result = URLConnectionUtil.get(saveLabAddr + "?regionalismCode="
+            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?regionalismCode="
                     + serverNo + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
             if (StringUtils.isBlank(result)) {
-                throw new RuntimeException("the url return is blank:" + saveLabAddr);
+                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
             }
             resultMap = JSONUtil.parseJsonToMap(result);
             code = ((Long) resultMap.get("code")).intValue();
@@ -322,7 +318,7 @@ public class SysUserServiceImpl implements SysUserService {
                 if (HttpStatusEnum.NOT_ACCEPTABLE.getCode().equals(code)) {
                     throw new RegisterException((String) resultMap.get("msg"));
                 }
-                throw new RuntimeException("the url return code is not success:" + saveLabAddr);
+                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
             } else {
                 data = (Map) resultMap.get("data");
                 if (StringUtils.isBlank((String) data.get("labCode"))) {
@@ -373,14 +369,14 @@ public class SysUserServiceImpl implements SysUserService {
         SysUser sysUser = sysUserMapper.selectByPrimaryKey(id);
         sysUserMapper.deleteUserById(id);
         // 删除子系统用户
-        String result = URLConnectionUtil.get(userDelStatisticsAddr + sysUser.getUsername(), null);
+        String result = URLConnectionUtil.get(urls.getUserDelStatisticsUrl() + sysUser.getUsername(), null);
         if (StringUtils.isBlank(result)) {
-            throw new RuntimeException("the url return is blank:" + userDelStatisticsAddr);
+            throw new RuntimeException("the url return is blank:" + urls.getUserDelStatisticsUrl());
         }
         Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
         Integer code = ((Long) resultMap.get("code")).intValue();
         if (!ResultEnum.SUCCESS_STATUS.equals(code)) {
-            throw new RuntimeException("the url return code is not success:" + userDelStatisticsAddr);
+            throw new RuntimeException("the url return code is not success:" + urls.getUserDelStatisticsUrl());
         }
     }
 
