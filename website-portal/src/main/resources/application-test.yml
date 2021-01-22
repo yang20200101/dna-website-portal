@@ -56,13 +56,6 @@ oauth2:
     # jwt密钥
     jwtSecret: highershine-jwt-key
 
-interface:
-  # 校验注册的用户是否在填报系统中对应实验室填报过
-  validPersonInLab:
-    addr: http://ip:port/web-manage/su/register/valid
-  # 用户注册同步到填报子系统
-  userSyncStatistics:
-    addr: http://ip:port/web-manage/su/submitLogin
-  # 用户删除同步到填报子系统
-  userDelStatisticsAddr:
-    addr: http://192.168.10.58/web-manage/su/delete/
+# 子系统地址
+website:
+  managePath: ip:port/web-manage
