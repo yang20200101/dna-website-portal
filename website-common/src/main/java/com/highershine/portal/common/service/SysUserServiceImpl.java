@@ -15,6 +15,7 @@ import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
+import com.highershine.portal.common.enums.HttpStatusEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.mapper.SysUserMapper;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -308,6 +310,22 @@ public class SysUserServiceImpl implements SysUserService {
                 } else {
                     throw new RegisterException("该身份证号在户籍系统中不存在，请重新填写后进行提取");
                 }
+            }
+        }
+        //生成实验室编号
+        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?labCode="
+                    + dto.getLabCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+            if (StringUtils.isBlank(result)) {
+                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
+            }
+            resultMap = JSONUtil.parseJsonToMap(result);
+            code = ((Long) resultMap.get("code")).intValue();
+            if (!HttpStatusEnum.OK.getCode().equals(code)) {
+                if (HttpStatusEnum.PRECONDITION_FAILED.getCode().equals(code)) {
+                    throw new RegisterException((String) resultMap.get("msg"));
+                }
+                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
             }
         }
 
