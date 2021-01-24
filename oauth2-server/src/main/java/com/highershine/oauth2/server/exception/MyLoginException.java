@@ -7,13 +7,13 @@ import org.springframework.security.core.AuthenticationException;
  * @Author: xueboren
  * @Date: 2020/12/10 14:48
  */
-public class MyUsernameNotFoundException extends AuthenticationException {
+public class MyLoginException extends AuthenticationException {
 
-    public MyUsernameNotFoundException(String msg) {
+    public MyLoginException(String msg) {
         super(msg);
     }
 
-    public MyUsernameNotFoundException(String msg, Throwable t) {
+    public MyLoginException(String msg, Throwable t) {
         super(msg, t);
     }
 }

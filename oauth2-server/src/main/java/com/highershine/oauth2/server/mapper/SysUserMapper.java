@@ -22,6 +22,13 @@ public interface SysUserMapper {
     SysUser selectByUsername(String username);
 
     /**
+     * 根据身份证号查询
+     * @param idCardNo
+     * @return
+     */
+    SysUser selectByIdCardNo(String idCardNo);
+
+    /**
      * 根据userId查询系统角色
      * @param id
      * @return
