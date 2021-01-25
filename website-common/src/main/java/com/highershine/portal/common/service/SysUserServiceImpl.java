@@ -277,11 +277,11 @@ public class SysUserServiceImpl implements SysUserService {
         }
         // 判断手动输入所在单位编号是否重复
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-            String serverNo = sysUser.getProvince();
-            if (StringUtils.isNotBlank(sysUser.getArea())) {
-                serverNo = sysUser.getArea();
-            } else if (StringUtils.isNotBlank(sysUser.getCity())) {
-                serverNo = sysUser.getCity();
+            String serverNo = dto.getProvince();
+            if (StringUtils.isNotBlank(dto.getArea())) {
+                serverNo = dto.getArea();
+            } else if (StringUtils.isNotBlank(dto.getCity())) {
+                serverNo = dto.getCity();
             }
             String serverCode = serverNo.substring(0, 4);
             String orgSubCode = dto.getOrgCode().substring(0, 4);
