@@ -28,8 +28,8 @@ public interface ArticleMapper {
     List<ArticleVo> getArticleList(ArticleDTO articleDTO);
 
     /**
-     * 根据草稿id假删除
+     * 根据草稿id删除
      * @param id
      */
-    void deleteFlagByDraftId(Long id);
+    void deleteByDraftId(Long id);
 }

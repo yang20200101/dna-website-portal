@@ -128,10 +128,11 @@
       and  (pa.title like concat('%',#{keyword, jdbcType=VARCHAR},'%')
       or pa.content like concat('%',#{keyword, jdbcType=VARCHAR},'%'))
     </if>
+    order by is_top desc,level desc nulls last, updated_at desc
   </select>
 
- <!--根据草稿ID假删除-->
-  <delete id="deleteFlagByDraftId" parameterType="java.lang.Long">
+ <!--根据草稿ID删除-->
+  <delete id="deleteByDraftId" parameterType="java.lang.Long">
     delete from po_article
     where draft_id = #{id,jdbcType=BIGINT}
   </delete>
