@@ -8,7 +8,6 @@ import com.highershine.portal.handlder.LoginExpireHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -59,7 +58,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                                 "/swagger-ui.html","/css/**", "/js/**","/images/**", "/webjars/**", "**/favicon.ico"};
 
     @Bean
-    @LoadBalanced
     public RestTemplate restTemplate(RestTemplateBuilder builder){
         RestTemplate restTemplate = builder.build();
         /*为RestTemplate配置异常处理器0*/

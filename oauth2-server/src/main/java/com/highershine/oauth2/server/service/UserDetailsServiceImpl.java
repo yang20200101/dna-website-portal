@@ -55,6 +55,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 log.error("[{}] pki idCardNo not found!", idCardNo);
                 throw new MyLoginException(LoginConstant.PKI_NOT_FOUND_EXCEPTION_PREFIX  + "没有查询到该用户");
             }
+            List<SysClientRole> clientRoles = sysUserMapper.selectClientRoleByUserId(sysUser.getId());
+            sysUser.setClientRoles(clientRoles);
             log.error("pki登录成功");
         } else {
             throw new MyLoginException("");
