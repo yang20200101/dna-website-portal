@@ -315,7 +315,7 @@ public class SysUserServiceImpl implements SysUserService {
         //生成实验室编号
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
             result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?labCode="
-                    + dto.getLabCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+                    + dto.getOrgCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
             if (StringUtils.isBlank(result)) {
                 throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
             }
