@@ -128,7 +128,7 @@
       and  (pa.title like concat('%',#{keyword, jdbcType=VARCHAR},'%')
       or pa.content like concat('%',#{keyword, jdbcType=VARCHAR},'%'))
     </if>
-    order by is_top desc,level desc nulls last, updated_at desc
+    order by pa.is_top desc,pa.level desc nulls last, pa.updated_at desc
   </select>
 
  <!--根据草稿ID删除-->
