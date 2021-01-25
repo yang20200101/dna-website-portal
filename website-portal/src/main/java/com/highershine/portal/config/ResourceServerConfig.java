@@ -3,12 +3,9 @@ package com.highershine.portal.config;
 import com.highershine.portal.filter.JWTAuthenticationFilter;
 import com.highershine.portal.handlder.ApiAccessDeniedHandler;
 import com.highershine.portal.handlder.AuthExceptionEntryPoint;
-import com.highershine.portal.handlder.CustomerResponseErrorHandler;
 import com.highershine.portal.handlder.LoginExpireHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -58,14 +55,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                                 "/v2/api-docs", "/swagger-resources/configuration/ui","/swagger-resources", "/swagger-resources/configuration/security",
                                 "/swagger-ui.html","/css/**", "/js/**","/images/**", "/webjars/**", "**/favicon.ico"};
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(RestTemplateBuilder builder){
-        RestTemplate restTemplate = builder.build();
-        /*为RestTemplate配置异常处理器0*/
-        restTemplate.setErrorHandler(new CustomerResponseErrorHandler());
-        return restTemplate;
-    }
 
     //不使用权限校验的ROLE_前缀  (http.servletApi().rolePrefix("");该方式无效果，使用@Bean方式)
     @Bean

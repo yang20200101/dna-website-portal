@@ -62,14 +62,14 @@ public class SysUserServiceImpl implements SysUserService {
     private ValueOperations valueOperations;
     @Value("${oauth2.server.clientId:website}")
     private String clientId;
+    @Autowired
+    private InterfacePropertyConverter urls;
     @Value("${person.query.addr}")
     private String personQueryAddr;
     @Value("${person.query.salt}")
     private String personQuerySalt;
     @Value("${person.query.systemkey}")
     private String personQuerySystemkey;
-    @Autowired
-    private InterfacePropertyConverter urls;
 
 
 

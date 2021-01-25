@@ -117,7 +117,7 @@ public class DraftArticleServiceImpl implements DraftArticleService {
             draftArticle.setId(id).setIsPublish(false).setUpdatedAt(new Date());
             draftArticleMapper.updateByPrimaryKeySelective(draftArticle);
             //将文章表 数据删除
-            articleMapper.deleteFlagByDraftId(id);
+            articleMapper.deleteByDraftId(id);
         }
     }
 

@@ -66,6 +66,41 @@
     and su.username = #{username, jdbcType=VARCHAR}
   </select>
 
+  <select id="selectByIdCardNo" parameterType="java.lang.String" resultMap="selectByUsernameMap">
+    select
+    su.id,
+    su.ext_id,
+    su.username,
+    su.nickname,
+    su.password,
+    su.province,
+    su.server_nos,
+    su.id_card_no,
+    su.birth_date,
+    su.gender,
+    su.phone,
+    su.org_code,
+    su.lab_name,
+    su.remark,
+    su.city,
+    su.is_add_org,
+    su.area,
+    su.job,
+    su.status,
+    su.delete_flag,
+    su.create_datetime,
+    su.update_datetime,
+    sr.id as roleId,
+    sr.ext_id as role
+    from sys_user su
+    left join sys_user_role sur on sur.user_id = su.id and sur.client_id = 'website'
+    left join sys_role sr on  sur.role_id =sr.id
+    where su.delete_flag = false
+    and su.status = true
+    and sr.active_flag = true
+    and su.id_card_no = #{idCardNo, jdbcType=VARCHAR}
+  </select>
+
   <resultMap id="selectClientRoleByUserIdMap" type="com.highershine.oauth2.server.entity.SysClientRole">
     <id property="clientId" column="clientId" />
     <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
