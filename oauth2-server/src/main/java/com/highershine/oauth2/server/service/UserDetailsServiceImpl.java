@@ -34,6 +34,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUser sysUser = null;
         String type = request.getParameter("type");
+        if (StringUtils.isBlank(type)) {
+            //默认 密码模式登录
+            type = LoginConstant.TYPE_PASSWORD;
+        }
         if (LoginConstant.TYPE_PASSWORD.equals(type)) {
             sysUser = sysUserMapper.selectByUsername(username);
             if (sysUser == null) {
@@ -58,8 +62,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             List<SysClientRole> clientRoles = sysUserMapper.selectClientRoleByUserId(sysUser.getId());
             sysUser.setClientRoles(clientRoles);
             log.error("pki登录成功");
-        } else {
-            throw new MyLoginException("");
         }
         return sysUser;
     }
