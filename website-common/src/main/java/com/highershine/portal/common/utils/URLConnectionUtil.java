@@ -43,7 +43,7 @@ public class URLConnectionUtil {
                 result.append(strLine);
             }
         } catch (Exception e) {
-            log.error("发送 Get 方法异常！", e);
+            log.error("发送 Get 方法异常！{},{}", strUrl, e);
             throw e;
         } finally {
             try {
