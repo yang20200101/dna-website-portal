@@ -169,14 +169,17 @@ public class SysUserServiceImpl implements SysUserService {
      * @return
      */
     @Override
-    public void updateUser(SysUserDTO dto) {
+    public void updateUser(SysUserDTO dto, boolean perfectFlag) {
         SysUser sysUser = SysUserConverter.transferSysUserDto2Po(dto);
         sysUserMapper.updateByPrimaryKey(sysUser);
-        // 删除角色信息
-        sysUserRoleMapper.deleteByUserId(dto.getId());
-        // 插入角色信息
-        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, clientId);
-        sysUserRoleMapper.batchInsert(sysUserRoleList);
+        // 完善用户信息时，不修改角色信息
+        if (!perfectFlag) {
+            // 删除角色信息
+            sysUserRoleMapper.deleteByUserId(dto.getId());
+            // 插入角色信息
+            List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, CommonConstant.CLIENT_WEBSITE);
+            sysUserRoleMapper.batchInsert(sysUserRoleList);
+        }
     }
 
     /**
@@ -224,11 +227,11 @@ public class SysUserServiceImpl implements SysUserService {
      * @throws Exception
      */
     @Override
-    public void updateUserAndValid(SysUserDTO dto) throws Exception {
+    public void updateUserAndValid(SysUserDTO dto, boolean perfectFlag) throws Exception {
         //用户信息校验
         registerValid(dto);
         //修改用户信息
-        updateUser(dto);
+        updateUser(dto, perfectFlag);
         //清除redis中token
         cleanJwtRedis(dto.getUsername());
     }

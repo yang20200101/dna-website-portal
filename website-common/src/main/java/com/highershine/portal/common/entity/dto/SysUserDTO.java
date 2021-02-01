@@ -104,4 +104,7 @@ public class SysUserDTO implements Serializable {
 
     @ApiModelProperty(value = "系统对应角色信息")
     private List<ClientRoleBo> clientRoles;
+
+    @ApiModelProperty(value = "完善用户信息时传true", example = "true", required = true)
+    private boolean perfectFlag;
 }
