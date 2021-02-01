@@ -225,7 +225,7 @@ public class SysUserController {
                 return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), "用户id为空");
             }
             //修改用户信息
-            sysUserService.updateUserAndValid(dto);
+            sysUserService.updateUserAndValid(dto, dto.isPerfectFlag());
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS);
         } catch (RegisterException e) {
             return ResultUtil.errorResult(ExceptionEnum.ERROR_PARAMETERS.getCode(), e.getMessage());

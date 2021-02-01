@@ -53,7 +53,7 @@ public interface SysUserService {
      * 修改用户信息
      * @param dto
      */
-    void updateUser(SysUserDTO dto);
+    void updateUser(SysUserDTO dto, boolean perfectFlag);
 
     /**
      * 用户校验和注册
@@ -67,7 +67,7 @@ public interface SysUserService {
      * @param dto
      * @throws Exception
      */
-    void updateUserAndValid(SysUserDTO dto) throws Exception;
+    void updateUserAndValid(SysUserDTO dto, boolean perfectFlag ) throws Exception;
 
     /**
      * 注册校验
