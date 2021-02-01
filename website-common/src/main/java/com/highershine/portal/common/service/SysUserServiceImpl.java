@@ -174,7 +174,7 @@ public class SysUserServiceImpl implements SysUserService {
         // 删除角色信息
         sysUserRoleMapper.deleteByUserId(dto.getId());
         // 插入角色信息
-        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, clientId);
+        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, CommonConstant.CLIENT_WEBSITE);
         sysUserRoleMapper.batchInsert(sysUserRoleList);
     }
 
