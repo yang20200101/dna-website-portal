@@ -279,6 +279,20 @@ public class SysUserServiceImpl implements SysUserService {
         } else if ((boolean) data.get("existsFlag") == false){
             throw new RegisterException("您不属于该实验室，请联系管理员");
         }
+        // 判断手动输入所在单位编号是否重复
+        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+            String serverNo = dto.getProvince();
+            if (StringUtils.isNotBlank(dto.getArea())) {
+                serverNo = dto.getArea();
+            } else if (StringUtils.isNotBlank(dto.getCity())) {
+                serverNo = dto.getCity();
+            }
+            String serverCode = serverNo.substring(0, 4);
+            String orgSubCode = dto.getOrgCode().substring(0, 4);
+            if (!orgSubCode.equals(serverCode)) {
+                throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
+            }
+        }
         //查询户籍系统 判断身份证号姓名是否匹配
         Map paramMap = new HashMap<String, Object>();
         paramMap.put("cardNo", dto.getIdCardNo());
@@ -302,34 +316,50 @@ public class SysUserServiceImpl implements SysUserService {
                 }
             }
         }
-        //生成实验室编号
+        //新增实验室
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-            String serverNo = dto.getProvince();
-            if (StringUtils.isNotBlank(dto.getArea())) {
-                serverNo = dto.getArea();
-            } else if (StringUtils.isNotBlank(dto.getCity())) {
-                serverNo = dto.getCity();
-            }
-            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?regionalismCode="
-                    + serverNo + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?labCode="
+                    + dto.getOrgCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
             if (StringUtils.isBlank(result)) {
                 throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
             }
             resultMap = JSONUtil.parseJsonToMap(result);
             code = ((Long) resultMap.get("code")).intValue();
             if (!HttpStatusEnum.OK.getCode().equals(code)) {
-                if (HttpStatusEnum.NOT_ACCEPTABLE.getCode().equals(code)) {
+                if (HttpStatusEnum.PRECONDITION_FAILED.getCode().equals(code)) {
                     throw new RegisterException((String) resultMap.get("msg"));
                 }
                 throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
-            } else {
-                data = (Map) resultMap.get("data");
-                if (StringUtils.isBlank((String) data.get("labCode"))) {
-                    throw new RegisterException("新增实验室异常");
-                }
             }
-            dto.setOrgCode((String) data.get("labCode"));
         }
+        //自动生成实验室编号
+//        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+//            String serverNo = dto.getProvince();
+//            if (StringUtils.isNotBlank(dto.getArea())) {
+//                serverNo = dto.getArea();
+//            } else if (StringUtils.isNotBlank(dto.getCity())) {
+//                serverNo = dto.getCity();
+//            }
+//            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?regionalismCode="
+//                    + serverNo + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+//            if (StringUtils.isBlank(result)) {
+//                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
+//            }
+//            resultMap = JSONUtil.parseJsonToMap(result);
+//            code = ((Long) resultMap.get("code")).intValue();
+//            if (!HttpStatusEnum.OK.getCode().equals(code)) {
+//                if (HttpStatusEnum.NOT_ACCEPTABLE.getCode().equals(code)) {
+//                    throw new RegisterException((String) resultMap.get("msg"));
+//                }
+//                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
+//            } else {
+//                data = (Map) resultMap.get("data");
+//                if (StringUtils.isBlank((String) data.get("labCode"))) {
+//                    throw new RegisterException("新增实验室异常");
+//                }
+//            }
+//            dto.setOrgCode((String) data.get("labCode"));
+//        }
     }
 
     @Override
