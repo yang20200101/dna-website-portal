@@ -69,4 +69,7 @@ public class SysUserVo implements Serializable {
 
     @ApiModelProperty(value = "系统对应角色信息")
     private List<ClientRoleBo> clientRoles;
+
+    @ApiModelProperty(value = "用户菜单列表")
+    private String[] userMenu;
 }

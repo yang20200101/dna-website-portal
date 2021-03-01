@@ -5,6 +5,7 @@ import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.ActivityPlayerVo;
+import com.highershine.portal.common.entity.vo.ProvinceSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -97,4 +98,11 @@ public interface SysUserMapper {
      * @param sysUser
      */
     void updateByPrimaryKey(SysUser sysUser);
+
+    /**
+     * 根据省份查询省级管理员
+     * @param regionalismCode
+     * @return
+     */
+    List<ProvinceSysUserVo> selectProvinceUserList(String regionalismCode);
 }

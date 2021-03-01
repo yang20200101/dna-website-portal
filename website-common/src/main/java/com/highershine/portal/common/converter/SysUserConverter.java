@@ -5,6 +5,8 @@ import com.highershine.portal.common.entity.bo.ClientRoleBo;
 import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
+import com.highershine.portal.common.entity.vo.SysRoleListVo;
+import com.highershine.portal.common.entity.vo.SysRoleVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +61,23 @@ public final class SysUserConverter {
         }
         sysUser.setDeleteFlag(false).setCreateDatetime(new Date()).setUpdateDatetime(new Date());
         return sysUser;
+    }
+
+
+    public static List<SysUserRole> transferSysUserDto2UserRole(SysUserDTO dto, List<SysRoleListVo> roleList) {
+        //门户系统用户角色初始化
+        List<SysUserRole> resultList = new ArrayList<>();
+        for (SysRoleListVo vo : roleList) {
+            for (SysRoleVo role : vo.getRoles()) {
+                if ("1".equals(role.getDefaultFlag())) {
+                    //默认角色
+                    SysUserRole sysUserRole = new SysUserRole();
+                    sysUserRole.setClientId(vo.getClientId()).setUserId(dto.getId()).setRoleId(role.getRoleId());
+                    resultList.add(sysUserRole);
+                }
+            }
+        }
+        return resultList;
     }
 
 

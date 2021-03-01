@@ -6,7 +6,10 @@ import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
+import com.highershine.portal.common.entity.vo.ProvinceSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
+
+import java.util.List;
 
 
 /**
@@ -96,4 +99,11 @@ public interface SysUserService {
      * @return
      */
     void deleteUserById(Long id) throws Exception;
+
+    /**
+     * 根据省份查询省级管理员
+     * @param regionalismCode
+     * @return
+     */
+    List<ProvinceSysUserVo> findProvinceUserList(String regionalismCode);
 }

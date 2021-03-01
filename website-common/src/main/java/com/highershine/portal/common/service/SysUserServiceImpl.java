@@ -14,6 +14,7 @@ import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.po.SysUserRole;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
+import com.highershine.portal.common.entity.vo.ProvinceSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.enums.HttpStatusEnum;
 import com.highershine.portal.common.enums.ResultEnum;
@@ -56,6 +57,8 @@ public class SysUserServiceImpl implements SysUserService {
     private SysRegionalismService regionalismService;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysRoleService sysRoleService;
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
     @Autowired
@@ -144,7 +147,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserMapper.updateExtId(sysUser.getId());
         // 插入角色信息
         dto.setId(sysUser.getId());
-        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, CommonConstant.CLIENT_WEBSITE);
+        List<SysUserRole> sysUserRoleList = SysUserConverter.transferSysUserDto2UserRole(dto, sysRoleService.getRoleList());
         sysUserRoleMapper.batchInsert(sysUserRoleList);
         //用户同步到填报系统
         JSONObject json = getUserSyncParam(sysUser);
@@ -239,7 +242,6 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 注册校验
      * @param dto
-     * @return
      * @throws Exception
      */
     public void registerValid(SysUserDTO dto) throws Exception {
@@ -261,23 +263,35 @@ public class SysUserServiceImpl implements SysUserService {
                 throw new RegisterException("该实验室此工作岗位已被注册");
             }
         }
-        //校验用户是否是选择实验室的人员
-        JSONObject json = new JSONObject();
-        json.put("orgCode", dto.getOrgCode());
-        json.put("fullname", dto.getNickname());
-        json.put("idCardNo", dto.getIdCardNo());
-        json.put("job", dto.getJob());
-        String result = URLConnectionUtil.post(urls.getValidPersonInLabUrl(), json.toString());
-        if (StringUtils.isBlank(result)) {
-            throw new RuntimeException("the url return is blank:" + urls.getValidPersonInLabUrl());
+        String result = "";
+        Integer code = null;
+        Map<String, Object> resultMap = null;
+        Map<String, Object> data = null;
+        SysUser updateUser = null;
+        if (dto.getId() != null) {
+            updateUser = sysUserMapper.selectByPrimaryKey(dto.getId());
         }
-        Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-        Integer code = ((Long) resultMap.get("code")).intValue();
-        Map<String, Object> data = (Map) resultMap.get("data");
-        if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
-            throw new RuntimeException("the url return code is not success:" + urls.getValidPersonInLabUrl());
-        } else if ((boolean) data.get("existsFlag") == false){
-            throw new RegisterException("您不属于该实验室，请联系管理员");
+        //新增 或者  没有修改单位时 执行以下逻辑
+        if (dto.getId() == null
+                || (updateUser != null && updateUser.getOrgCode().equals(dto.getOrgCode()))) {
+            //校验用户是否是选择实验室的人员
+            JSONObject json = new JSONObject();
+            json.put("orgCode", dto.getOrgCode());
+            json.put("fullname", dto.getNickname());
+            json.put("idCardNo", dto.getIdCardNo());
+            json.put("job", dto.getJob());
+            result = URLConnectionUtil.post(urls.getValidPersonInLabUrl(), json.toString());
+            if (StringUtils.isBlank(result)) {
+                throw new RuntimeException("the url return is blank:" + urls.getValidPersonInLabUrl());
+            }
+            resultMap = JSONUtil.parseJsonToMap(result);
+            code = ((Long) resultMap.get("code")).intValue();
+            data = (Map) resultMap.get("data");
+            if (!ResultEnum.SUCCESS_STATUS.getCode().equals(code)) {
+                throw new RuntimeException("the url return code is not success:" + urls.getValidPersonInLabUrl());
+            } else if ((boolean) data.get("existsFlag") == false) {
+                throw new RegisterException("您不属于该实验室，请联系管理员");
+            }
         }
         // 判断手动输入所在单位编号是否重复
         if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
@@ -317,49 +331,49 @@ public class SysUserServiceImpl implements SysUserService {
             }
         }
         //新增实验室
-        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?labCode="
-                    + dto.getOrgCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
-            if (StringUtils.isBlank(result)) {
-                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
-            }
-            resultMap = JSONUtil.parseJsonToMap(result);
-            code = ((Long) resultMap.get("code")).intValue();
-            if (!HttpStatusEnum.OK.getCode().equals(code)) {
-                if (HttpStatusEnum.PRECONDITION_FAILED.getCode().equals(code)) {
-                    throw new RegisterException((String) resultMap.get("msg"));
-                }
-                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
-            }
-        }
-        //自动生成实验室编号
 //        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-//            String serverNo = dto.getProvince();
-//            if (StringUtils.isNotBlank(dto.getArea())) {
-//                serverNo = dto.getArea();
-//            } else if (StringUtils.isNotBlank(dto.getCity())) {
-//                serverNo = dto.getCity();
-//            }
-//            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?regionalismCode="
-//                    + serverNo + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+//            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?labCode="
+//                    + dto.getOrgCode() + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
 //            if (StringUtils.isBlank(result)) {
 //                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
 //            }
 //            resultMap = JSONUtil.parseJsonToMap(result);
 //            code = ((Long) resultMap.get("code")).intValue();
 //            if (!HttpStatusEnum.OK.getCode().equals(code)) {
-//                if (HttpStatusEnum.NOT_ACCEPTABLE.getCode().equals(code)) {
+//                if (HttpStatusEnum.PRECONDITION_FAILED.getCode().equals(code)) {
 //                    throw new RegisterException((String) resultMap.get("msg"));
 //                }
 //                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
-//            } else {
-//                data = (Map) resultMap.get("data");
-//                if (StringUtils.isBlank((String) data.get("labCode"))) {
-//                    throw new RegisterException("新增实验室异常");
-//                }
 //            }
-//            dto.setOrgCode((String) data.get("labCode"));
 //        }
+        //自动生成实验室编号
+        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+            String serverNo = dto.getProvince();
+            if (StringUtils.isNotBlank(dto.getArea())) {
+                serverNo = dto.getArea();
+            } else if (StringUtils.isNotBlank(dto.getCity())) {
+                serverNo = dto.getCity();
+            }
+            result = URLConnectionUtil.get(urls.getSaveLabUrl() + "?regionalismCode="
+                    + serverNo + "&labName=" + URLEncoder.encode(dto.getLabName(),"UTF-8"), null);
+            if (StringUtils.isBlank(result)) {
+                throw new RuntimeException("the url return is blank:" + urls.getSaveLabUrl());
+            }
+            resultMap = JSONUtil.parseJsonToMap(result);
+            code = ((Long) resultMap.get("code")).intValue();
+            if (!HttpStatusEnum.OK.getCode().equals(code)) {
+                if (HttpStatusEnum.NOT_ACCEPTABLE.getCode().equals(code)) {
+                    throw new RegisterException((String) resultMap.get("msg"));
+                }
+                throw new RuntimeException("the url return code is not success:" + urls.getSaveLabUrl());
+            } else {
+                data = (Map) resultMap.get("data");
+                if (StringUtils.isBlank((String) data.get("labCode"))) {
+                    throw new RegisterException("新增实验室异常");
+                }
+            }
+            dto.setOrgCode((String) data.get("labCode"));
+        }
     }
 
     @Override
@@ -411,6 +425,17 @@ public class SysUserServiceImpl implements SysUserService {
         if (!ResultEnum.SUCCESS_STATUS.equals(code)) {
             throw new RuntimeException("the url return code is not success:" + urls.getUserDelStatisticsUrl());
         }
+    }
+
+    /**
+     * 根据省份查询省级管理员
+     * @param regionalismCode
+     * @return
+     */
+    @Override
+    public List<ProvinceSysUserVo> findProvinceUserList(String regionalismCode) {
+        List<ProvinceSysUserVo> vos = sysUserMapper.selectProvinceUserList(regionalismCode);
+        return vos;
     }
 
     private void cleanJwtRedis (String username) {

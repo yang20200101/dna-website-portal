@@ -260,4 +260,18 @@
     and sur.user_id = #{id,jdbcType=BIGINT}
     order by sr.role_ord asc
   </select>
+
+  <select id="selectProvinceUserList" parameterType="java.lang.String" resultType="com.highershine.portal.common.entity.vo.ProvinceSysUserVo">
+    select distinct
+    su.nickname,
+    su.phone
+    from  sys_user su,sys_user_role sur,sys_role sr
+    where su.id=sur.user_id and sur.role_id =sr.id
+    and su.status = true
+    and su.delete_flag = false
+    and sr.active_flag = true
+    and sur.client_id = 'website'
+    and sr.ext_id = 'province'
+    and su.province = #{regionalismCode, jdbcType=VARCHAR}
+  </select>
 </mapper>

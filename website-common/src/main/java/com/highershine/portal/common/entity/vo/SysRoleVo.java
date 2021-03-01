@@ -24,4 +24,7 @@ public class SysRoleVo implements Serializable {
 
     @ApiModelProperty(value = "1默认角色;0不是默认", example = "1")
     private String defaultFlag;
+
+    @ApiModelProperty(value = "1不允许省级用户操作;0允许,默认", example = "1")
+    private String notAllowedFlag;
 }

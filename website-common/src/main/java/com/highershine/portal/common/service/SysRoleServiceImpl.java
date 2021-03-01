@@ -84,6 +84,13 @@ public class SysRoleServiceImpl implements SysRoleService {
                     if (RoleConstant.ROLE_EXT_AVERAGE.equals(sysRole.getExtId())) {
                         sysRoleVo.setDefaultFlag("1");
                     } else {
+                        if (RoleConstant.ROLE_EXT_ADMIN.equals(sysRole.getExtId())
+                                || RoleConstant.ROLE_EXT_SECOND_ADMIN.equals(sysRole.getExtId())) {
+                            //省级用户不允许操作的权限
+                            sysRoleVo.setNotAllowedFlag("1");
+                        } else {
+                            sysRoleVo.setNotAllowedFlag("0");
+                        }
                         sysRoleVo.setDefaultFlag("0");
                     }
                     roleVos.add(sysRoleVo);

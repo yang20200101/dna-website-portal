@@ -9,16 +9,20 @@ import com.highershine.portal.common.entity.dto.TokenDTO;
 import com.highershine.portal.common.entity.dto.UpdatePasswordDTO;
 import com.highershine.portal.common.entity.po.SysUser;
 import com.highershine.portal.common.entity.vo.FindSysUserVo;
+import com.highershine.portal.common.entity.vo.ProvinceSysUserVo;
 import com.highershine.portal.common.entity.vo.SysUserListVo;
 import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.result.Result;
+import com.highershine.portal.common.service.SysMenuService;
 import com.highershine.portal.common.service.SysUserService;
 import com.highershine.portal.common.utils.ResultUtil;
 import com.highershine.portal.common.utils.SysUserUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +61,8 @@ public class SysUserController {
     private RestTemplate restTemplate;
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysMenuService sysMenuService;
     @Autowired
     private SysUserUtil sysUserUtil;
     @Value("${oauth2.server.tokenAddr}")
@@ -174,6 +181,7 @@ public class SysUserController {
     public Result<SysUserVo> queryUserInfo() {
         try {
             SysUserVo vo = sysUserUtil.getSysUserVo();
+            vo.setUserMenu(sysMenuService.selectUserMenu(vo.getUserRole()));
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
             log.error("【用户管理】查询用户信息异常， 异常信息：{}", e);
@@ -250,6 +258,26 @@ public class SysUserController {
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
             log.error("【用户管理】查询用户信息接口异常， 异常信息：{}", e);
+            return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
+        }
+    }
+
+    /**
+     * 查询用户信息
+     * @return
+     */
+    @GetMapping("province/{regionalismCode}")
+    @ApiOperation("根据省份查询省级管理员(薛博仁)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "regionalismCode", value = "省份编码", example = "230000", paramType = "path",
+                    dataType = "string", required = true)
+    })
+    public Result<List<ProvinceSysUserVo>> findProvinceUserList(@PathVariable("regionalismCode") String regionalismCode) {
+        try {
+            List<ProvinceSysUserVo> vos = sysUserService.findProvinceUserList(regionalismCode);
+            return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vos);
+        } catch (Exception e) {
+            log.error("【用户管理】根据省份查询省级管理员异常， 异常信息：{}", e);
             return ResultUtil.errorResult(ExceptionEnum.UNKNOWN_EXCEPTION);
         }
     }
