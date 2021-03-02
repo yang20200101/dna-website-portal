@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highershine.oauth2.server.entity.SysRole;
 import com.highershine.oauth2.server.entity.SysUser;
 import com.highershine.oauth2.server.enums.ResultEnum;
+import com.highershine.oauth2.server.service.SysMenuService;
 import com.highershine.oauth2.server.utils.ResultUtil;
+import com.highershine.oauth2.server.utils.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -43,6 +45,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             roles.add(role.getAuthority());
         }
         map.put("roles", roles);
+        SysMenuService sysMenuService = (SysMenuService)SpringBeanUtil.getContext().getBean("sysMenuServiceImpl");
+        map.put("userMenu",sysMenuService.selectUserMenu(roles));
         // 返回给前端
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(MAPPER.writeValueAsString(ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, map)));

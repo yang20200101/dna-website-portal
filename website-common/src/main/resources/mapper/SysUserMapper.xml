@@ -236,6 +236,9 @@
     <if test="labName != null and labName != ''">
       and su.lab_name like concat('%',#{labName, jdbcType=VARCHAR},'%')
     </if>
+    <if test="province != null and province != ''">
+      and su.province = #{province, jdbcType=VARCHAR}
+    </if>
     <if test="roleIds != null">
       and sr.id in
       <foreach collection="roleIds" item="id" index="index" open="(" close=")" separator=",">

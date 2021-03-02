@@ -1,4 +1,4 @@
-package com.highershine.portal.common.service;
+package com.highershine.oauth2.server.service;
 
 import java.util.List;
 

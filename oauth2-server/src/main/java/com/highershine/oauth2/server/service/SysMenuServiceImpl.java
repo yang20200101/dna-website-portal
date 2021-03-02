@@ -1,6 +1,6 @@
-package com.highershine.portal.common.service;
+package com.highershine.oauth2.server.service;
 
-import com.highershine.portal.common.mapper.SysMenuMapper;
+import com.highershine.oauth2.server.mapper.SysMenuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,6 @@
 package com.highershine.portal.common.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -30,4 +31,9 @@ public class SysUserListDTO extends BaseDTO implements Serializable {
 
     @ApiModelProperty(value = "实验室名称", example = "大兴", required = false)
     private String labName;
+
+    //行政区划编码
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
+    private String province;
 }

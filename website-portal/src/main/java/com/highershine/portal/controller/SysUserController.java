@@ -3,6 +3,7 @@ package com.highershine.portal.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.highershine.portal.common.constants.RedisConstant;
+import com.highershine.portal.common.constants.RoleConstant;
 import com.highershine.portal.common.entity.dto.SysUserDTO;
 import com.highershine.portal.common.entity.dto.SysUserListDTO;
 import com.highershine.portal.common.entity.dto.TokenDTO;
@@ -16,7 +17,6 @@ import com.highershine.portal.common.enums.ExceptionEnum;
 import com.highershine.portal.common.enums.ResultEnum;
 import com.highershine.portal.common.exception.RegisterException;
 import com.highershine.portal.common.result.Result;
-import com.highershine.portal.common.service.SysMenuService;
 import com.highershine.portal.common.service.SysUserService;
 import com.highershine.portal.common.utils.ResultUtil;
 import com.highershine.portal.common.utils.SysUserUtil;
@@ -61,8 +61,6 @@ public class SysUserController {
     private RestTemplate restTemplate;
     @Autowired
     private SysUserService sysUserService;
-    @Autowired
-    private SysMenuService sysMenuService;
     @Autowired
     private SysUserUtil sysUserUtil;
     @Value("${oauth2.server.tokenAddr}")
@@ -181,7 +179,6 @@ public class SysUserController {
     public Result<SysUserVo> queryUserInfo() {
         try {
             SysUserVo vo = sysUserUtil.getSysUserVo();
-            vo.setUserMenu(sysMenuService.selectUserMenu(vo.getUserRole()));
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);
         } catch (Exception e) {
             log.error("【用户管理】查询用户信息异常， 异常信息：{}", e);
@@ -292,6 +289,10 @@ public class SysUserController {
         try {
             if (dto == null) {
                 dto = new SysUserListDTO();
+            }
+            SysUserVo sysUserVo = sysUserUtil.getSysUserVo();
+            if (!sysUserVo.getUserRole().contains(RoleConstant.ROLE_EXT_ADMIN)) {
+                dto.setProvince(sysUserVo.getProvince());
             }
             PageInfo<SysUserListVo> vo = sysUserService.getUserList(dto);
             return ResultUtil.successResult(ResultEnum.SUCCESS_STATUS, vo);

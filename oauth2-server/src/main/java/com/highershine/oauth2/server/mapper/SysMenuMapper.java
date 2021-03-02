@@ -1,4 +1,4 @@
-package com.highershine.portal.common.mapper;
+package com.highershine.oauth2.server.mapper;
 
 import org.springframework.stereotype.Repository;
 

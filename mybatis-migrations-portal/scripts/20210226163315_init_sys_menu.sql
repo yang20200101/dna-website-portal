@@ -57,7 +57,7 @@ INSERT INTO public.sys_permission (menu_id, role_id) VALUES (1, 'province');
 INSERT INTO public.sys_permission (menu_id, role_id) VALUES (3, 'province');
 INSERT INTO public.sys_permission (menu_id, role_id) VALUES (8, 'province');
 
-INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag") VALUES ('LAB_JOB', '4', '4', '实验室技术领导', NULL, NULL, 4, 't', NULL, 'admin', now(), NULL, NULL, 'f');
+INSERT INTO public.sys_dict("dict_category", "dict_key", "dict_national_key", "dict_value1", "dict_value2", "dict_value3", "ord", "active_flag","remark", "create_user", "create_datetime", "update_user", "update_datetime", "delete_flag") VALUES ('LAB_JOB', '4', '4', '技术部门分管领导', NULL, NULL, 4, 't', NULL, 'admin', now(), NULL, NULL, 'f');
 commit;
 
 -- //@UNDO
