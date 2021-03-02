@@ -246,7 +246,7 @@
       </foreach>
     </if>
     <if test="provinceFlag == true" >
-      and su.city is null
+      and coalesce(su.city ,'') = ''
     </if>
     <if test="status != null" >
      and su.status = #{status,jdbcType=BIT}
