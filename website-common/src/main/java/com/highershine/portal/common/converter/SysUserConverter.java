@@ -77,6 +77,8 @@ public final class SysUserConverter {
                 }
             }
         }
+        //普通用户
+        dto.setRoles(RoleConstant.ROLE_EXT_AVERAGE);
         return resultList;
     }
 
