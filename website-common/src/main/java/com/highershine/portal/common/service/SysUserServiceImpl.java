@@ -293,20 +293,20 @@ public class SysUserServiceImpl implements SysUserService {
                 throw new RegisterException("您不属于该实验室，请联系管理员");
             }
         }
-        // 判断手动输入所在单位编号是否重复
-        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
-            String serverNo = dto.getProvince();
-            if (StringUtils.isNotBlank(dto.getArea())) {
-                serverNo = dto.getArea();
-            } else if (StringUtils.isNotBlank(dto.getCity())) {
-                serverNo = dto.getCity();
-            }
-            String serverCode = serverNo.substring(0, 4);
-            String orgSubCode = dto.getOrgCode().substring(0, 4);
-            if (!orgSubCode.equals(serverCode)) {
-                throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
-            }
-        }
+//        // 判断手动输入所在单位编号是否重复
+//        if (dto.getIsAddOrg() != null && dto.getIsAddOrg()) {
+//            String serverNo = dto.getProvince();
+//            if (StringUtils.isNotBlank(dto.getArea())) {
+//                serverNo = dto.getArea();
+//            } else if (StringUtils.isNotBlank(dto.getCity())) {
+//                serverNo = dto.getCity();
+//            }
+//            String serverCode = serverNo.substring(0, 4);
+//            String orgSubCode = dto.getOrgCode().substring(0, 4);
+//            if (!orgSubCode.equals(serverCode)) {
+//                throw new RegisterException("【公安机构代码】与【所属行政地区/单位】不匹配，请检查");
+//            }
+//        }
         //查询户籍系统 判断身份证号姓名是否匹配
         Map paramMap = new HashMap<String, Object>();
         paramMap.put("cardNo", dto.getIdCardNo());
