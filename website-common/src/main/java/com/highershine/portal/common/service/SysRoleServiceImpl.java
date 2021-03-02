@@ -11,6 +11,7 @@ import com.highershine.portal.common.enums.HttpStatusEnum;
 import com.highershine.portal.common.mapper.SysClientMapper;
 import com.highershine.portal.common.mapper.SysRoleMapper;
 import com.highershine.portal.common.utils.JSONUtil;
+import com.highershine.portal.common.utils.SysUserUtil;
 import com.highershine.portal.common.utils.URLConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,8 @@ public class SysRoleServiceImpl implements SysRoleService {
     private SysRoleMapper sysRoleMapper;
     @Autowired
     private SysClientMapper sysClientMapper;
+    @Autowired
+    private SysUserUtil sysUserUtil;
 
     //缓存其他系统角色
     private Map<String, SysRoleListVo> cacheClientRoleMap = new HashMap<>();
@@ -120,6 +123,14 @@ public class SysRoleServiceImpl implements SysRoleService {
                     log.error("【角色查询】获取其他系统角色异常， url：{}",  sysClient.getRoleUrl());
                 }
 
+            }
+        }
+        if (sysUserUtil.getSysUserVo().getUserRole().contains(RoleConstant.ROLE_EXT_ADMIN)) {
+            for (SysRoleListVo vo : voList) {
+                for (SysRoleVo role : vo.getRoles()) {
+                    //管理员 允许修改任何系统的角色
+                    role.setNotAllowedFlag("0");
+                }
             }
         }
         return voList;
