@@ -1,6 +1,8 @@
 package com.highershine.portal.common.service;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.highershine.portal.common.constants.CommonConstant;
 import com.highershine.portal.common.constants.RoleConstant;
 import com.highershine.portal.common.entity.po.SysClient;
@@ -11,7 +13,6 @@ import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.HttpStatusEnum;
 import com.highershine.portal.common.mapper.SysClientMapper;
 import com.highershine.portal.common.mapper.SysRoleMapper;
-import com.highershine.portal.common.utils.JSONUtil;
 import com.highershine.portal.common.utils.SysUserUtil;
 import com.highershine.portal.common.utils.URLConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -57,14 +58,14 @@ public class SysRoleServiceImpl implements SysRoleService {
                 if (StringUtils.isBlank(result)) {
                     throw new RuntimeException("the url return is blank:" + sysClient.getRoleUrl());
                 }
-                Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-                Integer code = ((Long) resultMap.get("code")).intValue();
+                Map<String, Object> resultMap = JSONObject.parseObject(result, Map.class);
+                Integer code = ((Integer) resultMap.get("code")).intValue();
                 if (!HttpStatusEnum.OK.getCode().equals(code)) {
                     throw new RuntimeException("the url return code is not success:" + sysClient.getRoleUrl());
                 } else {
                     //请求成功
-                    List<SysRoleVo> roleVos = (List) resultMap.get("data");
-                    vo.setRoles(roleVos);
+                    List<SysRoleVo> data = (List<SysRoleVo>) resultMap.get("data");
+                    vo.setRoles(data);
                     cacheClientRoleMap.put(sysClient.getId(), vo);
                 }
             }
@@ -108,13 +109,14 @@ public class SysRoleServiceImpl implements SysRoleService {
                     if (StringUtils.isBlank(result)) {
                         throw new RuntimeException("the url return is blank:" + sysClient.getRoleUrl());
                     }
-                    Map<String, Object> resultMap = JSONUtil.parseJsonToMap(result);
-                    Integer code = ((Long) resultMap.get("code")).intValue();
+                    Map<String, Object> resultMap = JSONObject.parseObject(result, Map.class);
+                    Integer code = ((Integer) resultMap.get("code")).intValue();
                     if (!HttpStatusEnum.OK.getCode().equals(code)) {
                         throw new RuntimeException("the url return code is not success:" + sysClient.getRoleUrl());
                     } else {
                         //请求成功
-                        List<SysRoleVo> roleVos = (List) resultMap.get("data");
+                        JSONArray jsonArray = (JSONArray) resultMap.get("data");
+                        List<SysRoleVo> roleVos = JSONObject.parseArray(jsonArray.toJSONString(), SysRoleVo.class);
                         vo.setRoles(roleVos);
                         voList.add(vo);
                     }
