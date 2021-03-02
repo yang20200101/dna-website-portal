@@ -115,9 +115,8 @@ public class SysRoleServiceImpl implements SysRoleService {
                         throw new RuntimeException("the url return code is not success:" + sysClient.getRoleUrl());
                     } else {
                         //请求成功
-                        JSONArray jsonArray = (JSONArray) resultMap.get("data");
-                        List<SysRoleVo> roleVos = JSONObject.parseArray(jsonArray.toJSONString(), SysRoleVo.class);
-                        vo.setRoles(roleVos);
+                        List<SysRoleVo> data = (List<SysRoleVo>) resultMap.get("data");
+                        vo.setRoles(data);
                         voList.add(vo);
                     }
                 } catch (Exception e) {
