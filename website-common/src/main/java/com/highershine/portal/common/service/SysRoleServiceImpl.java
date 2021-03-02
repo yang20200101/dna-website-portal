@@ -7,6 +7,7 @@ import com.highershine.portal.common.entity.po.SysClient;
 import com.highershine.portal.common.entity.po.SysRole;
 import com.highershine.portal.common.entity.vo.SysRoleListVo;
 import com.highershine.portal.common.entity.vo.SysRoleVo;
+import com.highershine.portal.common.entity.vo.SysUserVo;
 import com.highershine.portal.common.enums.HttpStatusEnum;
 import com.highershine.portal.common.mapper.SysClientMapper;
 import com.highershine.portal.common.mapper.SysRoleMapper;
@@ -125,7 +126,8 @@ public class SysRoleServiceImpl implements SysRoleService {
 
             }
         }
-        if (sysUserUtil.getSysUserVo().getUserRole().contains(RoleConstant.ROLE_EXT_ADMIN)) {
+        SysUserVo sysUserVo = sysUserUtil.getSysUserVo();
+        if (sysUserVo != null && sysUserVo.getUserRole().contains(RoleConstant.ROLE_EXT_ADMIN)) {
             for (SysRoleListVo vo : voList) {
                 for (SysRoleVo role : vo.getRoles()) {
                     //管理员 允许修改任何系统的角色
